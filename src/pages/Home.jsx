@@ -68,12 +68,12 @@ const Home = () => {
 
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Background layer - cambia según el tema */}
+        {/* Background layer - usa el mismo fondo que el body */}
         <div className="absolute inset-0" style={{ zIndex: 1 }}>
-          {/* Fondo para modo oscuro */}
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-800 dark:opacity-100 opacity-0 transition-opacity duration-500" />
-          {/* Fondo para modo claro */}
-          <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-yellow-50 to-amber-100 dark:opacity-0 opacity-100 transition-opacity duration-500" />
+          {/* Fondo para modo oscuro - mismo que el body */}
+          <div className="absolute inset-0 dark:opacity-100 opacity-0 transition-opacity duration-500" style={{ background: 'linear-gradient(135deg, #3C2415 0%, #2D1810 50%, #1F0F0A 100%)' }} />
+          {/* Fondo para modo claro - mismo que el body */}
+          <div className="absolute inset-0 dark:opacity-0 opacity-100 transition-opacity duration-500 bg-white" />
         </div>
         
         {/* Background Video */}
@@ -87,17 +87,16 @@ const Home = () => {
           style={{ pointerEvents: 'none', zIndex: 2 }}
         >
           <source src="/logo.webm" type="video/webm" />
-          <source src="/Logo.mp4" type="video/mp4" />
           {/* Fallback para navegadores que no soporten el video */}
           Tu navegador no soporta videos HTML5.
         </video>
         
         {/* Overlay para mejor legibilidad del texto - adaptativo al tema */}
         <div className="absolute inset-0" style={{ zIndex: 3 }}>
-          {/* Overlay para modo oscuro */}
-          <div className="absolute inset-0 bg-gradient-to-br from-black/50 via-black/30 to-black/60 dark:opacity-100 opacity-0 transition-opacity duration-500" />
-          {/* Overlay para modo claro */}
-          <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-amber-50/60 to-yellow-100/50 dark:opacity-0 opacity-100 transition-opacity duration-500" />
+          {/* Overlay para modo oscuro - sutil para que se vea el fondo */}
+          <div className="absolute inset-0 bg-gradient-to-br from-black/20 via-transparent to-black/30 dark:opacity-100 opacity-0 transition-opacity duration-500" />
+          {/* Overlay para modo claro - completamente transparente */}
+          <div className="absolute inset-0 dark:opacity-0 opacity-0 transition-opacity duration-500" />
         </div>
         
         <div className="container mx-auto px-4 text-center relative" style={{ zIndex: 10 }}>

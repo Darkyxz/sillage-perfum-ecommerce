@@ -108,7 +108,7 @@ const Products = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900 dark:to-amber-800 py-8">
+    <div className="min-h-screen py-8">
       <Helmet>
         <title>Nuestra Colección - Sillage-Perfum</title>
         <meta name="description" content="Explora nuestra completa colección de perfumes premium. Encuentra tu fragancia perfecta." />

@@ -144,8 +144,8 @@ const ProductManagement = () => {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin text-white mx-auto mb-4" />
-          <p className="text-white/70">Cargando productos...</p>
+          <Loader2 className="admin-icon h-12 w-12 animate-spin mx-auto mb-4" />
+          <p className="admin-text-muted">Cargando productos...</p>
         </div>
       </div>
     );
@@ -154,18 +154,18 @@ const ProductManagement = () => {
   return (
     <>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-white">Gestión de Productos</h2>
+        <h2 className="admin-title text-2xl font-bold">Gestión de Productos</h2>
         <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
           <DialogTrigger asChild>
-            <Button className="floating-button text-white" onClick={openAddForm}>
+            <Button className="admin-button" onClick={openAddForm}>
               <Plus className="mr-2 h-4 w-4" />
               Agregar Producto
             </Button>
           </DialogTrigger>
-          <DialogContent className="glass-effect-dark border-white/10 max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="admin-dialog max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle className="text-white">{editingProduct ? 'Editar Producto' : 'Agregar Nuevo Producto'}</DialogTitle>
-              <DialogDescription className="text-white/60">
+              <DialogTitle className="admin-text font-semibold text-lg">{editingProduct ? 'Editar Producto' : 'Agregar Nuevo Producto'}</DialogTitle>
+              <DialogDescription className="admin-text-muted">
                 Completa los detalles del producto. Haz clic en guardar cuando termines.
               </DialogDescription>
             </DialogHeader>
@@ -180,18 +180,18 @@ const ProductManagement = () => {
 
       {products.length === 0 ? (
         <div className="text-center py-12">
-          <Package className="h-16 w-16 text-white/30 mx-auto mb-4" />
-          <p className="text-white/70 text-lg mb-2">No hay productos en el catálogo</p>
-          <p className="text-white/50">Agrega tu primer producto para comenzar</p>
+          <Package className="admin-icon h-16 w-16 opacity-50 mx-auto mb-4" />
+          <p className="admin-text text-lg mb-2">No hay productos en el catálogo</p>
+          <p className="admin-text-muted">Agrega tu primer producto para comenzar</p>
         </div>
       ) : (
         <div className="grid gap-4">
           {products.map((product) => (
-            <Card key={product.id} className="admin-panel border-white/10">
+            <Card key={product.id} className="admin-panel">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
-                    <div className="w-16 h-16 rounded-lg glass-effect flex items-center justify-center">
+                    <div className="w-16 h-16 rounded-lg admin-panel flex items-center justify-center">
                       {product.image_url ? (
                         <img 
                           src={product.image_url} 
@@ -199,27 +199,27 @@ const ProductManagement = () => {
                           className="w-full h-full object-cover rounded-lg"
                         />
                       ) : (
-                        <Package className="h-8 w-8 text-white/50" />
+                        <Package className="admin-icon h-8 w-8" />
                       )}
                     </div>
                     <div>
-                      <h3 className="text-white font-semibold text-lg">{product.name}</h3>
-                      <p className="text-white/60">{product.brand} • {product.category}</p>
-                      <p className="text-white/50 text-sm">
+                      <h3 className="admin-text font-semibold text-lg">{product.name}</h3>
+                      <p className="admin-text-muted">{product.brand} • {product.category}</p>
+                      <p className="admin-text-muted text-sm">
                         SKU: {product.sku} • Stock: {product.stock_quantity} • 
                         {product.in_stock ? ' En Stock' : ' Agotado'}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-4">
-                    <span className="text-white font-bold text-xl">${product.price}</span>
+                    <span className="admin-text font-bold text-xl">${product.price}</span>
                     <div className="flex space-x-2">
                       <Button
                         variant="outline"
                         size="icon"
                         onClick={() => handleToggleFeatured(product)}
-                        className={`glass-effect border-white/30 hover:bg-white/10 ${
-                          product.is_featured ? 'text-yellow-400 border-yellow-400' : 'text-white'
+                        className={`admin-button-outline ${
+                          product.is_featured ? 'text-yellow-500 border-yellow-500' : ''
                         }`}
                         title={product.is_featured ? 'Quitar de destacados' : 'Marcar como destacado'}
                       >
@@ -228,7 +228,7 @@ const ProductManagement = () => {
                       <Button
                         variant="outline"
                         size="icon"
-                        className="glass-effect border-white/30 text-white hover:bg-white/10"
+                        className="admin-button-outline"
                         onClick={() => openEditForm(product)}
                       >
                         <Edit className="h-4 w-4" />
@@ -237,7 +237,7 @@ const ProductManagement = () => {
                         variant="outline"
                         size="icon"
                         onClick={() => handleDeleteProduct(product.id)}
-                        className="glass-effect border-red-500/30 text-red-400 hover:bg-red-500/10"
+                        className="admin-button-outline border-red-500/50 text-red-500 hover:bg-red-500/10"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>

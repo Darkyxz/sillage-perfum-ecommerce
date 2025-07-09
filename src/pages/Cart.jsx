@@ -150,8 +150,8 @@ const Cart = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center">
-              <Loader2 className="h-12 w-12 animate-spin text-yellow-400 mx-auto mb-4" />
-              <p className="text-yellow-100/80">Cargando carrito...</p>
+              <Loader2 className="h-12 w-12 animate-spin text-amber-600 dark:text-amber-400 mx-auto mb-4" />
+              <p className="text-amber-800 dark:text-amber-100/80">Cargando carrito...</p>
             </div>
           </div>
         </div>
@@ -174,19 +174,19 @@ const Cart = () => {
             className="text-center py-16"
           >
             <div className="glass-effect w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
-              <ShoppingCart className="h-12 w-12 text-yellow-400/60" />
+              <ShoppingCart className="h-12 w-12 text-amber-600 dark:text-amber-400" />
             </div>
             
-            <h1 className="text-3xl font-display font-bold text-yellow-50 mb-4">
+            <h1 className="text-3xl font-display font-bold text-amber-800 dark:text-amber-200 mb-4">
               Tu carrito está vacío
             </h1>
             
-            <p className="text-yellow-100/80 text-lg mb-8">
+            <p className="text-amber-700 dark:text-amber-300 text-lg mb-8">
               Descubre nuestra increíble colección de perfumes
             </p>
             
             <Link to="/productos">
-              <Button className="floating-button text-black font-semibold px-8 py-3">
+              <Button className="floating-button font-semibold px-8 py-3">
                 Explorar Productos
               </Button>
             </Link>

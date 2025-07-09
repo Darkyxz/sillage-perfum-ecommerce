@@ -76,75 +76,75 @@ const ProductForm = ({ onSubmit, initialData, onCancel }) => {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label className="text-white/80">Nombre del Producto *</Label>
-          <Input name="name" value={productData.name} onChange={handleChange} className="glass-effect border-white/30 text-white" placeholder="Ej: Midnight Elegance" />
+          <Label className="admin-text font-medium">Nombre del Producto *</Label>
+          <Input name="name" value={productData.name} onChange={handleChange} className="admin-input" placeholder="Ej: Midnight Elegance" />
         </div>
         <div className="space-y-2">
-          <Label className="text-white/80">Marca</Label>
-          <Input name="brand" value={productData.brand} onChange={handleChange} className="glass-effect border-white/30 text-white" placeholder="Ej: Essence Luxe" />
+          <Label className="admin-text font-medium">Marca</Label>
+          <Input name="brand" value={productData.brand} onChange={handleChange} className="admin-input" placeholder="Ej: Essence Luxe" />
         </div>
         <div className="space-y-2">
-          <Label className="text-white/80">Precio *</Label>
-          <Input name="price" type="number" step="0.01" value={productData.price} onChange={handleChange} className="glass-effect border-white/30 text-white" placeholder="89.99" />
+          <Label className="admin-text font-medium">Precio *</Label>
+          <Input name="price" type="number" step="0.01" value={productData.price} onChange={handleChange} className="admin-input" placeholder="89.99" />
         </div>
         <div className="space-y-2">
-          <Label className="text-white/80">Categoría</Label>
-          <select name="category" value={productData.category} onChange={handleChange} className="w-full h-10 px-3 rounded-md glass-effect border border-white/30 text-white bg-transparent">
-            <option value="men" className="bg-gray-800">Hombres</option>
-            <option value="women" className="bg-gray-800">Mujeres</option>
-            <option value="unisex" className="bg-gray-800">Unisex</option>
+          <Label className="admin-text font-medium">Categoría</Label>
+          <select name="category" value={productData.category} onChange={handleChange} className="admin-input w-full h-10">
+            <option value="men">Hombres</option>
+            <option value="women">Mujeres</option>
+            <option value="unisex">Unisex</option>
           </select>
         </div>
         <div className="space-y-2">
-          <Label className="text-white/80 flex items-center">SKU *
-            <Button type="button" variant="outline" size="sm" onClick={handleBarcodeScanner} disabled={barcodeScanning} className="ml-2 glass-effect border-white/30 text-white hover:bg-white/10">
+          <Label className="admin-text font-medium flex items-center">SKU *
+            <Button type="button" variant="outline" size="sm" onClick={handleBarcodeScanner} disabled={barcodeScanning} className="ml-2 admin-button-outline">
               <Scan className="h-3 w-3 mr-1" />{barcodeScanning ? 'Escaneando...' : 'Escanear'}
             </Button>
           </Label>
-          <Input name="sku" value={productData.sku} onChange={handleChange} className={`glass-effect border-white/30 text-white ${barcodeScanning ? 'barcode-scanner' : ''}`} placeholder="EL001" disabled={barcodeScanning} />
+          <Input name="sku" value={productData.sku} onChange={handleChange} className={`admin-input ${barcodeScanning ? 'barcode-scanner' : ''}`} placeholder="EL001" disabled={barcodeScanning} />
         </div>
         <div className="space-y-2">
-          <Label className="text-white/80">Stock</Label>
-          <Input name="stock_quantity" type="number" value={productData.stock_quantity} onChange={handleChange} className="glass-effect border-white/30 text-white" placeholder="15" />
+          <Label className="admin-text font-medium">Stock</Label>
+          <Input name="stock_quantity" type="number" value={productData.stock_quantity} onChange={handleChange} className="admin-input" placeholder="15" />
         </div>
         <div className="space-y-2">
-          <Label className="text-white/80">Tamaño</Label>
-          <select name="size" value={productData.size} onChange={handleChange} className="w-full h-10 px-3 rounded-md glass-effect border border-white/30 text-white bg-transparent">
-            <option value="50ml" className="bg-gray-800">50ml</option>
-            <option value="100ml" className="bg-gray-800">100ml</option>
-            <option value="150ml" className="bg-gray-800">150ml</option>
+          <Label className="admin-text font-medium">Tamaño</Label>
+          <select name="size" value={productData.size} onChange={handleChange} className="admin-input w-full h-10">
+            <option value="50ml">50ml</option>
+            <option value="100ml">100ml</option>
+            <option value="150ml">150ml</option>
           </select>
         </div>
         <div className="space-y-2">
-          <Label className="text-white/80">Concentración</Label>
-          <select name="concentration" value={productData.concentration} onChange={handleChange} className="w-full h-10 px-3 rounded-md glass-effect border border-white/30 text-white bg-transparent">
-            <option value="Eau de Toilette" className="bg-gray-800">Eau de Toilette</option>
-            <option value="Eau de Parfum" className="bg-gray-800">Eau de Parfum</option>
-            <option value="Parfum" className="bg-gray-800">Parfum</option>
+          <Label className="admin-text font-medium">Concentración</Label>
+          <select name="concentration" value={productData.concentration} onChange={handleChange} className="admin-input w-full h-10">
+            <option value="Eau de Toilette">Eau de Toilette</option>
+            <option value="Eau de Parfum">Eau de Parfum</option>
+            <option value="Parfum">Parfum</option>
           </select>
         </div>
       </div>
       <div className="space-y-2">
-        <Label className="text-white/80">Descripción</Label>
-        <textarea name="description" value={productData.description} onChange={handleChange} className="w-full h-20 px-3 py-2 rounded-md glass-effect border border-white/30 text-white bg-transparent resize-none" placeholder="Descripción del producto..." />
+        <Label className="admin-text font-medium">Descripción</Label>
+        <textarea name="description" value={productData.description} onChange={handleChange} className="admin-input w-full h-20 resize-none" placeholder="Descripción del producto..." />
       </div>
       <div className="space-y-2">
-        <Label className="text-white/80 flex items-center">Imagen del Producto <Camera className="ml-2 h-4 w-4" /></Label>
-        <Input type="file" accept="image/*" onChange={handleImageUpload} className="glass-effect border-white/30 text-white file:bg-white/10 file:text-white file:border-0" />
+        <Label className="admin-text font-medium flex items-center">Imagen del Producto <Camera className="ml-2 h-4 w-4" /></Label>
+        <Input type="file" accept="image/*" onChange={handleImageUpload} className="admin-input file:bg-transparent file:text-current file:border-0" />
         {imagePreview && (
           <div className="mt-2">
-            <img src={imagePreview} alt="Vista previa" className="h-20 w-20 object-cover rounded-md glass-effect p-1"/>
-            <p className="text-white/60 text-xs mt-1">
+            <img src={imagePreview} alt="Vista previa" className="h-20 w-20 object-cover rounded-md admin-panel p-1"/>
+            <p className="admin-text-muted text-xs mt-1">
               {imageFile ? 'Vista previa de la nueva imagen.' : 'Imagen actual.'}
             </p>
           </div>
         )}
       </div>
       <div className="flex space-x-4 pt-4">
-        <Button type="submit" className="flex-1 floating-button text-white">
+        <Button type="submit" className="flex-1 admin-button">
           {initialData ? 'Guardar Cambios' : 'Agregar Producto'}
         </Button>
-        <Button type="button" variant="outline" onClick={onCancel} className="glass-effect border-white/30 text-white hover:bg-white/10">
+        <Button type="button" variant="outline" onClick={onCancel} className="admin-button-outline">
           Cancelar
         </Button>
       </div>

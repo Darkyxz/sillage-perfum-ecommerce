@@ -37,7 +37,7 @@ const Header = () => {
         loop
         muted
         playsInline
-        className="absolute inset-0 w-full h-full object-cover opacity-10 dark:opacity-5"
+        className="absolute inset-0 w-full h-full object-cover opacity-15 dark:opacity-8"
         style={{ pointerEvents: 'none', zIndex: -1 }}
       >
         <source src="/logo.webm" type="video/webm" />

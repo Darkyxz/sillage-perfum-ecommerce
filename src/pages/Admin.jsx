@@ -63,6 +63,17 @@ const Admin = () => {
     }
   };
 
+  const handleProductAdded = (newProduct) => {
+    setProducts(prev => [newProduct, ...prev]);
+    // Actualizar estadísticas
+    setStats(prev => prev.map(stat => {
+      if (stat.title === "Total Productos") {
+        return { ...stat, value: (products.length + 1).toString() };
+      }
+      return stat;
+    }));
+  };
+
   if (!isAdmin) {
     return (
       <div className="min-h-screen py-8">
@@ -81,7 +92,7 @@ const Admin = () => {
   }
 
   return (
-    <div className="min-h-screen py-8">
+    <div className="admin-page min-h-screen py-8">
       <Helmet>
         <title>Panel de Administración - Sillage-Perfum</title>
         <meta name="description" content="Gestiona productos, pedidos y configuraciones de la tienda." />
@@ -93,29 +104,29 @@ const Admin = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-4xl font-display font-bold text-yellow-50 mb-2">
+          <h1 className="admin-title text-4xl font-display font-bold">
             Panel de Administración
           </h1>
-          <p className="text-yellow-100/80">
+          <p className="admin-subtitle">
             Bienvenido, {user?.email}. Gestiona tu tienda desde aquí.
           </p>
         </motion.div>
 
-        <Tabs defaultValue="dashboard" className="space-y-8">
-          <TabsList className="glass-effect border-yellow-400/20">
-            <TabsTrigger value="dashboard" className="text-yellow-100 data-[state=active]:bg-yellow-400/20">
+        <Tabs defaultValue="dashboard" className="admin-tabs space-y-8">
+          <TabsList className="tabs-list">
+            <TabsTrigger value="dashboard" className="tabs-trigger">
               Dashboard
             </TabsTrigger>
-            <TabsTrigger value="products" className="text-yellow-100 data-[state=active]:bg-yellow-400/20">
+            <TabsTrigger value="products" className="tabs-trigger">
               Productos
             </TabsTrigger>
-            <TabsTrigger value="orders" className="text-yellow-100 data-[state=active]:bg-yellow-400/20">
+            <TabsTrigger value="orders" className="tabs-trigger">
               Pedidos
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="dashboard">
-            <AdminDashboard stats={stats} products={products} />
+            <AdminDashboard stats={stats} products={products} onProductAdded={handleProductAdded} />
           </TabsContent>
 
           <TabsContent value="products">
