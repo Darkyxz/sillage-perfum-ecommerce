@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 
 const UrgencyBanner = () => {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [timeLeft, setTimeLeft] = useState({
     hours: 23,
     minutes: 45,
@@ -30,6 +30,24 @@ const UrgencyBanner = () => {
     return () => clearInterval(timer);
   }, []);
 
+  // Mostrar banner después de 5 segundos si no se ha visto antes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const hasSeenBanner = sessionStorage.getItem('hasSeenUrgencyBanner');
+      if (!hasSeenBanner) {
+        setIsVisible(true);
+      }
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Función para cerrar el banner y marcar como visto
+  const handleClose = () => {
+    setIsVisible(false);
+    sessionStorage.setItem('hasSeenUrgencyBanner', 'true');
+  };
+
   if (!isVisible) return null;
 
   return (
@@ -41,10 +59,10 @@ const UrgencyBanner = () => {
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
         className="fixed bottom-4 left-4 right-4 z-50 max-w-md mx-auto"
       >
-        <div className="bg-gradient-to-r from-red-600 to-pink-600 rounded-xl shadow-2xl border border-red-400 p-4 backdrop-blur-md">
+        <div className="bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 dark:from-amber-600 dark:via-yellow-600 dark:to-amber-700 rounded-xl shadow-2xl border border-amber-400 p-4 backdrop-blur-md">
           <button
-            onClick={() => setIsVisible(false)}
-            className="absolute top-2 right-2 text-white hover:text-red-200 transition-colors"
+            onClick={handleClose}
+            className="absolute top-2 right-2 text-white hover:text-amber-200 transition-colors"
           >
             <X size={18} />
           </button>
@@ -55,7 +73,7 @@ const UrgencyBanner = () => {
             </div>
             <div>
               <h3 className="text-white font-bold text-lg">¡Oferta Flash!</h3>
-              <p className="text-red-100 text-sm">40% OFF en toda la tienda</p>
+              <p className="text-amber-100 text-sm">40% OFF en toda la tienda</p>
             </div>
           </div>
 
@@ -76,14 +94,14 @@ const UrgencyBanner = () => {
             </div>
           </div>
 
-          <Link to="/products" className="block">
-            <Button className="w-full bg-white text-red-600 hover:bg-red-50 font-bold py-2 transition-all duration-300 transform hover:scale-105">
+          <Link to="/productos" className="block" onClick={handleClose}>
+            <Button className="w-full bg-white text-amber-600 hover:bg-amber-50 font-bold py-2 transition-all duration-300 transform hover:scale-105">
               <ShoppingCart className="mr-2 h-4 w-4" />
               ¡Comprar Ahora!
             </Button>
           </Link>
 
-          <p className="text-red-100 text-xs text-center mt-2">
+          <p className="text-amber-100 text-xs text-center mt-2">
             *Solo válido por tiempo limitado
           </p>
         </div>

@@ -8,15 +8,19 @@ const ThemeToggle = () => {
   useEffect(() => {
     // Verificar si hay una preferencia guardada
     const savedTheme = localStorage.getItem('theme');
-    const hasInitialDarkClass = document.documentElement.classList.contains('dark');
     
-    // Si hay tema guardado como 'dark' o si ya tiene la clase dark, activar modo oscuro
-    if (savedTheme === 'dark' || hasInitialDarkClass) {
+    // Solo activar modo oscuro si está explícitamente guardado como 'dark'
+    if (savedTheme === 'dark') {
       setIsDark(true);
       document.documentElement.classList.add('dark');
     } else {
+      // Por defecto, modo claro
       setIsDark(false);
       document.documentElement.classList.remove('dark');
+      // Si no hay preferencia guardada, guardar como claro
+      if (!savedTheme) {
+        localStorage.setItem('theme', 'light');
+      }
     }
   }, []);
 
@@ -40,7 +44,7 @@ const ThemeToggle = () => {
       variant="ghost"
       size="icon"
       onClick={toggleTheme}
-      className="text-yellow-800 hover:text-yellow-900 hover:bg-yellow-400/20 dark:text-yellow-100/80 dark:hover:text-yellow-50 dark:hover:bg-yellow-400/15"
+      className="text-gray-600 hover:text-amber-600 hover:bg-amber-50 dark:text-amber-300 dark:hover:text-amber-200 dark:hover:bg-amber-800/20 transition-colors"
       aria-label={isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
     >
       {isDark ? (

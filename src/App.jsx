@@ -25,7 +25,7 @@ function App() {
       <CartProvider>
         <FavoritesProvider>
         <Router>
-          <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
+          <div className="min-h-screen bg-white dark:bg-gradient-to-br dark:from-amber-900 dark:to-amber-950 transition-colors duration-300">
             <Helmet>
               <title>Sillage-Perfum - Perfumes Premium</title>
               <meta name="description" content="Descubre nuestra exclusiva colección de perfumes de lujo. Fragancias únicas para cada ocasión especial." />

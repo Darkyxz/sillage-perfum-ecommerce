@@ -30,26 +30,26 @@
 }
 
 .dark {
-  /* Modo oscuro - se activa cuando se añade la clase .dark */
-  --background: 0 0% 8%; /* Negro */
-  --foreground: 45 80% 50%; /* Dorado */
-  --card: 0 0% 12%; /* Negro card */
-  --card-foreground: 45 80% 50%; /* Dorado */
-  --popover: 0 0% 12%; /* Negro popover */
-  --popover-foreground: 45 80% 50%; /* Dorado */
-  --primary: 45 80% 70%; /* Dorado brillante */
-  --primary-foreground: 0 0% 8%; /* Negro */
-  --secondary: 0 0% 15%; /* Gris oscuro */
-  --secondary-foreground: 45 80% 50%; /* Dorado */
-  --muted: 0 0% 15%; /* Gris oscuro */
+  /* Modo oscuro con tema café/beige */
+  --background: 25 35% 8%; /* Café oscuro */
+  --foreground: 45 80% 70%; /* Dorado claro */
+  --card: 25 30% 12%; /* Café card */
+  --card-foreground: 45 80% 70%; /* Dorado claro */
+  --popover: 25 30% 12%; /* Café popover */
+  --popover-foreground: 45 80% 70%; /* Dorado claro */
+  --primary: 45 85% 60%; /* Dorado brillante */
+  --primary-foreground: 25 35% 8%; /* Café oscuro */
+  --secondary: 25 25% 15%; /* Café medio */
+  --secondary-foreground: 45 80% 70%; /* Dorado claro */
+  --muted: 25 25% 15%; /* Café medio */
   --muted-foreground: 45 60% 60%; /* Dorado apagado */
-  --accent: 0 0% 15%; /* Gris oscuro */
-  --accent-foreground: 45 80% 50%; /* Dorado */
+  --accent: 25 25% 15%; /* Café medio */
+  --accent-foreground: 45 80% 70%; /* Dorado claro */
   --destructive: 0 80% 50%; /* Rojo */
-  --destructive-foreground: 0 0% 95%; /* Blanco */
-  --border: 45 30% 30%; /* Dorado oscuro */
-  --input: 0 0% 15%; /* Gris oscuro */
-  --ring: 45 80% 70%; /* Dorado */
+  --destructive-foreground: 45 80% 90%; /* Dorado muy claro */
+  --border: 25 40% 25%; /* Café con dorado */
+  --input: 25 25% 15%; /* Café medio */
+  --ring: 45 85% 60%; /* Dorado brillante */
 }
 
 * {
@@ -178,9 +178,9 @@ body:not(.dark) {
   background: #ffffff;
 }
 
-/* Fondo limpio para modo oscuro (cuando se activa .dark) */
+/* Fondo con tema café/beige para modo oscuro */
 .dark body {
-  background: #111827;
+  background: linear-gradient(135deg, #3C2415 0%, #2D1810 50%, #1F0F0A 100%);
 }
 
 .font-display {
