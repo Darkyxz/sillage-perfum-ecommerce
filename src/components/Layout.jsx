@@ -6,9 +6,9 @@ import UrgencyBanner from '@/components/UrgencyBanner';
 
 const Layout = ({ children }) => {
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-900 to-slate-800 text-white">
+    <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800 text-gray-900 dark:text-white">
       <Navbar />
-      <main className="flex-grow container mx-auto px-4 py-8">
+      <main className="flex-grow">
         {children}
       </main>
       <Footer />

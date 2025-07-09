@@ -37,7 +37,7 @@ const Testimonials = () => {
   ];
 
   return (
-    <section className="py-20 bg-gray-50 dark:bg-slate-800/70">
+    <section className="py-20 bg-gray-50 dark:bg-slate-900">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -69,7 +69,7 @@ const Testimonials = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.2 }}
-              className="testimonial-card bg-white dark:bg-slate-700/50 backdrop-blur-md rounded-xl p-6 border border-gray-200 dark:border-slate-600/40 shadow-lg hover:shadow-xl transition-all duration-300 hover:border-amber-300 dark:hover:border-slate-500/60"
+              className="testimonial-card bg-white dark:bg-slate-800 backdrop-blur-md rounded-xl p-6 border border-gray-200 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:border-amber-300 dark:hover:border-slate-600"
             >
               <div className="flex items-center mb-4">
                 <img
@@ -114,19 +114,19 @@ const Testimonials = () => {
           transition={{ duration: 0.6, delay: 0.8 }}
           className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16 text-center"
         >
-          <div className="bg-white dark:bg-slate-700/50 border border-gray-200 dark:border-slate-600/40 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
             <div className="text-3xl font-bold text-amber-600 dark:text-amber-400">2,500+</div>
             <div className="text-gray-600 dark:text-gray-300 text-sm mt-1">Clientes Felices</div>
           </div>
-          <div className="bg-white dark:bg-slate-700/50 border border-gray-200 dark:border-slate-600/40 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
             <div className="text-3xl font-bold text-amber-600 dark:text-amber-400">24h</div>
             <div className="text-gray-600 dark:text-gray-300 text-sm mt-1">Envío Express</div>
           </div>
-          <div className="bg-white dark:bg-slate-700/50 border border-gray-200 dark:border-slate-600/40 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
             <div className="text-3xl font-bold text-amber-600 dark:text-amber-400">100%</div>
             <div className="text-gray-600 dark:text-gray-300 text-sm mt-1">Productos Auténticos</div>
           </div>
-          <div className="bg-white dark:bg-slate-700/50 border border-gray-200 dark:border-slate-600/40 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
+          <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow">
             <div className="text-3xl font-bold text-amber-600 dark:text-amber-400">4.9★</div>
             <div className="text-gray-600 dark:text-gray-300 text-sm mt-1">Calificación Promedio</div>
           </div>
