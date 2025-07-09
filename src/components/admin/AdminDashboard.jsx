@@ -4,10 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus, BarChart3 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
+import OrderStats from './OrderStats';
 
 const AdminDashboard = ({ stats, products }) => {
   return (
     <>
+      {/* Componente de estadísticas avanzadas de pedidos */}
+      <OrderStats />
+      
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {stats.map((stat, index) => (
           <motion.div
