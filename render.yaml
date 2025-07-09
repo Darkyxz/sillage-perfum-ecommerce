@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: sillage-perfum-ecommerce
+    env: node
+    region: oregon
+    buildCommand: bun install && bun run build
+    startCommand: bun run preview
+    envVars:
+      - key: VITE_SUPABASE_URL
+        sync: false
+      - key: VITE_SUPABASE_ANON_KEY
+        sync: false
+      - key: VITE_MERCADOPAGO_PUBLIC_KEY
+        sync: false
+      - key: VITE_MERCADOPAGO_ACCESS_TOKEN
+        sync: false
+      - key: VITE_BASE_URL
+        value: https://sillage-perfum-ecommerce.onrender.com
+      - key: VITE_NODE_ENV
+        value: production
