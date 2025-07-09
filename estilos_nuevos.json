@@ -1,0 +1,394 @@
+{
+    "designSystem": {
+      "brandName": "Sillage Perfum",
+      "designPhilosophy": "Minimalist luxury with elegant sophistication",
+      "targetAesthetic": "Premium perfume boutique with clean lines and luxurious feel",
+      
+      "colorPalettes": {
+        "palette1": {
+          "name": "Golden Elegance",
+          "description": "Warm gold tones with sophisticated blacks",
+          "light": {
+            "primary": "#D4AF37",
+            "secondary": "#F4E4BC",
+            "accent": "#B8860B",
+            "background": "#FEFEFE",
+            "surface": "#F8F6F0",
+            "text": "#2C2C2C",
+            "textSecondary": "#666666",
+            "border": "#E8E8E8"
+          },
+          "dark": {
+            "primary": "#FFD700",
+            "secondary": "#3A3A3A",
+            "accent": "#DAA520",
+            "background": "#1A1A1A",
+            "surface": "#2D2D2D",
+            "text": "#F5F5F5",
+            "textSecondary": "#CCCCCC",
+            "border": "#404040"
+          }
+        },
+        "palette2": {
+          "name": "Silver Sophistication",
+          "description": "Cool silver tones with charcoal accents",
+          "light": {
+            "primary": "#C0C0C0",
+            "secondary": "#F0F0F0",
+            "accent": "#A0A0A0",
+            "background": "#FFFFFF",
+            "surface": "#F8F8F8",
+            "text": "#333333",
+            "textSecondary": "#666666",
+            "border": "#E0E0E0"
+          },
+          "dark": {
+            "primary": "#E5E5E5",
+            "secondary": "#404040",
+            "accent": "#B8B8B8",
+            "background": "#1E1E1E",
+            "surface": "#2A2A2A",
+            "text": "#F0F0F0",
+            "textSecondary": "#BBBBBB",
+            "border": "#444444"
+          }
+        },
+        "palette3": {
+          "name": "Champagne Luxury",
+          "description": "Warm beige and champagne with gold highlights",
+          "light": {
+            "primary": "#F7E7CE",
+            "secondary": "#E8D5B7",
+            "accent": "#D4AF37",
+            "background": "#FEFCF7",
+            "surface": "#F5F2ED",
+            "text": "#3C3C3C",
+            "textSecondary": "#7A7A7A",
+            "border": "#E6E1D6"
+          },
+          "dark": {
+            "primary": "#D4AF37",
+            "secondary": "#4A4A4A",
+            "accent": "#F7E7CE",
+            "background": "#1F1F1F",
+            "surface": "#2E2E2E",
+            "text": "#F0F0F0",
+            "textSecondary": "#C0C0C0",
+            "border": "#454545"
+          }
+        }
+      },
+  
+      "typography": {
+        "fontFamilies": {
+          "primary": "Playfair Display, Georgia, serif",
+          "secondary": "Montserrat, Arial, sans-serif",
+          "accent": "Cormorant Garamond, serif"
+        },
+        "fontSizes": {
+          "hero": "3.5rem",
+          "h1": "2.5rem",
+          "h2": "2rem",
+          "h3": "1.5rem",
+          "h4": "1.25rem",
+          "body": "1rem",
+          "small": "0.875rem",
+          "tiny": "0.75rem"
+        },
+        "fontWeights": {
+          "light": 300,
+          "regular": 400,
+          "medium": 500,
+          "semibold": 600,
+          "bold": 700
+        },
+        "lineHeights": {
+          "tight": 1.2,
+          "normal": 1.5,
+          "relaxed": 1.8
+        }
+      },
+  
+      "spacing": {
+        "xs": "0.25rem",
+        "sm": "0.5rem",
+        "md": "1rem",
+        "lg": "1.5rem",
+        "xl": "2rem",
+        "2xl": "3rem",
+        "3xl": "4rem",
+        "4xl": "6rem",
+        "5xl": "8rem"
+      },
+  
+      "layout": {
+        "maxWidth": "1200px",
+        "containerPadding": "1rem",
+        "sectionSpacing": "4rem",
+        "gridGap": "2rem"
+      },
+  
+      "components": {
+        "header": {
+          "height": "80px",
+          "style": "fixed",
+          "background": "transparent with backdrop blur",
+          "elements": {
+            "logo": {
+              "position": "left",
+              "size": "medium",
+              "style": "elegant typography"
+            },
+            "navigation": {
+              "position": "center",
+              "style": "horizontal menu",
+              "items": ["HOME", "FRAGRANCES", "FIND", "ABOUT", "BRANDS", "STORES", "SALE", "CONTACT"]
+            },
+            "actions": {
+              "position": "right",
+              "items": ["search", "wishlist", "cart", "menu"]
+            }
+          }
+        },
+  
+        "hero": {
+          "layout": "full-width",
+          "style": "split-screen with image and text",
+          "elements": {
+            "image": {
+              "position": "left or right",
+              "style": "high-quality product or model photo",
+              "overlay": "subtle gradient"
+            },
+            "content": {
+              "alignment": "center",
+              "elements": {
+                "subtitle": "small elegant text",
+                "title": "large hero typography",
+                "description": "elegant tagline",
+                "cta": "primary button"
+              }
+            }
+          }
+        },
+  
+        "productGrid": {
+          "layout": "responsive grid",
+          "columns": {
+            "mobile": 1,
+            "tablet": 2,
+            "desktop": 4
+          },
+          "card": {
+            "style": "clean with subtle shadow",
+            "elements": {
+              "image": "product photo with hover effect",
+              "title": "product name",
+              "brand": "brand name",
+              "price": "prominent pricing",
+              "rating": "star rating",
+              "actions": "add to cart, wishlist"
+            }
+          }
+        },
+  
+        "buttons": {
+          "primary": {
+            "style": "solid with primary color",
+            "padding": "0.75rem 2rem",
+            "borderRadius": "0.25rem",
+            "fontSize": "1rem",
+            "fontWeight": "medium",
+            "textTransform": "uppercase",
+            "letterSpacing": "0.05em"
+          },
+          "secondary": {
+            "style": "outline with primary color",
+            "padding": "0.75rem 2rem",
+            "borderRadius": "0.25rem",
+            "fontSize": "1rem",
+            "fontWeight": "medium"
+          },
+          "ghost": {
+            "style": "text only with hover effect",
+            "padding": "0.5rem 1rem",
+            "fontSize": "0.875rem"
+          }
+        },
+  
+        "cards": {
+          "product": {
+            "background": "surface color",
+            "border": "subtle border",
+            "borderRadius": "0.5rem",
+            "padding": "1rem",
+            "shadow": "subtle shadow on hover",
+            "transition": "smooth hover effects"
+          },
+          "feature": {
+            "background": "surface color",
+            "border": "none",
+            "borderRadius": "0.75rem",
+            "padding": "2rem",
+            "textAlign": "center"
+          }
+        },
+  
+        "forms": {
+          "input": {
+            "borderRadius": "0.25rem",
+            "padding": "0.75rem 1rem",
+            "border": "1px solid border color",
+            "fontSize": "1rem",
+            "focusStyle": "primary color border"
+          },
+          "newsletter": {
+            "style": "inline with button",
+            "background": "surface color",
+            "borderRadius": "0.25rem"
+          }
+        }
+      },
+  
+      "sections": {
+        "hero": {
+          "minHeight": "70vh",
+          "layout": "split or centered",
+          "background": "gradient or image"
+        },
+        "featured": {
+          "padding": "4rem 0",
+          "layout": "centered with grid",
+          "background": "surface color"
+        },
+        "categories": {
+          "padding": "4rem 0",
+          "layout": "horizontal cards",
+          "style": "image backgrounds with overlays"
+        },
+        "promotion": {
+          "padding": "3rem 0",
+          "background": "accent color or image",
+          "style": "full-width banner"
+        },
+        "testimonials": {
+          "padding": "4rem 0",
+          "layout": "centered with quotes",
+          "style": "elegant typography"
+        },
+        "newsletter": {
+          "padding": "3rem 0",
+          "background": "dark or accent color",
+          "style": "centered form"
+        },
+        "footer": {
+          "padding": "3rem 0 1rem",
+          "background": "dark color",
+          "layout": "multi-column",
+          "sections": ["links", "contact", "social", "legal"]
+        }
+      },
+  
+      "animations": {
+        "transitions": {
+          "fast": "0.15s ease-out",
+          "normal": "0.3s ease-out",
+          "slow": "0.5s ease-out"
+        },
+        "effects": {
+          "fadeIn": "opacity transition",
+          "slideUp": "transform translateY",
+          "scaleHover": "transform scale(1.05)",
+          "parallax": "background position shift"
+        }
+      },
+  
+      "breakpoints": {
+        "mobile": "320px",
+        "tablet": "768px",
+        "desktop": "1024px",
+        "large": "1200px"
+      },
+  
+      "designPrinciples": {
+        "whitespace": "Generous use of white space for breathing room",
+        "hierarchy": "Clear visual hierarchy with typography and spacing",
+        "consistency": "Consistent spacing, colors, and component styles",
+        "accessibility": "High contrast ratios and semantic markup",
+        "performance": "Optimized images and efficient CSS",
+        "responsive": "Mobile-first responsive design"
+      },
+  
+      "pageStructure": {
+        "homepage": {
+          "sections": [
+            "header",
+            "hero",
+            "featured-categories",
+            "bestsellers",
+            "promotion-banner",
+            "new-arrivals",
+            "brand-showcase",
+            "testimonials",
+            "newsletter",
+            "footer"
+          ]
+        },
+        "productListing": {
+          "sections": [
+            "header",
+            "breadcrumbs",
+            "filters-sidebar",
+            "product-grid",
+            "pagination",
+            "recently-viewed",
+            "footer"
+          ]
+        },
+        "productDetail": {
+          "sections": [
+            "header",
+            "breadcrumbs",
+            "product-gallery",
+            "product-info",
+            "reviews",
+            "related-products",
+            "footer"
+          ]
+        }
+      },
+  
+      "uiPatterns": {
+        "navigation": {
+          "primary": "horizontal menu with dropdowns",
+          "mobile": "hamburger menu with slide-out",
+          "breadcrumbs": "home > category > product"
+        },
+        "search": {
+          "style": "modal overlay with suggestions",
+          "filters": "sidebar with categories and price range",
+          "sorting": "dropdown with price, popularity, rating"
+        },
+        "ecommerce": {
+          "cart": "slide-out panel",
+          "wishlist": "heart icon with counter",
+          "quickview": "modal with product details",
+          "comparison": "side-by-side table"
+        }
+      },
+  
+      "contentStrategy": {
+        "imagery": {
+          "style": "High-quality, professional product photography",
+          "lighting": "Soft, natural lighting",
+          "background": "Clean, minimal backgrounds",
+          "models": "Elegant, sophisticated styling"
+        },
+        "copywriting": {
+          "tone": "Elegant, sophisticated, luxurious",
+          "style": "Concise but descriptive",
+          "voice": "Confident and knowledgeable"
+        }
+      }
+    }
+  }

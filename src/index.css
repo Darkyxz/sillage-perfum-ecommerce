@@ -1,0 +1,406 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Modo claro - por defecto (sin clase) */
+  --background: 40 25% 95%; /* Beige muy claro */
+  --foreground: 45 70% 25%; /* Dorado oscuro */
+  --card: 40 20% 98%; /* Beige casi blanco */
+  --card-foreground: 45 70% 25%; /* Dorado oscuro */
+  --popover: 40 20% 98%; /* Beige casi blanco */
+  --popover-foreground: 45 70% 25%; /* Dorado oscuro */
+  --primary: 45 80% 45%; /* Dorado */
+  --primary-foreground: 40 25% 95%; /* Beige claro */
+  --secondary: 40 15% 90%; /* Beige claro */
+  --secondary-foreground: 45 70% 25%; /* Dorado oscuro */
+  --muted: 40 15% 90%; /* Beige claro */
+  --muted-foreground: 45 50% 35%; /* Dorado medio */
+  --accent: 40 15% 90%; /* Beige claro */
+  --accent-foreground: 45 70% 25%; /* Dorado oscuro */
+  --destructive: 0 70% 50%; /* Rojo */
+  --destructive-foreground: 40 25% 95%; /* Beige claro */
+  --border: 45 60% 70%; /* Dorado claro */
+  --input: 40 20% 98%; /* Beige casi blanco */
+  --ring: 45 80% 45%; /* Dorado */
+  --radius: 0.5rem;
+}
+
+.dark {
+  /* Modo oscuro - se activa cuando se añade la clase .dark */
+  --background: 0 0% 8%; /* Negro */
+  --foreground: 45 80% 50%; /* Dorado */
+  --card: 0 0% 12%; /* Negro card */
+  --card-foreground: 45 80% 50%; /* Dorado */
+  --popover: 0 0% 12%; /* Negro popover */
+  --popover-foreground: 45 80% 50%; /* Dorado */
+  --primary: 45 80% 70%; /* Dorado brillante */
+  --primary-foreground: 0 0% 8%; /* Negro */
+  --secondary: 0 0% 15%; /* Gris oscuro */
+  --secondary-foreground: 45 80% 50%; /* Dorado */
+  --muted: 0 0% 15%; /* Gris oscuro */
+  --muted-foreground: 45 60% 60%; /* Dorado apagado */
+  --accent: 0 0% 15%; /* Gris oscuro */
+  --accent-foreground: 45 80% 50%; /* Dorado */
+  --destructive: 0 80% 50%; /* Rojo */
+  --destructive-foreground: 0 0% 95%; /* Blanco */
+  --border: 45 30% 30%; /* Dorado oscuro */
+  --input: 0 0% 15%; /* Gris oscuro */
+  --ring: 45 80% 70%; /* Dorado */
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  background: hsl(var(--background));
+  font-family: 'Inter', sans-serif;
+  color: hsl(var(--foreground));
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Solo mejoras para modo claro - NO tocar modo oscuro */
+body:not(.dark) .text-gray-300 {
+  color: #4a4a4a;
+}
+
+body:not(.dark) .text-gray-400 {
+  color: #555555;
+}
+
+body:not(.dark) .bg-slate-800\/70 {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  border-color: rgba(200, 200, 200, 0.8) !important;
+}
+
+body:not(.dark) .border-slate-700 {
+  border-color: rgba(200, 200, 200, 0.8) !important;
+}
+
+body:not(.dark) .text-pink-400 {
+  color: #db2777 !important;
+}
+
+body:not(.dark) .text-purple-400 {
+  color: #9333ea !important;
+}
+
+body:not(.dark) .text-red-400 {
+  color: #dc2626 !important;
+}
+
+body:not(.dark) .bg-slate-800\/50 {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(180, 180, 180, 0.6) !important;
+}
+
+body:not(.dark) .text-white {
+  color: #1f2937 !important;
+}
+
+body:not(.dark) .text-white\/60 {
+  color: #4b5563 !important;
+}
+
+body:not(.dark) .text-white\/70 {
+  color: #374151 !important;
+}
+
+body:not(.dark) .bg-slate-900\/80 {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+}
+
+body:not(.dark) .bg-slate-700\/60 {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  border-color: rgba(160, 160, 160, 0.8) !important;
+}
+
+body:not(.dark) .border-slate-600 {
+  border-color: rgba(160, 160, 160, 0.8) !important;
+}
+
+body:not(.dark) .placeholder-gray-400::placeholder {
+  color: #9ca3af !important;
+}
+
+/* Testimonials - solo modo claro */
+body:not(.dark) .bg-yellow-900\/20 {
+  background-color: rgba(254, 240, 138, 0.3) !important;
+}
+
+body:not(.dark) .border-yellow-400\/20 {
+  border-color: rgba(251, 191, 36, 0.4) !important;
+}
+
+body:not(.dark) .border-yellow-400\/30 {
+  border-color: rgba(251, 191, 36, 0.5) !important;
+}
+
+body:not(.dark) .text-yellow-50 {
+  color: #92400e !important;
+}
+
+body:not(.dark) .text-yellow-100\/80 {
+  color: #a16207 !important;
+}
+
+body:not(.dark) .text-yellow-200\/70 {
+  color: #a16207 !important;
+}
+
+/* FORZAR testimonials del mismo color que el fondo */
+.dark section[class*="bg-yellow-900"] {
+  background-color: rgba(26, 26, 26, 0.8) !important;
+  border-color: rgba(45, 45, 45, 0.5) !important;
+}
+
+.dark section [class*="bg-yellow-900"] {
+  background-color: rgba(26, 26, 26, 0.6) !important;
+  border-color: rgba(45, 45, 45, 0.4) !important;
+}
+
+/* Forzar textos claros en testimonials oscuros */
+.dark section [class*="text-yellow-50"],
+.dark section [class*="text-yellow-100"],
+.dark section [class*="text-yellow-200"] {
+  color: #e2e8f0 !important;
+}
+
+/* Fondo con gradiente para modo claro (por defecto) */
+body:not(.dark) {
+  background: linear-gradient(135deg, #f5f1e8 0%, #ede4d3 50%, #f8f5f0 100%);
+}
+
+/* Fondo con gradiente para modo oscuro (cuando se activa .dark) */
+.dark body {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #0a0a0a 100%);
+}
+
+.font-display {
+  font-family: 'Playfair Display', serif;
+}
+
+/* Glass effect para modo claro (por defecto) */
+.glass-effect {
+  background: rgba(218, 165, 32, 0.15); /* Dorado transparente más sutil para modo claro */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(218, 165, 32, 0.25); /* Borde dorado sutil */
+}
+
+/* Glass effect para modo oscuro (cuando se activa .dark) */
+.dark .glass-effect {
+  background: rgba(255, 215, 0, 0.1); /* Dorado transparente */
+  border: 1px solid rgba(255, 215, 0, 0.3); /* Borde dorado */
+}
+  
+/* Glass effect dark - para modo claro (por defecto) */
+.glass-effect-dark {
+  background: rgba(245, 241, 232, 0.9); /* Beige claro para modo claro */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(218, 165, 32, 0.3); /* Borde dorado */
+}
+
+/* Glass effect dark para modo oscuro (cuando se activa .dark) */
+.dark .glass-effect-dark {
+  background: rgba(26, 26, 26, 0.8); /* Negro con transparencia para modo oscuro */
+  border: 1px solid rgba(255, 215, 0, 0.2); /* Borde dorado sutil */
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #DAA520 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Perfume cards - modo claro (por defecto) */
+.perfume-card {
+  background: linear-gradient(145deg, rgba(218, 165, 32, 0.12), rgba(245, 222, 179, 0.15));
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(218, 165, 32, 0.25);
+  transition: all 0.3s ease;
+}
+
+/* Perfume cards - modo oscuro (cuando se activa .dark) */
+.dark .perfume-card {
+  background: linear-gradient(145deg, rgba(255, 215, 0, 0.1), rgba(245, 222, 179, 0.08));
+  border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.perfume-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(218, 165, 32, 0.25);
+  border-color: rgba(218, 165, 32, 0.4);
+}
+
+.dark .perfume-card:hover {
+  box-shadow: 0 20px 40px rgba(255, 215, 0, 0.3);
+  border-color: rgba(255, 215, 0, 0.4);
+}
+
+.admin-panel {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(245, 222, 179, 0.05));
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.cart-item {
+  background: rgba(255, 215, 0, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 215, 0, 0.15);
+  transition: all 0.2s ease;
+}
+
+.cart-item:hover {
+  background: rgba(255, 215, 0, 0.15);
+}
+
+/* Floating button - modo claro (por defecto) */
+.floating-button {
+  background: linear-gradient(90deg, #B8860B, #DAA520);
+  box-shadow: 0 8px 32px rgba(184, 134, 11, 0.4);
+  transition: all 0.3s ease;
+}
+
+/* Floating button - modo oscuro (cuando se activa .dark) */
+.dark .floating-button {
+  background: linear-gradient(90deg, #DAA520, #FFD700);
+  box-shadow: 0 8px 32px rgba(255, 215, 0, 0.4);
+}
+
+.floating-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(184, 134, 11, 0.5);
+}
+
+.dark .floating-button:hover {
+  box-shadow: 0 12px 40px rgba(255, 215, 0, 0.6);
+}
+
+.barcode-scanner {
+  background: linear-gradient(135deg, #DAA520 0%, #FFD700 100%);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+@media (max-width: 768px) {
+  .product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+}
+
+.filter-sidebar {
+  background: rgba(255, 215, 0, 0.08);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.search-bar {
+  background: rgba(255, 215, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.search-bar:focus-within {
+  background: rgba(255, 215, 0, 0.15);
+  border-color: rgba(255, 215, 0, 0.5);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* Video background styles */
+.hero-video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  transform: translateX(-50%) translateY(-50%);
+  object-fit: cover;
+  z-index: 5;
+}
+
+/* Z-index utility classes */
+.z-5 {
+  z-index: 5;
+}
+
+/* Hero section z-index overrides - Force proper layering */
+.hero-background {
+  z-index: 1 !important;
+  position: absolute;
+  inset: 0;
+}
+
+.hero-video-layer {
+  z-index: 2 !important;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.hero-overlay {
+  z-index: 3 !important;
+  position: absolute;
+  inset: 0;
+}
+
+.hero-content {
+  z-index: 10 !important;
+  position: relative;
+}
+
+.hero-floating {
+  z-index: 15 !important;
+  position: absolute;
+}
+
+/* Ensure video covers full container on mobile */
+@media (max-aspect-ratio: 16/9) {
+  .hero-video {
+    width: 100%;
+    height: auto;
+  }
+}
+
+@media (min-aspect-ratio: 16/9) {
+  .hero-video {
+    width: auto;
+    height: 100%;
+  }
+}
