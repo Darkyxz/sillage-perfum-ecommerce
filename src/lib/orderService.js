@@ -1,50 +1,89 @@
 import { supabase } from './supabase';
 
 export const orderService = {
-  // Crear un nuevo pedido
+  // Crear un nuevo pedido con validación mejorada
   async createOrder(userId, items, totalAmount, paymentId = null, shippingAddress = null) {
     try {
-      // Validar que totalAmount sea un número válido
-      if (typeof totalAmount !== 'number' || isNaN(totalAmount)) {
-        throw new Error('El monto total (totalAmount) debe ser un número válido.');
+      // Validaciones previas
+      if (!userId) {
+        throw new Error('El ID del usuario es requerido.');
+      }
+      
+      if (!items || !Array.isArray(items) || items.length === 0) {
+        throw new Error('Los items son requeridos y deben ser un array no vacío.');
+      }
+      
+      if (typeof totalAmount !== 'number' || isNaN(totalAmount) || totalAmount <= 0) {
+        throw new Error('El monto total debe ser un número válido mayor a 0.');
       }
 
-      // 1. Crear el pedido principal
+      // Validar que el usuario existe
+      const { data: userExists, error: userError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', userId)
+        .single();
+
+      if (userError || !userExists) {
+        throw new Error('El usuario no existe en el sistema.');
+      }
+
+      // 1. Crear el pedido principal con información completa
+      const orderData = {
+        user_id: userId,
+        total_amount: totalAmount,
+        status: 'pending',
+        payment_id: paymentId,
+        shipping_address: shippingAddress,
+        created_at: new Date().toISOString()
+      };
+
       const { data: newOrders, error: orderError } = await supabase
         .from('orders')
-        .insert([{
-          user_id: userId,
-          total_amount: totalAmount,
-          status: 'pending',
-          payment_id: paymentId,
-          shipping_address: shippingAddress
-        }])
+        .insert([orderData])
         .select();
 
-      if (orderError) throw orderError;
+      if (orderError) {
+        console.error('Error creating order:', orderError);
+        throw new Error(`Error al crear el pedido: ${orderError.message}`);
+      }
+      
       if (!newOrders || newOrders.length === 0) {
         throw new Error("La creación del pedido no devolvió el registro esperado.");
       }
       
       const order = newOrders[0];
+      console.log('✅ Pedido creado exitosamente:', { orderId: order.id, userId, totalAmount });
 
-      // 2. Crear los items del pedido
-      const orderItems = items.map(item => ({
-        order_id: order.id,
-        product_id: item.id,
-        quantity: item.quantity,
-        unit_price: item.price
-      }));
+      // 2. Crear los items del pedido con validación
+      const orderItems = items.map(item => {
+        if (!item.id || !item.quantity || !item.price) {
+          throw new Error(`Item inválido: ${JSON.stringify(item)}`);
+        }
+        
+        return {
+          order_id: order.id,
+          product_id: item.id,
+          quantity: parseInt(item.quantity),
+          unit_price: parseFloat(item.price)
+        };
+      });
 
       const { error: itemsError } = await supabase
         .from('order_items')
         .insert(orderItems);
 
-      if (itemsError) throw itemsError;
+      if (itemsError) {
+        console.error('Error creating order items:', itemsError);
+        // Intentar eliminar la orden creada si falló la inserción de items
+        await supabase.from('orders').delete().eq('id', order.id);
+        throw new Error(`Error al crear los items del pedido: ${itemsError.message}`);
+      }
 
+      console.log('✅ Items del pedido creados exitosamente:', orderItems.length);
       return order;
     } catch (error) {
-      console.error('Error creating order:', error);
+      console.error('❌ Error creating order:', error);
       throw error;
     }
   },

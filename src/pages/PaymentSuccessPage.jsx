@@ -8,6 +8,7 @@ import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { motion } from 'framer-motion';
 import { orderService } from '@/lib/orderService';
+import { checkoutService } from '@/lib/checkoutService';
 import { toast } from '@/components/ui/use-toast';
 
 const PaymentSuccessPage = () => {
