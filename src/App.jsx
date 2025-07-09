@@ -5,7 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { CartProvider } from '@/contexts/CartContext';
 import { FavoritesProvider } from '@/contexts/FavoritesContext';
-import Header from '@/components/Header';
+import Layout from '@/components/Layout';
 import Home from '@/pages/Home';
 import Products from '@/pages/Products';
 import ProductDetail from '@/pages/ProductDetail';
@@ -25,15 +25,13 @@ function App() {
       <CartProvider>
         <FavoritesProvider>
         <Router>
-          <div className="min-h-screen">
+          <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
             <Helmet>
               <title>Sillage-Perfum - Perfumes Premium</title>
               <meta name="description" content="Descubre nuestra exclusiva colección de perfumes de lujo. Fragancias únicas para cada ocasión especial." />
             </Helmet>
             
-            <Header />
-            
-            <main>
+            <Layout>
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/productos" element={<Products />} />
@@ -48,7 +46,7 @@ function App() {
                 <Route path="/pago-fallido" element={<PaymentFailurePage />} />
                 <Route path="/pago-pendiente" element={<PaymentPendingPage />} />
               </Routes>
-            </main>
+            </Layout>
             
             <Toaster />
           </div>

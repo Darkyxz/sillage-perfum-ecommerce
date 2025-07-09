@@ -173,14 +173,14 @@ body:not(.dark) .text-yellow-200\/70 {
   color: #e2e8f0 !important;
 }
 
-/* Fondo con gradiente para modo claro (por defecto) */
+/* Fondo limpio para modo claro (por defecto) */
 body:not(.dark) {
-  background: linear-gradient(135deg, #f5f1e8 0%, #ede4d3 50%, #f8f5f0 100%);
+  background: #ffffff;
 }
 
-/* Fondo con gradiente para modo oscuro (cuando se activa .dark) */
+/* Fondo limpio para modo oscuro (cuando se activa .dark) */
 .dark body {
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #0a0a0a 100%);
+  background: #111827;
 }
 
 .font-display {

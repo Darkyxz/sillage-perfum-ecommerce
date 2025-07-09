@@ -43,7 +43,7 @@ const Testimonials = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-16 text-gray-900 dark:text-white"
         >
           <h2 className="text-4xl font-display font-bold mb-4 text-gray-900 dark:text-white">
             Lo que dicen nuestros clientes
@@ -69,7 +69,7 @@ const Testimonials = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.2 }}
-              className="testimonial-card bg-white dark:bg-slate-800 backdrop-blur-md rounded-xl p-6 border border-gray-200 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:border-amber-300 dark:hover:border-slate-600"
+              className="testimonial-card bg-white dark:bg-slate-800 backdrop-blur-md rounded-xl p-6 border border-gray-200 dark:border-slate-700 shadow-lg hover:shadow-xl transition-all duration-300 hover:border-amber-300 dark:hover:border-amber-600 text-gray-800 dark:text-gray-200"
             >
               <div className="flex items-center mb-4">
                 <img
@@ -96,7 +96,7 @@ const Testimonials = () => {
                 ))}
               </div>
 
-              <p className="text-gray-700 dark:text-gray-300 mb-4 italic leading-relaxed">
+              <p className="text-gray-700 dark:text-gray-200 mb-4 italic leading-relaxed">
                 "{testimonial.comment}"
               </p>
 
