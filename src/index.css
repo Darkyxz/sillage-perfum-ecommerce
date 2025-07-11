@@ -6,50 +6,90 @@
 @tailwind utilities;
 
 :root {
-  /* Modo claro - por defecto (sin clase) */
-  --background: 40 25% 95%; /* Beige muy claro */
-  --foreground: 45 70% 25%; /* Dorado oscuro */
-  --card: 40 20% 98%; /* Beige casi blanco */
-  --card-foreground: 45 70% 25%; /* Dorado oscuro */
-  --popover: 40 20% 98%; /* Beige casi blanco */
-  --popover-foreground: 45 70% 25%; /* Dorado oscuro */
-  --primary: 45 80% 45%; /* Dorado */
-  --primary-foreground: 40 25% 95%; /* Beige claro */
-  --secondary: 40 15% 90%; /* Beige claro */
-  --secondary-foreground: 45 70% 25%; /* Dorado oscuro */
-  --muted: 40 15% 90%; /* Beige claro */
-  --muted-foreground: 45 50% 35%; /* Dorado medio */
-  --accent: 40 15% 90%; /* Beige claro */
-  --accent-foreground: 45 70% 25%; /* Dorado oscuro */
-  --destructive: 0 70% 50%; /* Rojo */
-  --destructive-foreground: 40 25% 95%; /* Beige claro */
-  --border: 45 60% 70%; /* Dorado claro */
-  --input: 40 20% 98%; /* Beige casi blanco */
-  --ring: 45 80% 45%; /* Dorado */
+  /* Base colors - Light theme */
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 3.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 3.9%;
+  --primary: 43 96% 50%; /* Gold */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 240 4.8% 95.9%;
+  --secondary-foreground: 240 5.9% 10%;
+  --muted: 240 4.8% 95.9%;
+  --muted-foreground: 240 3.8% 46.1%;
+  --accent: 240 4.8% 95.9%;
+  --accent-foreground: 240 5.9% 10%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 5.9% 90%;
+  --input: 240 5.9% 90%;
+  --ring: 43 96% 50%; /* Gold ring */
   --radius: 0.5rem;
+
+  /* Gold color palette */
+  --primary-50: 48 100% 96%;
+  --primary-100: 45 96% 89%;
+  --primary-200: 45 96% 78%;
+  --primary-300: 45 96% 71%;
+  --primary-400: 44 96% 65%;
+  --primary-500: 43 96% 50%; /* Main gold */
+  --primary-600: 40 96% 45%;
+  --primary-700: 37 96% 40%;
+  --primary-800: 34 96% 35%;
+  --primary-900: 31 96% 30%;
 }
 
 .dark {
-  /* Modo oscuro con tema café/beige */
-  --background: 25 35% 8%; /* Café oscuro */
-  --foreground: 45 80% 70%; /* Dorado claro */
-  --card: 25 30% 12%; /* Café card */
-  --card-foreground: 45 80% 70%; /* Dorado claro */
-  --popover: 25 30% 12%; /* Café popover */
-  --popover-foreground: 45 80% 70%; /* Dorado claro */
-  --primary: 45 85% 60%; /* Dorado brillante */
-  --primary-foreground: 25 35% 8%; /* Café oscuro */
-  --secondary: 25 25% 15%; /* Café medio */
-  --secondary-foreground: 45 80% 70%; /* Dorado claro */
-  --muted: 25 25% 15%; /* Café medio */
-  --muted-foreground: 45 60% 60%; /* Dorado apagado */
-  --accent: 25 25% 15%; /* Café medio */
-  --accent-foreground: 45 80% 70%; /* Dorado claro */
-  --destructive: 0 80% 50%; /* Rojo */
-  --destructive-foreground: 45 80% 90%; /* Dorado muy claro */
-  --border: 25 40% 25%; /* Café con dorado */
-  --input: 25 25% 15%; /* Café medio */
-  --ring: 45 85% 60%; /* Dorado brillante */
+  --background: 20 14.3% 4.1%;
+  --foreground: 0 0% 95%;
+  --card: 24 9.8% 10%;
+  --card-foreground: 0 0% 95%;
+  --popover: 0 0% 9%;
+  --popover-foreground: 0 0% 95%;
+  --primary: 43 96% 50%; /* Gold - same as light mode */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 0 0% 14.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --accent: 12 6.5% 15.1%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 85.7% 97.3%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --ring: 43 96% 50%; /* Gold ring - same as light mode */
+  
+  /* Dark mode gold palette */
+  --primary-50: 43 96% 96%;
+  --primary-100: 43 96% 89%;
+  --primary-200: 43 96% 78%;
+  --primary-300: 43 96% 71%;
+  --primary-400: 43 96% 65%;
+  --primary-500: 43 96% 50%; /* Main gold */
+  --primary-600: 43 96% 45%;
+  --primary-700: 43 96% 40%;
+  --primary-800: 43 96% 35%;
+  --primary-900: 43 96% 30%;
+}
+
+/* Asegurar que los textos en modo oscuro usen los colores correctos */
+.dark .text-foreground {
+  color: hsl(var(--foreground)) !important;
+}
+
+.dark .text-muted-foreground {
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+.dark .text-primary {
+  color: hsl(var(--primary)) !important;
+}
+
+.dark .text-destructive {
+  color: hsl(var(--destructive)) !important;
 }
 
 * {
@@ -66,49 +106,64 @@ body {
 
 /* Solo mejoras para modo claro - NO tocar modo oscuro */
 body:not(.dark) .text-gray-300 {
-  color: #4a4a4a;
+  color: #daaf60; /* Warm gold instead of gray */
 }
 
 body:not(.dark) .text-gray-400 {
-  color: #555555;
+  color: #c4965a; /* Slightly darker warm gold */
 }
 
 body:not(.dark) .bg-slate-800\/70 {
-  background-color: rgba(255, 255, 255, 0.8) !important;
-  border-color: rgba(200, 200, 200, 0.8) !important;
+  background-color: rgba(252, 248, 237, 0.95) !important; /* Warm cream background */
+  border-color: rgba(218, 165, 32, 0.3) !important; /* Gold border */
 }
 
 body:not(.dark) .border-slate-700 {
-  border-color: rgba(200, 200, 200, 0.8) !important;
+  border-color: rgba(218, 165, 32, 0.4) !important; /* Gold border */
 }
 
 body:not(.dark) .text-pink-400 {
-  color: #db2777 !important;
+  color: #daaf60 !important; /* Warm gold instead of pink */
 }
 
 body:not(.dark) .text-purple-400 {
-  color: #9333ea !important;
+  color: #DAA520 !important; /* Gold instead of purple */
 }
 
 body:not(.dark) .text-red-400 {
-  color: #dc2626 !important;
+  color: #e6b960 !important; /* Bright warm gold instead of red */
 }
 
 body:not(.dark) .bg-slate-800\/50 {
-  background-color: rgba(255, 255, 255, 0.9) !important;
-  border-color: rgba(180, 180, 180, 0.6) !important;
+  background-color: rgba(253, 250, 243, 0.9) !important; /* Lighter warm cream */
+  border-color: rgba(218, 165, 32, 0.25) !important; /* Subtle gold border */
 }
 
+/* Text color overrides for light mode */
+body:not(.dark) .text-foreground {
+  color: hsl(var(--foreground)) !important;
+}
+
+body:not(.dark) .text-muted-foreground {
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+body:not(.dark) .text-primary {
+  color: hsl(var(--primary)) !important;
+}
+
+/* Keep these for backward compatibility */
 body:not(.dark) .text-white {
-  color: #1f2937 !important;
+  color: var(--foreground) !important;
 }
 
 body:not(.dark) .text-white\/60 {
-  color: #4b5563 !important;
+  color: var(--muted-foreground) !important;
 }
 
 body:not(.dark) .text-white\/70 {
-  color: #374151 !important;
+  color: var(--foreground) !important;
+  opacity: 0.9;
 }
 
 body:not(.dark) .bg-slate-900\/80 {
@@ -121,38 +176,66 @@ body:not(.dark) .bg-slate-700\/60 {
 }
 
 body:not(.dark) .border-slate-600 {
-  border-color: rgba(160, 160, 160, 0.8) !important;
+  border-color: rgba(218, 165, 32, 0.4) !important; /* Gold border */
 }
 
 body:not(.dark) .placeholder-gray-400::placeholder {
-  color: #9ca3af !important;
+  color: #c4965a !important; /* Warm gold placeholder */
+}
+
+/* Additional overrides for general consistency */
+body:not(.dark) .text-foreground {
+  color: #daaf60 !important; /* Warm gold for main text */
+}
+
+body:not(.dark) .text-muted-foreground {
+  color: #c4965a !important; /* Slightly darker gold for muted text */
+}
+
+/* Focus ring colors */
+body:not(.dark) .focus\:ring-pink-500:focus {
+  --tw-ring-color: rgba(218, 165, 32, 0.5) !important;
+}
+
+body:not(.dark) .focus\:border-pink-500:focus {
+  border-color: rgba(218, 165, 32, 0.8) !important;
+}
+
+/* Hover states for buttons */
+body:not(.dark) .hover\:bg-purple-400:hover {
+  background-color: rgba(218, 165, 32, 0.9) !important;
+  color: white !important;
+}
+
+body:not(.dark) .hover\:text-slate-900:hover {
+  color: white !important;
 }
 
 /* Testimonials - Diseño consistente para modo claro */
 body:not(.dark) .bg-yellow-900\/20 {
-  background-color: rgba(255, 255, 255, 0.95) !important;
-  border-color: rgba(229, 231, 235, 0.8) !important;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  background-color: rgba(254, 252, 237, 0.95) !important; /* Warm cream background */
+  border-color: rgba(218, 165, 32, 0.3) !important; /* Gold border */
+  box-shadow: 0 1px 3px 0 rgba(218, 165, 32, 0.1), 0 1px 2px 0 rgba(218, 165, 32, 0.06);
 }
 
 body:not(.dark) .border-yellow-400\/20 {
-  border-color: rgba(229, 231, 235, 0.8) !important;
+  border-color: rgba(218, 165, 32, 0.3) !important; /* Gold border */
 }
 
 body:not(.dark) .border-yellow-400\/30 {
-  border-color: rgba(229, 231, 235, 0.8) !important;
+  border-color: rgba(218, 165, 32, 0.4) !important; /* Stronger gold border */
 }
 
 body:not(.dark) .text-yellow-50 {
-  color: #1f2937 !important;
+  color: #daaf60 !important; /* Warm gold - readable and elegant */
 }
 
 body:not(.dark) .text-yellow-100\/80 {
-  color: #4b5563 !important;
+  color: #c4965a !important; /* Slightly darker gold - warm readable */
 }
 
 body:not(.dark) .text-yellow-200\/70 {
-  color: #6b7280 !important;
+  color: #b8864f !important; /* Deeper gold instead of gray */
 }
 
 /* FORZAR testimonials del mismo color que el fondo */
@@ -308,17 +391,18 @@ body:not(.dark) {
 
 /* Mejorar testimonials específicamente */
 body:not(.dark) .testimonial-card {
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(229, 231, 235, 0.8);
+  background: rgba(254, 252, 237, 0.95); /* Warm cream background */
+  border: 1px solid rgba(218, 165, 32, 0.3); /* Gold border */
   border-radius: 12px;
   padding: 2rem;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 6px -1px rgba(218, 165, 32, 0.1), 0 2px 4px -1px rgba(218, 165, 32, 0.06);
   transition: all 0.3s ease;
 }
 
 body:not(.dark) .testimonial-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 20px 25px -5px rgba(218, 165, 32, 0.15), 0 10px 10px -5px rgba(218, 165, 32, 0.08);
+  border-color: rgba(218, 165, 32, 0.5); /* Stronger gold border on hover */
 }
   
 /* Glass effect dark - para modo claro (por defecto) */
@@ -747,26 +831,40 @@ input[type=number] {
 
 /* Admin text styles */
 .admin-title {
-  color: hsl(var(--foreground));
+  color: #daaf60;
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
 }
 
 .admin-subtitle {
-  color: hsl(var(--muted-foreground));
+  color: #c4965a;
   font-size: 1rem;
   margin-bottom: 2rem;
 }
 
 .admin-text {
-  color: hsl(var(--foreground));
+  color: #daaf60;
   font-size: 0.875rem;
 }
 
 .admin-text-muted {
-  color: hsl(var(--muted-foreground));
+  color: #c4965a;
   font-size: 0.875rem;
+}
+
+/* Admin dashboard values with golden styling */
+.admin-value {
+  color: #f0c674;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(240, 198, 116, 0.3);
+}
+
+/* Admin dashboard prices */
+.admin-price {
+  color: #f0c674;
+  font-weight: 700;
+  text-shadow: 0 1px 3px rgba(240, 198, 116, 0.4);
 }
 
 /* Admin dialog styles */
@@ -803,6 +901,126 @@ input[type=number] {
 }
 
 /* =================================== */
+/* PRODUCT PAGE IMPROVEMENTS */
+/* =================================== */
+
+/* Mejoras para la página de productos - modo claro */
+body:not(.dark) .bg-slate-700\/60 {
+  background-color: rgba(252, 248, 237, 0.9) !important; /* Warm cream background */
+  border-color: rgba(218, 165, 32, 0.3) !important; /* Gold border */
+}
+
+body:not(.dark) .border-slate-600 {
+  border-color: rgba(218, 165, 32, 0.4) !important; /* Gold border */
+}
+
+body:not(.dark) .text-slate-900 {
+  color: #daaf60 !important; /* Warm gold text */
+}
+
+body:not(.dark) .placeholder-gray-400::placeholder {
+  color: #c4965a !important; /* Warm gold placeholder */
+}
+
+/* Consistent button colors for product pages */
+body:not(.dark) .text-purple-400 {
+  color: #DAA520 !important; /* Gold instead of purple */
+}
+
+body:not(.dark) .border-purple-400 {
+  border-color: rgba(218, 165, 32, 0.6) !important; /* Gold border */
+}
+
+body:not(.dark) .hover\:bg-purple-400:hover {
+  background-color: rgba(218, 165, 32, 0.9) !important; /* Gold hover background */
+  color: white !important;
+}
+
+/* Verified badge styling - consistent with admin buttons */
+body:not(.dark) .bg-amber-700 {
+  background: linear-gradient(90deg, #B8860B, #DAA520) !important;
+  color: white !important;
+  border: 1px solid rgba(218, 165, 32, 0.3) !important;
+  box-shadow: 0 2px 4px rgba(184, 134, 11, 0.2) !important;
+}
+
+body:not(.dark) .text-amber-50 {
+  color: white !important;
+}
+
+body:not(.dark) .border-amber-600\/50 {
+  border-color: rgba(218, 165, 32, 0.5) !important;
+}
+
+/* Dark mode verified badge */
+.dark .bg-amber-800\/90 {
+  background: linear-gradient(90deg, #DAA520, #FFD700) !important;
+  color: #1a1a1a !important;
+  border: 1px solid rgba(255, 215, 0, 0.3) !important;
+  box-shadow: 0 2px 4px rgba(255, 215, 0, 0.2) !important;
+}
+
+/* Consistency for all amber text colors */
+body:not(.dark) .text-amber-900 {
+  color: #daaf60 !important; /* Warm gold - main text */
+}
+
+body:not(.dark) .text-amber-800\/90 {
+  color: #c4965a !important; /* Slightly darker gold */
+}
+
+body:not(.dark) .text-amber-700\/90 {
+  color: #b8864f !important; /* Deeper gold */
+}
+
+body:not(.dark) .text-amber-600 {
+  color: #f0c674 !important; /* Bright gold for highlights */
+}
+
+body:not(.dark) .text-amber-500 {
+  color: #e6b960 !important; /* Bright warm gold */
+}
+
+/* =================================== */
+/* PRICE HIGHLIGHTING STYLES */
+/* =================================== */
+
+/* Estilos específicos para precios que resalten */
+body:not(.dark) .text-primary {
+  color: #f0c674 !important; /* Bright gold for prices */
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(240, 198, 116, 0.3);
+}
+
+/* Precios en cards de productos */
+body:not(.dark) .text-2xl.text-primary {
+  color: #f0c674 !important;
+  font-weight: 700;
+  text-shadow: 0 1px 3px rgba(240, 198, 116, 0.4);
+}
+
+/* Precios con gradiente para mayor impacto */
+.price-highlight {
+  background: linear-gradient(135deg, #f0c674 0%, #e6b960 50%, #daaf60 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+}
+
+/* Precios tachados (originales) */
+body:not(.dark) .line-through {
+  color: #c4965a !important;
+  opacity: 0.7;
+}
+
+/* Texto de ahorro */
+body:not(.dark) .text-primary\/80 {
+  color: #e6b960 !important;
+  font-weight: 600;
+}
+
+/* =================================== */
 /* UTILITY CLASSES FOR CONSISTENT BACKGROUNDS */
 /* =================================== */
 
@@ -813,5 +1031,30 @@ input[type=number] {
 
 /* Clase para asegurar que el fondo sea transparente */
 .transparent-background {
+
+/* =================================== */
+/* COHERENCIA VISUAL MEJORADA */
+/* =================================== */
+
+/* 
+ * Cambios realizados para mejorar la coherencia visual:
+ * 
+ * 1. Reemplazados colores negros/grises por tonos dorados cálidos
+ * 2. Eliminados colores naranjas/púrpuras/rosas por tonos dorados
+ * 3. Mejorado el badge "Verificado" para que coincida con botones del dashboard
+ * 4. Unificada la paleta de colores usando la escala de amber/gold existente
+ * 5. Mantenida la legibilidad usando dorados cálidos (#daaf60, #c4965a, #b8864f)
+ * 6. Conservados los efectos visuales pero con colores coherentes
+ * 7. Agregados efectos especiales para precios que resalten
+ * 
+ * Colores principales utilizados:
+ * - Warm Gold (#daaf60) - Textos principales
+ * - Darker Gold (#c4965a) - Textos secundarios
+ * - Deep Gold (#b8864f) - Textos suaves
+ * - Bright Gold (#f0c674) - Precios y highlights
+ * - Warm Gold Bright (#e6b960) - Elementos que resaltan
+ * - Goldenrod (#DAA520) - Botones y acentos
+ * - Warm Cream (rgba(252, 248, 237)) - Fondos suaves
+ */
   background: transparent !important;
 }

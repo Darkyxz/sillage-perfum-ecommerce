@@ -215,31 +215,35 @@ const ProductManagement = () => {
                     <span className="admin-text font-bold text-xl">${product.price}</span>
                     <div className="flex space-x-2">
                       <Button
-                        variant="outline"
+                        variant="ghost"
                         size="icon"
                         onClick={() => handleToggleFeatured(product)}
-                        className={`admin-button-outline ${
-                          product.is_featured ? 'text-yellow-500 border-yellow-500' : ''
-                        }`}
-                        title={product.is_featured ? 'Quitar de destacados' : 'Marcar como destacado'}
+                        className={`${product.is_featured ? 'text-yellow-400' : 'text-gray-400'} hover:bg-yellow-500/10 h-10 w-10`}
+                        title={product.is_featured ? 'Quitar de destacados' : 'Destacar producto'}
                       >
-                        <Star className={`h-4 w-4 ${product.is_featured ? 'fill-current' : ''}`} />
+                        <Star className={`h-5 w-5 ${product.is_featured ? 'fill-current' : ''}`} />
                       </Button>
                       <Button
-                        variant="outline"
+                        variant="ghost"
                         size="icon"
-                        className="admin-button-outline"
                         onClick={() => openEditForm(product)}
+                        className="text-blue-400 hover:bg-blue-500/10 h-10 w-10"
+                        title="Editar producto"
                       >
-                        <Edit className="h-4 w-4" />
+                        <Edit className="h-5 w-5" />
                       </Button>
                       <Button
-                        variant="outline"
+                        variant="ghost"
                         size="icon"
-                        onClick={() => handleDeleteProduct(product.id)}
-                        className="admin-button-outline border-red-500/50 text-red-500 hover:bg-red-500/10"
+                        onClick={() => {
+                          if (window.confirm(`¿Estás seguro de eliminar ${product.name}?`)) {
+                            handleDeleteProduct(product.id);
+                          }
+                        }}
+                        className="text-red-400 hover:bg-red-500/10 h-10 w-10"
+                        title="Eliminar producto"
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Trash2 className="h-5 w-5" />
                       </Button>
                     </div>
                   </div>

@@ -93,10 +93,10 @@ const ProductsPage = () => {
         className="py-8"
       >
         <div className="mb-10 text-center">
-          <h1 className="text-5xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
+          <h1 className="text-5xl font-extrabold mb-4 text-foreground">
             Descubre Nuestros Perfumes
           </h1>
-          <p className="text-lg text-gray-400 max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Una selección curada de las fragancias más exquisitas del mundo, esperando ser descubiertas por ti.
           </p>
         </div>
@@ -156,60 +156,60 @@ const ProductsPage = () => {
                   </div>
                 )}
                 
-                <div className="p-1 bg-gradient-to-br from-purple-600 via-pink-600 to-red-600">
+                <div className="p-1 bg-gradient-to-r from-primary/80 to-primary/60">
                   <img  
                     alt={product.imageAlt} 
-                    class="w-full h-64 object-cover"
-                   src="https://images.unsplash.com/photo-1670538528394-18075d01726a" />
+                    className="w-full h-64 object-cover"
+                    src="https://images.unsplash.com/photo-1670538528394-18075d01726a" />
                 </div>
                 
                 <div className="p-5 flex flex-col flex-grow">
-                  <h2 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400 mb-1">{product.name}</h2>
-                  <p className="text-sm text-gray-400 mb-2">{product.brand}</p>
+                  <h2 className="text-2xl font-bold text-foreground mb-1">{product.name}</h2>
+                  <p className="text-sm text-muted-foreground mb-2">{product.brand}</p>
                   
                   {/* Rating y reviews */}
                   <div className="flex items-center mb-2">
-                    <div className="flex text-yellow-400">
+                    <div className="flex text-amber-400">
                       {[...Array(5)].map((_, i) => (
-                        <span key={i} className={i < Math.floor(product.rating) ? "text-yellow-400" : "text-gray-600"}>
+                        <span key={i} className={i < Math.floor(product.rating) ? "text-amber-400" : "text-muted-foreground/30"}>
                           ★
                         </span>
                       ))}
                     </div>
-                    <span className="ml-2 text-gray-400 text-sm">({product.reviews})</span>
+                    <span className="ml-2 text-muted-foreground text-sm">({product.reviews})</span>
                   </div>
                   
-                  <p className="text-gray-300 text-sm mb-4 flex-grow">{product.description}</p>
+                  <p className="text-muted-foreground text-sm mb-4 flex-grow">{product.description}</p>
                   
                   {/* Precios */}
                   <div className="mb-4">
                     <div className="flex items-center gap-2">
-                      <p className="text-2xl font-semibold text-green-400">{product.price}</p>
+                      <p className="text-2xl font-semibold text-primary">{product.price}</p>
                       {product.originalPrice && (
-                        <p className="text-lg text-gray-500 line-through">{product.originalPrice}</p>
+                        <p className="text-lg text-muted-foreground/70 line-through">{product.originalPrice}</p>
                       )}
                     </div>
                     {product.originalPrice && (
-                      <p className="text-sm text-green-300">¡Ahorras {(parseFloat(product.originalPrice.replace('€', '')) - parseFloat(product.price.replace('€', ''))).toFixed(0)}€!</p>
+                      <p className="text-sm text-primary/80">¡Ahorras {(parseFloat(product.originalPrice.replace('€', '')) - parseFloat(product.price.replace('€', ''))).toFixed(0)}€!</p>
                     )}
                   </div>
                   
                   <div className="flex gap-2">
                     <Button 
                       size="sm" 
-                      className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-medium flex-1"
-                      onClick={() => handleNotImplemented(`Añadir ${product.name} al carrito`)}
+                      className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/60 text-primary-foreground font-medium flex-1"
+                      onClick={() => handleNotImplemented("Añadir al carrito")}
                     >
-                      <ShoppingCartIcon className="mr-2 h-4 w-4" />
-                      Añadir al Carrito
+                      <ShoppingCartIcon className="h-4 w-4 mr-2" />
+                      Añadir al carrito
                     </Button>
                     <Button 
+                      variant="outline" 
                       size="sm" 
-                      variant="outline"
-                      className="border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-slate-900"
-                      onClick={() => handleNotImplemented(`Ver detalles de ${product.name}`)}
+                      className="text-primary border-primary/50 hover:bg-primary/10 hover:text-primary"
+                      onClick={() => handleNotImplemented("Ver detalles")}
                     >
-                      Ver
+                      Detalles
                     </Button>
                   </div>
                 </div>

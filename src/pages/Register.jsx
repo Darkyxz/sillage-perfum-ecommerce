@@ -81,31 +81,31 @@ const Register = () => {
           transition={{ duration: 0.8 }}
           className="max-w-md mx-auto"
         >
-          <Card className="glass-effect border-white/10">
+          <Card className="bg-background/80 border-border/50 backdrop-blur-sm">
             <CardHeader className="text-center">
-              <CardTitle className="text-3xl font-display font-bold text-white mb-2">
+              <CardTitle className="text-3xl font-display font-bold text-foreground mb-2">
                 Crear Cuenta
               </CardTitle>
-              <p className="text-white/70">
-                Únete a Essence Luxe y descubre fragancias únicas
+              <p className="text-muted-foreground">
+                Únete a Sillage Perfum y descubre fragancias únicas
               </p>
             </CardHeader>
 
             <CardContent className="space-y-6">
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="fullName" className="text-white">
+                  <Label htmlFor="fullName" className="text-foreground">
                     Nombre Completo
                   </Label>
                   <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/50" />
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="fullName"
                       name="fullName"
                       type="text"
                       value={formData.fullName}
                       onChange={handleInputChange}
-                      className="glass-effect border-white/30 text-white pl-10 placeholder:text-white/50"
+                      className="bg-background/50 border-border/50 text-foreground pl-10 placeholder:text-muted-foreground/50"
                       placeholder="Tu nombre completo"
                       required
                       autoComplete="name"
@@ -114,18 +114,18 @@ const Register = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-white">
+                  <Label htmlFor="email" className="text-foreground">
                     Email
                   </Label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/50" />
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="email"
                       name="email"
                       type="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className="glass-effect border-white/30 text-white pl-10 placeholder:text-white/50"
+                      className="bg-background/50 border-border/50 text-foreground pl-10 placeholder:text-muted-foreground/50"
                       placeholder="tu@email.com"
                       required
                       autoComplete="email"
@@ -134,26 +134,26 @@ const Register = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-white">
+                  <Label htmlFor="password" className="text-foreground">
                     Contraseña
                   </Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/50" />
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="password"
                       name="password"
                       type={showPassword ? 'text' : 'password'}
                       value={formData.password}
                       onChange={handleInputChange}
-                      className="glass-effect border-white/30 text-white pl-10 pr-10 placeholder:text-white/50"
-                      placeholder="Mínimo 6 caracteres"
+                      className="bg-background/50 border-border/50 text-foreground pl-10 pr-10 placeholder:text-muted-foreground/50"
+                      placeholder="Crea una contraseña segura"
                       required
                       autoComplete="new-password"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/50 hover:text-white"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
                     >
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
@@ -161,26 +161,26 @@ const Register = () => {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="confirmPassword" className="text-white">
+                  <Label htmlFor="confirmPassword" className="text-foreground">
                     Confirmar Contraseña
                   </Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-white/50" />
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="confirmPassword"
                       name="confirmPassword"
                       type={showConfirmPassword ? 'text' : 'password'}
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
-                      className="glass-effect border-white/30 text-white pl-10 pr-10 placeholder:text-white/50"
-                      placeholder="Repite tu contraseña"
+                      className="bg-background/50 border-border/50 text-foreground pl-10 pr-10 placeholder:text-muted-foreground/50"
+                      placeholder="Confirma tu contraseña"
                       required
                       autoComplete="new-password"
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/50 hover:text-white"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
                     >
                       {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
@@ -189,8 +189,8 @@ const Register = () => {
 
                 <Button
                   type="submit"
+                  className="w-full floating-button text-primary-foreground font-semibold py-3"
                   disabled={isLoading}
-                  className="w-full floating-button text-white font-semibold py-3"
                 >
                   {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                   {isLoading ? 'Creando cuenta...' : 'Crear Cuenta'}
@@ -202,7 +202,7 @@ const Register = () => {
                   <div className="w-full border-t border-white/20" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-transparent text-white/60">O regístrate con</span>
+                  <span className="px-2 bg-transparent text-muted-foreground">O regístrate con</span>
                 </div>
               </div>
 
@@ -210,7 +210,7 @@ const Register = () => {
                 onClick={handleGoogleSignup}
                 disabled={isGoogleLoading}
                 variant="outline"
-                className="w-full glass-effect border-white/30 text-white hover:bg-white/10 py-3"
+                className="w-full glass-effect border-border/50 text-foreground hover:bg-accent/50 py-3"
               >
                 {isGoogleLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : (
                   <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
@@ -236,10 +236,13 @@ const Register = () => {
               </Button>
 
               <div className="text-center">
-                <p className="text-white/60 text-sm">
+                <p className="text-center text-muted-foreground text-sm">
                   ¿Ya tienes una cuenta?{' '}
-                  <Link to="/login" className="text-white hover:underline font-medium">
-                    Inicia sesión aquí
+                  <Link
+                    to="/login"
+                    className="text-primary hover:text-primary/80 font-medium transition-colors"
+                  >
+                    Inicia sesión
                   </Link>
                 </p>
               </div>

@@ -36,9 +36,9 @@ const Navbar = () => {
               40%
             </span>
           </Button>
-          <Link to="/cart" className="text-gray-300 hover:text-white transition-colors p-2 rounded-md hover:bg-slate-700/50 relative">
+          <Link to="/cart" className="text-[#c4965a] hover:text-[#f0c674] transition-colors p-2 rounded-md hover:bg-slate-700/50 relative">
             <ShoppingCart size={22} />
-            <span className="absolute -top-1 -right-1 bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+            <span className="absolute -top-1 -right-1 bg-[#f0c674] text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
               2
             </span>
             <span className="sr-only">Carrito</span>

@@ -91,6 +91,33 @@ const Home = () => {
           Tu navegador no soporta videos HTML5.
         </video>
         
+        {/* Decorative Coco Images - Above video */}
+        <div className="absolute inset-0 w-full h-full" style={{ zIndex: 3 }}>
+          {/* Coco Noir (left side) */}
+          <div 
+            className="absolute top-1/2 left-16 md:left-32 w-56 md:w-64 h-60 md:h-80 opacity-60 transform -translate-y-1/2"
+            style={{
+              backgroundImage: 'url(/coco2.png)',
+              backgroundSize: 'contain',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.3))'
+            }}
+          ></div>
+          
+          {/* Coco Eau de Parfum (right side) */}
+          <div 
+            className="absolute top-1/2 right-16 md:right-32 w-56 md:w-64 h-60 md:h-80 opacity-60 transform -translate-y-1/2"
+            style={{
+              backgroundImage: 'url(/coco.png)',
+              backgroundSize: 'contain',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.3))'
+            }}
+          ></div>
+        </div>
+        
         {/* Overlay para mejor legibilidad del texto - adaptativo al tema */}
         <div className="absolute inset-0" style={{ zIndex: 3 }}>
           {/* Overlay para modo oscuro - sutil para que se vea el fondo */}
@@ -107,7 +134,7 @@ const Home = () => {
             className="max-w-4xl mx-auto"
           >
             <motion.h1
-              className="text-5xl md:text-7xl font-display font-bold text-gray-800 dark:text-amber-200 mb-6"
+              className="text-5xl md:text-7xl font-display font-bold text-foreground mb-6"
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, delay: 0.2 }}
@@ -117,7 +144,7 @@ const Home = () => {
             </motion.h1>
             
             <motion.p
-              className="text-xl md:text-2xl text-gray-700 dark:text-amber-300 mb-8 max-w-2xl mx-auto"
+              className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.4 }}
@@ -132,7 +159,7 @@ const Home = () => {
               transition={{ duration: 0.8, delay: 0.6 }}
             >
               <Link to="/productos">
-                <Button size="lg" className="floating-button text-black dark:text-black text-white font-semibold px-8 py-3">
+                <Button size="lg" className="floating-button text-primary-foreground font-semibold px-8 py-3">
                   Explorar Colección
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
@@ -141,7 +168,7 @@ const Home = () => {
               <Button
                 variant="outline"
                 size="lg"
-                className="glass-effect text-yellow-100 dark:text-yellow-100 text-yellow-800 border-yellow-400/40 dark:border-yellow-400/40 border-yellow-600/60 hover:bg-yellow-400/15 dark:hover:bg-yellow-400/15 hover:bg-yellow-400/25 px-8 py-3"
+                className="glass-effect text-foreground border-border/50 hover:bg-accent/50 px-8 py-3"
                 onClick={() => {
                   toast({
                     title: "Catálogo",
@@ -157,7 +184,7 @@ const Home = () => {
 
         {/* Floating Elements */}
         <motion.div
-          className="absolute top-20 left-10 text-amber-400/50 dark:text-amber-400/50"
+          className="absolute top-20 left-10 text-amber-400/50"
           style={{ zIndex: 15 }}
           animate={{ y: [-10, 10, -10] }}
           transition={{ duration: 4, repeat: Infinity }}
@@ -166,7 +193,7 @@ const Home = () => {
         </motion.div>
         
         <motion.div
-          className="absolute bottom-20 right-10 text-amber-400/50 dark:text-amber-400/50"
+          className="absolute bottom-20 right-10 text-amber-400/50"
           style={{ zIndex: 15 }}
           animate={{ y: [10, -10, 10] }}
           transition={{ duration: 3, repeat: Infinity }}
@@ -184,10 +211,10 @@ const Home = () => {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-display font-bold text-amber-800 dark:text-amber-200 mb-4">
+            <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-4">
               Productos Destacados
             </h2>
-            <p className="text-xl text-gray-600 dark:text-amber-300 max-w-2xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
               Descubre nuestras fragancias más populares y exclusivas
             </p>
           </motion.div>
@@ -210,9 +237,9 @@ const Home = () => {
                     </div>
                     <CardContent className="p-6">
                       <div className="space-y-2">
-                        <div className="h-6 bg-gray-700/50 rounded animate-pulse"></div>
-                        <div className="h-4 bg-gray-700/50 rounded animate-pulse w-1/2"></div>
-                        <div className="h-8 bg-gray-700/50 rounded animate-pulse w-1/3"></div>
+                        <div className="h-6 bg-muted rounded animate-pulse"></div>
+                        <div className="h-4 bg-muted rounded animate-pulse w-1/2"></div>
+                        <div className="h-8 bg-muted rounded animate-pulse w-1/3"></div>
                       </div>
                     </CardContent>
                   </Card>
@@ -251,26 +278,26 @@ const Home = () => {
                       />
                     </div>
                     
-                    <CardContent className="p-6 bg-gray-50 dark:bg-amber-900/10">
+                    <CardContent className="p-6 bg-card">
                       <div className="flex justify-between items-start mb-2">
-                        <h3 className="text-xl font-semibold text-gray-800 dark:text-amber-200 pr-2">
+                        <h3 className="text-xl font-semibold text-foreground pr-2">
                           {product.name}
                         </h3>
                         <div className="flex items-center space-x-1 flex-shrink-0">
                           <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                          <span className="text-gray-600 dark:text-amber-300 text-sm font-medium">{product.rating || 4.5}</span>
+                          <span className="text-muted-foreground text-sm font-medium">{product.rating || 4.5}</span>
                         </div>
                       </div>
-                      <p className="text-gray-600 dark:text-amber-300 text-sm mb-4">
+                      <p className="text-muted-foreground text-sm mb-4">
                         {product.brand || 'Marca Premium'}
                       </p>
                       
                       <div className="mt-4 flex justify-between items-center">
-                        <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">
+                        <p className="text-2xl font-bold text-primary">
                           {formatPrice(product.price)}
                         </p>
                         <Link to={`/producto/${product.id}`}>
-                          <Button variant="outline" className="glass-effect border-amber-400/40 text-gray-700 dark:text-amber-200 hover:bg-amber-400/15">
+                          <Button variant="outline" className="glass-effect border-border/50 text-foreground hover:bg-accent/50">
                             Ver Detalles
                           </Button>
                         </Link>
@@ -298,7 +325,7 @@ const Home = () => {
                     Pronto tendremos nuevas fragancias exclusivas para ti
                   </p>
                   <Link to="/productos">
-                    <Button className="floating-button text-black">
+                    <Button className="floating-button text-primary-foreground">
                       Ver Todos los Productos
                     </Button>
                   </Link>
@@ -323,12 +350,12 @@ const Home = () => {
               className="text-center"
             >
               <div className="glass-effect w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Sparkles className="h-8 w-8 text-yellow-400" />
+                <Sparkles className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold text-yellow-50 mb-2">
+              <h3 className="text-xl font-semibold text-foreground mb-2">
                 Fragancias Exclusivas
               </h3>
-              <p className="text-yellow-100/80">
+              <p className="text-muted-foreground">
                 Perfumes únicos creados por los mejores perfumistas del mundo
               </p>
             </motion.div>
@@ -340,12 +367,12 @@ const Home = () => {
               className="text-center"
             >
               <div className="glass-effect w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Gift className="h-8 w-8 text-yellow-400" />
+                <Gift className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold text-yellow-50 mb-2">
+              <h3 className="text-xl font-semibold text-foreground mb-2">
                 Envío Gratuito
               </h3>
-              <p className="text-yellow-100/80">
+              <p className="text-muted-foreground">
                 Entrega gratuita en compras superiores a $50
               </p>
             </motion.div>
@@ -357,12 +384,12 @@ const Home = () => {
               className="text-center"
             >
               <div className="glass-effect w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Star className="h-8 w-8 text-yellow-400" />
+                <Star className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold text-yellow-50 mb-2">
+              <h3 className="text-xl font-semibold text-foreground mb-2">
                 Calidad Premium
               </h3>
-              <p className="text-yellow-100/80">
+              <p className="text-muted-foreground">
                 Solo los mejores ingredientes y procesos de fabricación
               </p>
             </motion.div>

@@ -59,7 +59,7 @@ const AdminDashboard = ({ stats, products, onProductAdded }) => {
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="admin-text-muted text-sm">{stat.title}</p>
-                    <p className="admin-text text-2xl font-bold">{stat.value}</p>
+                    <p className="admin-value text-2xl">{stat.value}</p>
                   </div>
                   <stat.icon className={`admin-icon h-8 w-8`} />
                 </div>
@@ -82,7 +82,7 @@ const AdminDashboard = ({ stats, products, onProductAdded }) => {
                     <p className="admin-text font-medium">{product.name}</p>
                     <p className="admin-text-muted text-sm">{product.brand}</p>
                   </div>
-                  <span className="admin-text font-bold">${product.price}</span>
+                  <span className="admin-price">${product.price}</span>
                 </div>
               ))}
             </div>

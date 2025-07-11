@@ -40,13 +40,13 @@ const Profile = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'paid':
-        return 'text-green-400';
+        return 'text-green-500 dark:text-green-400';
       case 'pending':
-        return 'text-yellow-400';
+        return 'text-amber-500 dark:text-amber-400';
       case 'cancelled':
-        return 'text-red-400';
+        return 'text-red-500 dark:text-red-400';
       default:
-        return 'text-white/60';
+        return 'text-muted-foreground';
     }
   };
 
@@ -68,10 +68,10 @@ const Profile = () => {
       <div className="min-h-screen py-8">
         <div className="container mx-auto px-4">
           <div className="text-center py-16">
-            <h1 className="text-3xl font-bold text-white mb-4">
+            <h1 className="text-3xl font-bold text-foreground mb-4">
               Inicia sesión para ver tu perfil
             </h1>
-            <p className="text-white/70">
+            <p className="text-muted-foreground">
               Necesitas estar logueado para acceder a esta página.
             </p>
           </div>
@@ -93,10 +93,10 @@ const Profile = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-4xl font-display font-bold text-white mb-2">
+          <h1 className="text-4xl font-display font-bold text-foreground mb-2">
             Mi Perfil
           </h1>
-          <p className="text-white/70">
+          <p className="text-muted-foreground">
             Gestiona tu cuenta y revisa tu historial de compras
           </p>
         </motion.div>
@@ -108,36 +108,24 @@ const Profile = () => {
             animate={{ opacity: 1, x: 0 }}
             className="lg:col-span-1"
           >
-            <Card className="glass-effect border-white/10">
+            <Card className="bg-background/80 border-border/50 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-white flex items-center">
-                  <User className="mr-2 h-5 w-5" />
-                  Información Personal
+                <CardTitle className="text-foreground flex items-center gap-2">
+                  <User className="h-5 w-5" />
+                  Mi Cuenta
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <label className="text-white/60 text-sm">Email</label>
-                  <p className="text-white font-medium">{user.email}</p>
-                </div>
-                <div>
-                  <label className="text-white/60 text-sm">Nombre</label>
-                  <p className="text-white font-medium">
-                    {profile?.full_name || 'No especificado'}
-                  </p>
-                </div>
-                <div>
-                  <label className="text-white/60 text-sm">Rol</label>
-                  <p className="text-white font-medium">
-                    {profile?.role === 'admin' ? 'Administrador' : 'Cliente'}
-                  </p>
+                  <p className="text-sm text-muted-foreground">Email</p>
+                  <p className="font-medium text-foreground">{user.email}</p>
                 </div>
                 <Button
-                  onClick={logout}
                   variant="outline"
-                  className="w-full glass-effect border-white/30 text-white hover:bg-white/10"
+                  className="w-full border-border/50 text-foreground hover:bg-accent/50 hover:text-foreground"
+                  onClick={logout}
                 >
-                  Cerrar Sesión
+                  Cerrar sesión
                 </Button>
               </CardContent>
             </Card>
@@ -149,103 +137,101 @@ const Profile = () => {
             animate={{ opacity: 1, x: 0 }}
             className="lg:col-span-2"
           >
-            <Card className="glass-effect border-white/10">
+            <Card className="bg-background/80 border-border/50 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-white flex items-center">
-                  <ShoppingBag className="mr-2 h-5 w-5" />
-                  Historial de Pedidos
+                <CardTitle className="text-foreground flex items-center gap-2">
+                  <ShoppingBag className="h-5 w-5" />
+                  Mis Pedidos
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 {loading ? (
-                  <div className="flex items-center justify-center py-8">
-                    <Loader2 className="h-8 w-8 animate-spin text-white mr-2" />
-                    <span className="text-white/70">Cargando pedidos...</span>
+                  <div className="flex justify-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                   </div>
                 ) : orders.length === 0 ? (
                   <div className="text-center py-8">
-                    <Package className="h-16 w-16 text-white/30 mx-auto mb-4" />
-                    <p className="text-white/70 text-lg mb-2">No tienes pedidos aún</p>
-                    <p className="text-white/50">¡Haz tu primera compra para ver tu historial aquí!</p>
+                    <Package className="h-12 w-12 mx-auto text-muted-foreground/40 mb-4" />
+                    <h3 className="text-foreground/80 text-lg font-medium">No hay pedidos</h3>
+                    <p className="text-muted-foreground mt-1">Tus pedidos aparecerán aquí</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
                     {orders.map((order) => (
-                      <motion.div
-                        key={order.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="border border-white/10 rounded-lg p-4"
-                      >
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center space-x-4">
-                            <Package className="h-5 w-5 text-white/60" />
+                      <Card key={order.id} className="bg-accent/5 border-border/50 hover:border-primary/30 transition-colors">
+                        <CardContent className="p-4">
+                          <div className="flex justify-between items-start">
                             <div>
-                              <h3 className="text-white font-semibold">
-                                Pedido #{order.id}
-                              </h3>
-                              <p className="text-white/60 text-sm">
-                                {new Date(order.created_at).toLocaleDateString('es-ES', {
-                                  year: 'numeric',
-                                  month: 'long',
-                                  day: 'numeric',
-                                  hour: '2-digit',
-                                  minute: '2-digit'
-                                })}
+                              <h3 className="font-medium text-foreground">Pedido #{order.id}</h3>
+                              <p className="text-sm text-muted-foreground flex items-center gap-1">
+                                <Calendar className="h-3.5 w-3.5" />
+                                {new Date(order.created_at).toLocaleDateString()}
                               </p>
                             </div>
-                          </div>
-                          <div className="text-right">
-                            <p className={`font-semibold ${getStatusColor(order.status)}`}>
+                            <span 
+                              className={`px-2.5 py-1 rounded-full text-xs font-medium ${
+                                order.status === 'paid' 
+                                  ? 'bg-green-500/10 text-green-600 dark:text-green-400' 
+                                  : order.status === 'pending' 
+                                    ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' 
+                                    : 'bg-destructive/10 text-destructive'
+                              }`}
+                            >
                               {getStatusText(order.status)}
-                            </p>
-                            <p className="text-white font-bold text-lg">
-                              ${order.total_amount}
-                            </p>
+                            </span>
                           </div>
-                        </div>
+                          
+                          <div className="mt-4 space-y-3">
+                            {order.order_items?.map((item, index) => (
+                              <div key={index} className="flex items-center justify-between py-2">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-10 h-10 rounded-md bg-accent/10 flex items-center justify-center">
+                                    {item.product?.image_url ? (
+                                      <img
+                                        src={item.product.image_url}
+                                        alt={item.product.name}
+                                        className="w-full h-full object-cover rounded-md"
+                                      />
+                                    ) : (
+                                      <Package className="h-5 w-5 text-muted-foreground" />
+                                    )}
+                                  </div>
+                                  <div>
+                                    <p className="text-foreground font-medium">{item.product?.name || 'Producto no disponible'}</p>
+                                    {item.product?.brand && (
+                                      <p className="text-muted-foreground text-sm">{item.product.brand}</p>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="text-right">
+                                  <p className="text-muted-foreground text-sm">
+                                    {item.quantity} x ${item.unit_price?.toFixed(2) || '0.00'}
+                                  </p>
+                                  <p className="text-foreground font-semibold">
+                                    ${((item.quantity || 0) * (item.unit_price || 0)).toFixed(2)}
+                                  </p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
 
-                        {/* Items del pedido */}
-                        <div className="space-y-2">
-                          {order.order_items?.map((item) => (
-                            <div key={item.id} className="flex items-center justify-between bg-white/5 rounded p-2">
-                              <div className="flex items-center space-x-3">
-                                <div className="w-10 h-10 rounded bg-white/10 flex items-center justify-center">
-                                  {item.product?.image_url ? (
-                                    <img
-                                      src={item.product.image_url}
-                                      alt={item.product.name}
-                                      className="w-full h-full object-cover rounded"
-                                    />
-                                  ) : (
-                                    <Package className="h-5 w-5 text-white/50" />
-                                  )}
-                                </div>
-                                <div>
-                                  <p className="text-white font-medium">{item.product?.name}</p>
-                                  <p className="text-white/60 text-sm">{item.product?.brand}</p>
-                                </div>
-                              </div>
-                              <div className="text-right">
-                                <p className="text-white/70 text-sm">
-                                  {item.quantity} x ${item.unit_price}
-                                </p>
-                                <p className="text-white font-semibold">
-                                  ${(item.quantity * item.unit_price).toFixed(2)}
-                                </p>
-                              </div>
+                          {order.shipping_address && (
+                            <div className="mt-3 pt-3 border-t border-border/20">
+                              <p className="text-muted-foreground text-sm">
+                                Envío: {order.shipping_address}
+                              </p>
                             </div>
-                          ))}
-                        </div>
+                          )}
 
-                        {order.payment_id && (
-                          <div className="mt-3 pt-3 border-t border-white/10">
-                            <p className="text-white/60 text-sm">
-                              ID de Pago: {order.payment_id}
-                            </p>
-                          </div>
-                        )}
-                      </motion.div>
+                          {order.payment_id && (
+                            <div className="mt-2">
+                              <p className="text-muted-foreground text-xs">
+                                ID de Pago: {order.payment_id}
+                              </p>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
                     ))}
                   </div>
                 )}

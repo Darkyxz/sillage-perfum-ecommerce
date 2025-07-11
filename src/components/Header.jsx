@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ShoppingCart, User, Menu, X, Search, Heart } from 'lucide-react';
@@ -17,6 +17,21 @@ const Header = () => {
   const { getFavoritesCount } = useFavorites();
   const navigate = useNavigate();
 
+  // Efecto para verificar datos del usuario
+  useEffect(() => {
+    // Depuración: Verificar datos del usuario
+    console.log('Datos del usuario:', user);
+    if (user) {
+      console.log('Avatar URL:', user.avatar);
+      // Verificar si la URL del avatar es accesible
+      if (user.avatar) {
+        fetch(user.avatar, { method: 'HEAD' })
+          .then(res => console.log('Estado del avatar:', res.status, res.statusText))
+          .catch(err => console.error('Error al cargar el avatar:', err));
+      }
+    }
+  }, [user]);
+
   const handleAuthAction = () => {
     if (user) {
       logout();
@@ -31,25 +46,14 @@ const Header = () => {
       animate={{ y: 0 }}
       className="relative bg-white dark:bg-amber-900/90 backdrop-blur-md sticky top-0 z-50 border-b border-gray-200 dark:border-amber-700 shadow-sm overflow-hidden"
     >
-      {/* Video de fondo para el header */}
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="absolute inset-0 w-full h-full object-cover opacity-15 dark:opacity-8"
-        style={{ pointerEvents: 'none', zIndex: -1 }}
-      >
-        <source src="/logo.webm" type="video/webm" />
-      </video>
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-amber-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">S</span>
+            <div className="w-8 h-8 flex items-center justify-center">
+              <img src="/icon.svg" alt="Sillage Perfum" className="w-8 h-8" />
             </div>
-            <span className="text-2xl font-display font-bold text-amber-800 dark:text-amber-200">
+            <span className="text-2xl font-display font-bold text-foreground">
               Sillage Perfum
             </span>
           </Link>
@@ -58,32 +62,32 @@ const Header = () => {
           <nav className="hidden md:flex items-center space-x-8">
             <Link
               to="/"
-              className="text-gray-700 hover:text-amber-600 dark:text-amber-200 dark:hover:text-amber-300 transition-colors font-medium text-sm uppercase tracking-wide"
+              className="text-muted-foreground hover:text-primary transition-colors font-medium text-sm uppercase tracking-wide"
             >
               Home
             </Link>
             <Link
               to="/productos"
-              className="text-gray-700 hover:text-amber-600 dark:text-amber-200 dark:hover:text-amber-300 transition-colors font-medium text-sm uppercase tracking-wide"
+              className="text-muted-foreground hover:text-primary transition-colors font-medium text-sm uppercase tracking-wide"
             >
               Perfumes
             </Link>
             <Link
               to="/sobre-nosotros"
-              className="text-gray-700 hover:text-amber-600 dark:text-amber-200 dark:hover:text-amber-300 transition-colors font-medium text-sm uppercase tracking-wide"
+              className="text-muted-foreground hover:text-primary transition-colors font-medium text-sm uppercase tracking-wide"
             >
               About
             </Link>
             <Link
               to="/contacto"
-              className="text-gray-700 hover:text-amber-600 dark:text-amber-200 dark:hover:text-amber-300 transition-colors font-medium text-sm uppercase tracking-wide"
+              className="text-muted-foreground hover:text-primary transition-colors font-medium text-sm uppercase tracking-wide"
             >
               Contact
             </Link>
             {user?.role === 'admin' && (
               <Link
                 to="/admin"
-                className="text-gray-700 hover:text-amber-600 dark:text-amber-200 dark:hover:text-amber-300 transition-colors font-medium text-sm uppercase tracking-wide"
+                className="text-muted-foreground hover:text-primary transition-colors font-medium text-sm uppercase tracking-wide"
               >
                 Admin
               </Link>
@@ -96,7 +100,7 @@ const Header = () => {
             <Button
               variant="ghost"
               size="icon"
-              className="text-gray-600 hover:text-amber-600 hover:bg-amber-50 dark:text-amber-300 dark:hover:text-amber-200 dark:hover:bg-amber-800/20 transition-colors"
+              className="text-muted-foreground hover:text-primary hover:bg-accent/50 transition-colors"
               onClick={() => {
                 toast({
                   title: "Búsqueda",
@@ -115,11 +119,11 @@ const Header = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-gray-600 hover:text-amber-600 hover:bg-amber-50 dark:text-amber-300 dark:hover:text-amber-200 dark:hover:bg-amber-800/20 transition-colors relative"
+                className="text-[#c4965a] hover:text-[#f0c674] hover:bg-amber-50 dark:text-[#c4965a] dark:hover:text-[#f0c674] dark:hover:bg-amber-800/20 transition-colors relative"
               >
                 <Heart className="h-5 w-5" />
                 {getFavoritesCount() > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                  <span className="absolute -top-1 -right-1 bg-[#f0c674] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
                     {getFavoritesCount()}
                   </span>
                 )}
@@ -131,11 +135,11 @@ const Header = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-gray-600 hover:text-amber-600 hover:bg-amber-50 dark:text-amber-300 dark:hover:text-amber-200 dark:hover:bg-amber-800/20 transition-colors relative"
+                className="text-[#c4965a] hover:text-[#f0c674] hover:bg-amber-50 dark:text-[#c4965a] dark:hover:text-[#f0c674] dark:hover:bg-amber-800/20 transition-colors relative"
               >
                 <ShoppingCart className="h-5 w-5" />
                 {getTotalItems() > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-amber-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                  <span className="absolute -top-1 -right-1 bg-[#f0c674] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
                     {getTotalItems()}
                   </span>
                 )}
@@ -146,18 +150,25 @@ const Header = () => {
             <div className="flex items-center space-x-2">
               {user ? (
                 <div className="flex items-center space-x-2">
-                  <Link to="/perfil">
-                    <img
-                      src={user.avatar}
-                      alt={user.name}
-                      className="w-8 h-8 rounded-full border-2 border-amber-300"
-                    />
-                  </Link>
+                  <div className="relative" style={{ minWidth: '36px' }}>
+                    <Link to="/perfil" className="block w-9 h-9 rounded-full overflow-hidden border-2 border-amber-300 dark:border-amber-600">
+                      <div className="w-full h-full flex items-center justify-center bg-amber-100 dark:bg-amber-900">
+                        {user.email ? (
+                          <span className="font-medium text-primary text-lg font-bold">
+                            {user.email.charAt(0).toUpperCase()}
+                          </span>
+                        ) : (
+                          <User className="h-5 w-5 text-primary" />
+                        )}
+                      </div>
+                    </Link>
+                    <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-amber-900"></div>
+                  </div>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={handleAuthAction}
-                    className="text-gray-600 hover:text-amber-600 hover:bg-amber-50 dark:text-amber-300 dark:hover:text-amber-200 dark:hover:bg-amber-800/20 transition-colors text-sm"
+                    className="text-muted-foreground hover:text-destructive hover:bg-accent/50 transition-colors text-sm"
                   >
                     Salir
                   </Button>
@@ -167,7 +178,7 @@ const Header = () => {
                   variant="ghost"
                   size="icon"
                   onClick={handleAuthAction}
-                  className="text-gray-600 hover:text-amber-600 hover:bg-amber-50 dark:text-amber-300 dark:hover:text-amber-200 dark:hover:bg-amber-800/20 transition-colors"
+                  className="text-muted-foreground hover:text-primary hover:bg-accent/50 transition-colors"
                 >
                   <User className="h-5 w-5" />
                 </Button>
@@ -178,7 +189,7 @@ const Header = () => {
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden text-gray-600 hover:text-amber-600 hover:bg-amber-50 dark:text-amber-300 dark:hover:text-amber-200 dark:hover:bg-amber-800/20"
+              className="md:hidden text-[#c4965a] hover:text-[#f0c674] hover:bg-amber-50 dark:text-[#c4965a] dark:hover:text-[#f0c674] dark:hover:bg-amber-800/20"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -197,27 +208,27 @@ const Header = () => {
             <nav className="flex flex-col space-y-4">
               <Link
                 to="/"
-                className="text-gray-700 hover:text-amber-600 dark:text-amber-200 dark:hover:text-amber-300 transition-colors font-medium"
+                className="text-muted-foreground hover:text-primary transition-colors font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Inicio
               </Link>
               <Link
                 to="/productos"
-                className="text-gray-700 hover:text-amber-600 dark:text-amber-200 dark:hover:text-amber-300 transition-colors font-medium"
+                className="text-muted-foreground hover:text-primary transition-colors font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Productos
               </Link>
               <Link
                 to="/favoritos"
-                className="text-gray-700 hover:text-amber-600 dark:text-amber-200 dark:hover:text-amber-300 transition-colors font-medium flex items-center"
+                className="text-[#c4965a] hover:text-[#f0c674] dark:text-[#c4965a] dark:hover:text-[#f0c674] transition-colors font-medium flex items-center"
                 onClick={() => setIsMenuOpen(false)}
               >
                 <Heart className="h-4 w-4 mr-2" />
                 Favoritos
                 {getFavoritesCount() > 0 && (
-                  <span className="ml-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                  <span className="ml-2 bg-[#f0c674] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
                     {getFavoritesCount()}
                   </span>
                 )}
@@ -225,7 +236,7 @@ const Header = () => {
               {user?.role === 'admin' && (
                 <Link
                   to="/admin"
-                  className="text-gray-700 hover:text-amber-600 dark:text-amber-200 dark:hover:text-amber-300 transition-colors font-medium"
+                  className="text-muted-foreground hover:text-primary transition-colors font-medium"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Admin
