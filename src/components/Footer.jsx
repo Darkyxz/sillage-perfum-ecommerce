@@ -112,7 +112,7 @@ const Footer = () => {
         <div className="border-t border-gray-200 dark:border-gray-700 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center text-center md:text-left">
             <p className="text-[#b8864f] dark:text-[#b8864f] text-sm mb-4 md:mb-0">
-              © 2024 Sillage Perfum. Todos los derechos reservados.
+              © 2025 Sillage Perfum. Todos los derechos reservados. - Desarollada por Circuit-Service.
             </p>
             <div className="flex space-x-6 text-sm text-[#b8864f] dark:text-[#b8864f]">
               <a href="#" className="hover:text-[#f0c674] transition-colors">Política de Privacidad</a>
