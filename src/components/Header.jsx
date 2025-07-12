@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ShoppingCart, User, Menu, X, Search, Heart, Sparkles } from 'lucide-react';
+import { ShoppingCart, User, Menu, X, Search, Heart } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
 import { useFavorites } from '@/contexts/FavoritesContext';
@@ -12,7 +12,6 @@ import ThemeToggle from '@/components/ThemeToggle';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [iconError, setIconError] = useState(false);
   const { user, logout } = useAuth();
   const { getTotalItems } = useCart();
   const { getFavoritesCount } = useFavorites();
@@ -52,19 +51,7 @@ const Header = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3">
             <div className="w-8 h-8 flex items-center justify-center">
-              {!iconError ? (
-                <img 
-                  src="/icon.png" 
-                  alt="Sillage Perfum" 
-                  className="w-8 h-8" 
-                  onError={(e) => {
-                    console.error('Error loading icon:', e);
-                    setIconError(true);
-                  }} 
-                />
-              ) : (
-                <Sparkles className="w-8 h-8 text-amber-600" />
-              )}
+              <img src="/icon.svg" alt="Sillage Perfum" className="w-8 h-8" />
             </div>
             <span className="text-2xl font-display font-bold text-foreground">
               Sillage Perfum
