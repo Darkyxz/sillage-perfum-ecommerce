@@ -17,7 +17,6 @@
     // Type definitions
     "typeRoots": ["./node_modules/@types", "./src/types", "./src"],
     "types": ["node", "tailwindcss"],
-    "typeRoots": ["./node_modules/@types", "./src/types"],
     "esModuleInterop": true,
     "resolveJsonModule": true,
 
@@ -45,8 +44,7 @@
     "strictPropertyInitialization": false,
     "noImplicitThis": true,
     "alwaysStrict": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
+    "noImplicitReturns": true
   },
   "include": [
     "src/**/*.ts",

@@ -9,6 +9,8 @@
     "dev": "vite",
     "build": "node tools/generate-llms.js || true && vite build",
     "preview": "vite preview",
+    "start": "bun run server.js",
+    "build:prod": "bun run build && bun run start",
     "theme:check": "node scripts/check-theme.js",
     "theme:update": "node scripts/update-theme.js",
     "theme:migrate": "node scripts/migrate-theme.js"

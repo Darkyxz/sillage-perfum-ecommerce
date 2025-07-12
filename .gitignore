@@ -106,3 +106,7 @@ dist-ssr
 
 # SQL files
 *.sql
+
+# Markdown files (excepto README.md)
+*.md
+!README.md

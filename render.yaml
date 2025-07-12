@@ -1,10 +1,10 @@
 services:
   - type: web
     name: sillage-perfum-ecommerce
-    env: node
+    runtime: bun
     region: oregon
     buildCommand: bun install && bun run build
-    startCommand: bun run preview
+    startCommand: bun run start
     envVars:
       - key: VITE_SUPABASE_URL
         sync: false
