@@ -80,7 +80,8 @@ dist
 # Gatsby files
 .cache/
 # Add further Gatsby-specific rules here
-public
+# public - Allow public folder but exclude test subfolder
+public/test/
 
 # vuepress build output
 .vuepress/dist
