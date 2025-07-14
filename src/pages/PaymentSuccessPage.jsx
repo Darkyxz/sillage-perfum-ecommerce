@@ -88,8 +88,8 @@ const PaymentSuccessPage = () => {
     return (
       <div className="min-h-screen flex items-center justify-center py-12">
         <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin text-white mx-auto mb-4" />
-          <p className="text-white/70">Procesando tu pago...</p>
+          <Loader2 className="h-12 w-12 animate-spin text-sillage-gold mx-auto mb-4" />
+          <p className="text-muted-foreground">Procesando tu pago...</p>
         </div>
       </div>
     );
@@ -98,21 +98,21 @@ const PaymentSuccessPage = () => {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center py-12">
-        <Card className="glass-effect border-red-500/50 text-center max-w-md">
+        <Card className="glass-effect border-destructive/50 text-center max-w-md">
           <CardHeader>
-            <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-r from-red-500 to-orange-500 mb-4">
+            <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-r from-destructive to-destructive/80 mb-4">
               <XCircle className="h-10 w-10 text-white" />
             </div>
-            <CardTitle className="text-3xl font-display font-bold text-white">
+            <CardTitle className="text-3xl font-display font-bold text-foreground">
               Ocurrió un Error
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-white/80 text-lg">
+            <p className="text-muted-foreground text-lg">
               {error}
             </p>
             <Link to="/perfil">
-              <Button variant="outline" className="w-full sm:w-auto glass-effect border-white/30 text-white hover:bg-white/10">
+              <Button variant="outline" className="w-full sm:w-auto border-sillage-gold text-sillage-gold-dark hover:bg-sillage-gold hover:text-white">
                 Ver Mis Pedidos
               </Button>
             </Link>
@@ -134,41 +134,41 @@ const PaymentSuccessPage = () => {
         transition={{ duration: 0.5 }}
         className="container mx-auto px-4 max-w-md"
       >
-        <Card className="glass-effect border-white/10 text-center">
+        <Card className="glass-effect border-sillage-gold/20 text-center">
           <CardHeader>
-            <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-r from-green-400 to-blue-500 mb-4">
+            <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-gradient-to-r from-sillage-gold to-sillage-gold-bright mb-4">
               <CheckCircle className="h-10 w-10 text-white" />
             </div>
-            <CardTitle className="text-3xl font-display font-bold text-white">
+            <CardTitle className="text-3xl font-display font-bold text-foreground">
               ¡Pago Exitoso!
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <p className="text-white/80 text-lg">
+            <p className="text-muted-foreground text-lg">
               Gracias por tu compra. Tu pedido ha sido confirmado y está siendo procesado.
             </p>
             
             {order && (
-              <div className="bg-white/5 rounded-lg p-4 text-left">
-                <h4 className="text-white font-semibold mb-2">Detalles del Pedido:</h4>
-                <p className="text-white/70 text-sm">ID: #{order.id}</p>
-                <p className="text-white/70 text-sm">Total: ${order.total_amount}</p>
-                <p className="text-white/70 text-sm">Estado: {order.status === 'paid' ? 'Pagado' : order.status}</p>
+              <div className="bg-sillage-gold/5 border border-sillage-gold/20 rounded-lg p-4 text-left">
+                <h4 className="text-sillage-gold-dark font-semibold mb-2">Detalles del Pedido:</h4>
+                <p className="text-muted-foreground text-sm">ID: #{order.id}</p>
+                <p className="text-muted-foreground text-sm">Total: ${order.total_amount}</p>
+                <p className="text-muted-foreground text-sm">Estado: {order.status === 'paid' ? 'Pagado' : order.status}</p>
               </div>
             )}
             
-            <p className="text-white/70 text-sm">
+            <p className="text-muted-foreground text-sm">
               Recibirás un email con los detalles de tu pedido en breve.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/productos">
-                <Button className="w-full sm:w-auto floating-button-secondary text-white font-semibold">
+                <Button className="w-full sm:w-auto bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white font-semibold">
                   <ShoppingBag className="mr-2 h-4 w-4" />
                   Seguir Comprando
                 </Button>
               </Link>
               <Link to="/perfil">
-                <Button variant="outline" className="w-full sm:w-auto glass-effect border-white/30 text-white hover:bg-white/10">
+                <Button variant="outline" className="w-full sm:w-auto border-sillage-gold text-sillage-gold-dark hover:bg-sillage-gold hover:text-white">
                   Ver Mis Pedidos
                 </Button>
               </Link>

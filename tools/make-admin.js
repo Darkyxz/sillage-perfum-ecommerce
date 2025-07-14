@@ -7,33 +7,94 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 async function makeAdmin(email) {
   try {
-    // Primero obtener el usuario por email
-    const { data: { user }, error: userError } = await supabase.auth.admin.getUserByEmail(email);
+    console.log(`🔍 Buscando usuario: ${email}`);
     
-    if (userError) {
-      console.error('Error obteniendo usuario:', userError);
-      return;
-    }
-
-    if (!user) {
-      console.log('Usuario no encontrado');
-      return;
-    }
-
-    // Actualizar el perfil para hacer admin
-    const { data, error } = await supabase
+    // Primero verificar si el usuario existe en la tabla profiles
+    const { data: profiles, error: profilesError } = await supabase
       .from('profiles')
-      .update({ role: 'admin' })
-      .eq('id', user.id);
-
-    if (error) {
-      console.error('Error actualizando perfil:', error);
+      .select('*')
+      .limit(10);
+    
+    console.log('📊 Usuarios existentes en profiles:', profiles);
+    
+    if (profilesError) {
+      console.error('❌ Error verificando tabla profiles:', profilesError);
       return;
     }
 
-    console.log(`✅ Usuario ${email} convertido a admin exitosamente`);
+    // Obtener usuarios de auth
+    const { data: { users }, error: usersError } = await supabase.auth.admin.listUsers();
+    
+    if (usersError) {
+      console.error('❌ Error obteniendo usuarios:', usersError);
+      return;
+    }
+
+    console.log('👥 Usuarios en auth:', users?.map(u => ({ id: u.id, email: u.email })));
+    
+    // Buscar el usuario específico
+    const user = users?.find(u => u.email === email);
+    
+    if (!user) {
+      console.log('❌ Usuario no encontrado en auth');
+      return;
+    }
+
+    console.log('✅ Usuario encontrado:', { id: user.id, email: user.email });
+
+    // Verificar si ya existe en profiles
+    const { data: existingProfile, error: existingError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single();
+    
+    if (existingError && existingError.code !== 'PGRST116') {
+      console.error('❌ Error verificando perfil existente:', existingError);
+    }
+
+    if (existingProfile) {
+      console.log('📝 Perfil existente:', existingProfile);
+      
+      // Actualizar perfil existente
+      const { data, error } = await supabase
+        .from('profiles')
+        .update({ role: 'admin' })
+        .eq('id', user.id)
+        .select();
+
+      if (error) {
+        console.error('❌ Error actualizando perfil:', error);
+        return;
+      }
+
+      console.log('✅ Perfil actualizado:', data);
+    } else {
+      console.log('📝 Creando nuevo perfil...');
+      
+      // Crear nuevo perfil
+      const { data, error } = await supabase
+        .from('profiles')
+        .insert({
+          id: user.id,
+          full_name: user.user_metadata?.full_name || user.email,
+          role: 'admin',
+          avatar_url: null
+        })
+        .select();
+
+      if (error) {
+        console.error('❌ Error creando perfil:', error);
+        return;
+      }
+
+      console.log('✅ Perfil creado:', data);
+    }
+
+    console.log(`🎉 Usuario ${email} convertido a admin exitosamente`);
+    
   } catch (error) {
-    console.error('Error:', error);
+    console.error('💥 Error general:', error);
   }
 }
 

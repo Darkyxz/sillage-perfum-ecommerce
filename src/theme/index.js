@@ -1,22 +1,25 @@
-// Theme configuration
+// Theme configuration centralizada para Sillage Perfume
 export const theme = {
   colors: {
-    // Primary colors (gold theme)
-    primary: {
+    // Colores principales de Sillage (dorado/oro)
+    'sillage-gold': {
       50: '#FFFAF0',
-      100: '#FEF3C7',
+      100: '#FEF3C7', 
       200: '#FDE68A',
       300: '#FCD34D',
       400: '#FBBF24',
-      500: '#F59E0B', // Main gold color
-      600: '#D97706',
-      700: '#B45309',
+      500: '#DAA520', // Goldenrod principal
+      600: '#c4965a', // Dorado oscuro usado en build
+      700: '#b8864f', // Dorado profundo
       800: '#92400E',
       900: '#78350F',
+      'warm': '#daaf60', // Dorado cálido
+      'bright': '#f0c674', // Dorado brillante usado en build
+      'warm-bright': '#e6b960',
     },
     
-    // Neutral colors
-    neutral: {
+    // Colores neutros oscuros para el tema
+    'sillage-dark': {
       50: '#FAFAFA',
       100: '#F5F5F5',
       200: '#E5E5E5',
@@ -25,99 +28,113 @@ export const theme = {
       500: '#737373',
       600: '#525252',
       700: '#404040',
-      800: '#262626',
-      900: '#171717',
+      800: '#262626', // Usado para fondos oscuros
+      900: '#171717', // Slate-900 equivalente
+      'lighter': '#3C2415',
+      'light': '#2D1810',
+      'DEFAULT': '#1F0F0A',
     },
     
-    // Success colors
+    // Colores crema para fondos suaves
+    'sillage-cream': {
+      50: '#FCFCFC',
+      100: '#FAFAFA',
+      200: '#F7F7F7',
+      300: '#F0F0F0',
+      400: '#E8E8E8',
+      500: '#E0E0E0',
+      'DEFAULT': 'rgba(252, 248, 237, 0.95)',
+      'warm': 'rgba(254, 252, 237, 0.95)',
+      'light': 'rgba(253, 250, 243, 0.9)',
+      'subtle': 'rgba(245, 241, 232, 0.9)',
+    },
+    
+    // Colores de gradientes para botones y elementos especiales
+    'sillage-gradient': {
+      'purple-pink': 'linear-gradient(to right, #a855f7, #ec4899)',
+      'purple-to-pink': 'linear-gradient(to right, #8b5cf6, #ec4899)',
+      'gold-warm': 'linear-gradient(to right, #DAA520, #c4965a)',
+      'gold-bright': 'linear-gradient(to right, #f0c674, #DAA520)',
+    },
+    
+    // Status colors
     success: {
       100: '#DCFCE7',
       500: '#22C55E',
       900: '#14532D',
     },
     
-    // Warning colors
     warning: {
       100: '#FEF3C7',
       500: '#F59E0B',
       900: '#78350F',
     },
     
-    // Error colors
     error: {
       100: '#FEE2E2',
       500: '#EF4444',
       900: '#7F1D1D',
     },
     
-    // Background and foreground
+    // Semantic colors (modo claro)
     background: 'hsl(0 0% 100%)',
     foreground: 'hsl(240 10% 3.9%)',
     
-    // Card colors
     card: 'hsl(0 0% 100%)',
     'card-foreground': 'hsl(240 10% 3.9%)',
     
-    // Popover colors
     popover: 'hsl(0 0% 100%)',
     'popover-foreground': 'hsl(240 10% 3.9%)',
     
-    // Primary colors (semantic)
+    // Primary usa sillage-gold
     primary: 'hsl(43 96% 50%)', // Gold
     'primary-foreground': 'hsl(0 0% 100%)',
     
-    // Secondary colors
     secondary: 'hsl(240 4.8% 95.9%)',
     'secondary-foreground': 'hsl(240 5.9% 10%)',
     
-    // Muted colors
     muted: 'hsl(240 4.8% 95.9%)',
     'muted-foreground': 'hsl(240 3.8% 46.1%)',
     
-    // Accent colors
     accent: 'hsl(240 4.8% 95.9%)',
     'accent-foreground': 'hsl(240 5.9% 10%)',
     
-    // Destructive colors
     destructive: 'hsl(0 84.2% 60.2%)',
     'destructive-foreground': 'hsl(0 0% 98%)',
     
-    // Border and input
     border: 'hsl(240 5.9% 90%)',
     input: 'hsl(240 5.9% 90%)',
-    
-    // Ring
     ring: 'hsl(43 96% 50%)', // Gold ring
   },
   
   // Dark mode overrides
   dark: {
-    background: 'hsl(20 14.3% 4.1%)',
-    foreground: 'hsl(0 0% 95%)',
+    background: 'hsl(222 84% 4.9%)', // Slate-900 equivalente
+    foreground: 'hsl(210 40% 98%)',
     
-    card: 'hsl(24 9.8% 10%)',
-    'card-foreground': 'hsl(0 0% 95%)',
+    card: 'hsl(222 84% 4.9%)',
+    'card-foreground': 'hsl(210 40% 98%)',
     
-    popover: 'hsl(0 0% 9%)',
-    'popover-foreground': 'hsl(0 0% 95%)',
+    popover: 'hsl(222 84% 4.9%)',
+    'popover-foreground': 'hsl(210 40% 98%)',
     
-    primary: 'hsl(43 96% 50%)', // Gold
+    primary: 'hsl(43 96% 50%)', // Gold se mantiene
     'primary-foreground': 'hsl(0 0% 100%)',
     
-    secondary: 'hsl(240 3.7% 15.9%)',
-    'secondary-foreground': 'hsl(0 0% 98%)',
+    secondary: 'hsl(217 32% 17%)',
+    'secondary-foreground': 'hsl(210 40% 98%)',
     
-    muted: 'hsl(0 0% 14.9%)',
-    'muted-foreground': 'hsl(240 5% 64.9%)',
+    muted: 'hsl(217 32% 17%)',
+    'muted-foreground': 'hsl(215 20% 65%)',
     
-    accent: 'hsl(12 6.5% 15.1%)',
-    'accent-foreground': 'hsl(0 0% 98%)',
+    accent: 'hsl(217 32% 17%)',
+    'accent-foreground': 'hsl(210 40% 98%)',
     
     destructive: 'hsl(0 62.8% 30.6%)',
     'destructive-foreground': 'hsl(0 85.7% 97.3%)',
     
-    border: 'hsl(240 3.7% 15.9%)',
-    input: 'hsl(240 3.7% 15.9%)',
+    border: 'hsl(217 32% 17%)',
+    input: 'hsl(217 32% 17%)',
     ring: 'hsl(43 96% 50%)', // Gold ring
   },
   

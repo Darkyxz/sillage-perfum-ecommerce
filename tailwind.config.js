@@ -1,6 +1,5 @@
 /** @type {import('tailwindcss').Config} */
 const { fontFamily } = require('tailwindcss/defaultTheme');
-const colors = require('tailwindcss/colors');
 
 module.exports = {
   darkMode: ['class'],
@@ -19,87 +18,95 @@ module.exports = {
       },
     },
     extend: {
-      // Base colors from our theme
       colors: {
-        // Semantic colors
-        border: 'var(--border)',
-        input: 'var(--input)',
-        ring: 'var(--ring)',
-        background: 'var(--background)',
-        foreground: 'var(--foreground)',
-        
-        // Primary colors (gold theme)
+        'sillage-gold': {
+          DEFAULT: 'hsl(var(--sillage-gold))',
+          50: '#FFFAF0',
+          100: '#FEF3C7', 
+          200: '#FDE68A',
+          300: '#FCD34D',
+          400: '#FBBF24',
+          500: '#DAA520', // goldenrod principal
+          600: 'hsl(var(--sillage-gold-dark))', // #c4965a
+          700: '#b8864f', // dorado profundo
+          800: '#92400E',
+          900: '#78350F',
+          'warm': 'hsl(var(--sillage-gold-warm))', // #daaf60
+          'dark': 'hsl(var(--sillage-gold-dark))', // #c4965a
+          'deep': '#b8864f',
+          'bright': 'hsl(var(--sillage-gold-bright))', // #f0c674
+          'warm-bright': '#e6b960',
+        },
+        'sillage-cream': {
+          DEFAULT: 'rgba(252, 248, 237, 0.95)',
+          warm: 'rgba(254, 252, 237, 0.95)',
+          light: 'rgba(253, 250, 243, 0.9)',
+          subtle: 'rgba(245, 241, 232, 0.9)',
+        },
+        'sillage-dark': {
+          DEFAULT: 'hsl(var(--sillage-dark))',
+          light: '#2D1810',
+          lighter: 'hsl(var(--sillage-dark-lighter))', // #3C2415
+          900: 'hsl(var(--sillage-dark-900))', // equivalente a slate-900
+        },
+        'sillage-gray': {
+          light: 'hsl(var(--sillage-gray-light))',
+          medium: 'hsl(var(--sillage-gray-medium))',
+        },
+        border: 'hsl(var(--border))',
+        input: 'hsl(var(--input))',
+        ring: 'hsl(var(--ring))',
+        background: 'hsl(var(--background))',
+        foreground: 'hsl(var(--foreground))',
         primary: {
-          DEFAULT: 'var(--primary)',
-          foreground: 'var(--primary-foreground)',
-          50: 'var(--primary-50)',
-          100: 'var(--primary-100)',
-          200: 'var(--primary-200)',
-          300: 'var(--primary-300)',
-          400: 'var(--primary-400)',
-          500: 'var(--primary-500)',
-          600: 'var(--primary-600)',
-          700: 'var(--primary-700)',
-          800: 'var(--primary-800)',
-          900: 'var(--primary-900)',
+          DEFAULT: 'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
         },
-        
-        // Secondary colors
         secondary: {
-          DEFAULT: 'var(--secondary)',
-          foreground: 'var(--secondary-foreground)',
+          DEFAULT: 'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
         },
-        
-        // Destructive colors
         destructive: {
-          DEFAULT: 'var(--destructive)',
-          foreground: 'var(--destructive-foreground)',
+          DEFAULT: 'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
         },
-        
-        // Muted colors
         muted: {
-          DEFAULT: 'var(--muted)',
-          foreground: 'var(--muted-foreground)',
+          DEFAULT: 'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
         },
-        
-        // Accent colors
         accent: {
-          DEFAULT: 'var(--accent)',
-          foreground: 'var(--accent-foreground)',
+          DEFAULT: 'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
         },
-        
-        // Popover colors
         popover: {
-          DEFAULT: 'var(--popover)',
-          foreground: 'var(--popover-foreground)',
+          DEFAULT: 'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
         },
-        
-        // Card colors
         card: {
-          DEFAULT: 'var(--card)',
-					foreground: 'hsl(var(--card-foreground))',
-				},
-			},
-			borderRadius: {
-				lg: 'var(--radius)',
-				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)',
-			},
-			keyframes: {
-				'accordion-down': {
-					from: { height: 0 },
-					to: { height: 'var(--radix-accordion-content-height)' },
-				},
-				'accordion-up': {
-					from: { height: 'var(--radix-accordion-content-height)' },
-					to: { height: 0 },
-				},
-			},
-			animation: {
-				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out',
-			},
-		},
-	},
-	plugins: [require('tailwindcss-animate')],
+          DEFAULT: 'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
+        },
+      },
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
+      },
+      keyframes: {
+        'accordion-down': {
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' },
+        },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' },
+        },
+      },
+      animation: {
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
+      },
+    },
+  },
+  plugins: [require('tailwindcss-animate')],
 };

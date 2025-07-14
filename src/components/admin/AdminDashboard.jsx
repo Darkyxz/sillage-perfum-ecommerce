@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Plus, BarChart3 } from 'lucide-react';
+import { Plus, BarChart3, Database } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import OrderStats from './OrderStats';
 import ProductForm from './ProductForm';
@@ -11,6 +11,7 @@ import { productService } from '@/lib/productService';
 
 const AdminDashboard = ({ stats, products, onProductAdded }) => {
   const [isAddFormOpen, setIsAddFormOpen] = useState(false);
+  const [loadingZacharProducts, setLoadingZacharProducts] = useState(false);
 
   const handleAddProduct = async (newProductData) => {
     try {
@@ -38,6 +39,37 @@ const AdminDashboard = ({ stats, products, onProductAdded }) => {
         description: "No se pudo agregar el producto. Intenta de nuevo.",
         variant: "destructive",
       });
+    }
+  };
+
+  const handleLoadZacharProducts = async () => {
+    if (!window.confirm('¿Estás seguro? Esto eliminará todos los productos actuales y los reemplazará con los productos de Zachary Perfumes.')) {
+      return;
+    }
+
+    try {
+      setLoadingZacharProducts(true);
+      
+      // Importación dinámica para evitar errores de SSR
+      const { loadZacharProducts } = await import('@/scripts/loadZacharProducts');
+      const newProducts = await loadZacharProducts();
+      
+      toast({
+        title: "¡Productos cargados exitosamente!",
+        description: `Se han cargado ${newProducts?.length || 0} productos de Zachary Perfumes.`,
+      });
+      
+      // Recargar la página para refrescar todos los datos
+      window.location.reload();
+    } catch (error) {
+      console.error('Error loading Zachary products:', error);
+      toast({
+        title: "Error al cargar productos",
+        description: "No se pudieron cargar los productos de Zachary. Intenta de nuevo.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingZacharProducts(false);
     }
   };
 
@@ -100,6 +132,16 @@ const AdminDashboard = ({ stats, products, onProductAdded }) => {
             >
               <Plus className="mr-2 h-4 w-4" />
               Agregar Producto
+            </Button>
+            
+            <Button
+              onClick={handleLoadZacharProducts}
+              disabled={loadingZacharProducts}
+              className="w-full admin-button"
+              variant="secondary"
+            >
+              <Database className="mr-2 h-4 w-4" />
+              {loadingZacharProducts ? 'Cargando...' : 'Cargar Productos Zachary'}
             </Button>
             
             <Button

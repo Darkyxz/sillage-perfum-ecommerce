@@ -88,7 +88,7 @@ declare module 'postcss' {
     function atRule(opts?: any): any;
     function decl(opts?: any): any;
     function comment(opts?: any): any;
-    function vendor: {
+    function vendor(): {
       prefix: (prop: string) => string;
       unprefixed: (prop: string) => string;
     };

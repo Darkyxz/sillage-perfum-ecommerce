@@ -24,6 +24,15 @@ export default defineConfig({
 			'Cross-Origin-Embedder-Policy': 'credentialless',
 		},
 		allowedHosts: true,
+		// Configuración para manejar mejor Ctrl+C
+		host: true,
+		port: 5173,
+		strictPort: false,
+		// Configurar señales de cierre
+		watch: {
+			usePolling: false,
+			ignored: ['**/node_modules/**', '**/.git/**']
+		}
 	},
 	resolve: {
 		extensions: ['.jsx', '.js', '.tsx', '.ts', '.json', ],

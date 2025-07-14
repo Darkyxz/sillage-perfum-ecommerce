@@ -8,7 +8,6 @@ import { useCart } from '@/contexts/CartContext';
 import { useFavorites } from '@/contexts/FavoritesContext';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
-import ThemeToggle from '@/components/ThemeToggle';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -17,18 +16,12 @@ const Header = () => {
   const { getFavoritesCount } = useFavorites();
   const navigate = useNavigate();
 
-  // Efecto para verificar datos del usuario
+  // Solo verificar el avatar si existe
   useEffect(() => {
-    // Depuración: Verificar datos del usuario
-    console.log('Datos del usuario:', user);
-    if (user) {
-      console.log('Avatar URL:', user.avatar);
+    if (user?.avatar_url) {
       // Verificar si la URL del avatar es accesible
-      if (user.avatar) {
-        fetch(user.avatar, { method: 'HEAD' })
-          .then(res => console.log('Estado del avatar:', res.status, res.statusText))
-          .catch(err => console.error('Error al cargar el avatar:', err));
-      }
+      fetch(user.avatar_url, { method: 'HEAD' })
+        .catch(err => console.warn('Avatar no accesible:', err));
     }
   }, [user]);
 
@@ -44,7 +37,7 @@ const Header = () => {
     <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      className="relative bg-white dark:bg-amber-900/90 backdrop-blur-md sticky top-0 z-50 border-b border-gray-200 dark:border-amber-700 shadow-sm overflow-hidden"
+      className="relative bg-black backdrop-blur-md sticky top-0 z-50 border-b border-border shadow-sm overflow-hidden"
     >
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
@@ -53,7 +46,7 @@ const Header = () => {
             <div className="w-8 h-8 flex items-center justify-center">
               <img src="/icon.svg" alt="Sillage Perfum" className="w-8 h-8" />
             </div>
-            <span className="text-2xl font-display font-bold text-foreground">
+            <span className="text-2xl font-display font-bold text-sillage-gold">
               Sillage Perfum
             </span>
           </Link>
@@ -62,32 +55,40 @@ const Header = () => {
           <nav className="hidden md:flex items-center space-x-8">
             <Link
               to="/"
-              className="text-muted-foreground hover:text-primary transition-colors font-medium text-sm uppercase tracking-wide"
+              className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium text-sm uppercase tracking-wide px-3 py-2 rounded-md"
             >
               Home
             </Link>
             <Link
               to="/productos"
-              className="text-muted-foreground hover:text-primary transition-colors font-medium text-sm uppercase tracking-wide"
+              className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium text-sm uppercase tracking-wide px-3 py-2 rounded-md"
             >
               Perfumes
             </Link>
-            <Link
-              to="/sobre-nosotros"
-              className="text-muted-foreground hover:text-primary transition-colors font-medium text-sm uppercase tracking-wide"
+            <button
+              onClick={() => {
+                const aboutSection = document.getElementById('about-section');
+                if (aboutSection) {
+                  aboutSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                  // Si no estamos en home, navegar a home
+                  window.location.href = '/#about';
+                }
+              }}
+              className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium text-sm uppercase tracking-wide px-3 py-2 rounded-md"
             >
               About
-            </Link>
+            </button>
             <Link
               to="/contacto"
-              className="text-muted-foreground hover:text-primary transition-colors font-medium text-sm uppercase tracking-wide"
+              className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium text-sm uppercase tracking-wide px-3 py-2 rounded-md"
             >
               Contact
             </Link>
             {user?.role === 'admin' && (
               <Link
                 to="/admin"
-                className="text-muted-foreground hover:text-primary transition-colors font-medium text-sm uppercase tracking-wide"
+                className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium text-sm uppercase tracking-wide px-3 py-2 rounded-md"
               >
                 Admin
               </Link>
@@ -100,7 +101,7 @@ const Header = () => {
             <Button
               variant="ghost"
               size="icon"
-              className="text-muted-foreground hover:text-primary hover:bg-accent/50 transition-colors"
+              className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors"
               onClick={() => {
                 toast({
                   title: "Búsqueda",
@@ -111,19 +112,17 @@ const Header = () => {
               <Search className="h-5 w-5" />
             </Button>
 
-            {/* Theme Toggle */}
-            <ThemeToggle />
 
             {/* Wishlist */}
             <Link to="/favoritos">
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-[#c4965a] hover:text-[#f0c674] hover:bg-amber-50 dark:text-[#c4965a] dark:hover:text-[#f0c674] dark:hover:bg-amber-800/20 transition-colors relative"
+                className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors relative"
               >
                 <Heart className="h-5 w-5" />
                 {getFavoritesCount() > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-[#f0c674] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                  <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold border-2 border-background shadow-lg">
                     {getFavoritesCount()}
                   </span>
                 )}
@@ -135,11 +134,11 @@ const Header = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-[#c4965a] hover:text-[#f0c674] hover:bg-amber-50 dark:text-[#c4965a] dark:hover:text-[#f0c674] dark:hover:bg-amber-800/20 transition-colors relative"
+                className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors relative"
               >
                 <ShoppingCart className="h-5 w-5" />
                 {getTotalItems() > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-[#f0c674] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                  <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold border-2 border-background shadow-lg">
                     {getTotalItems()}
                   </span>
                 )}
@@ -151,8 +150,8 @@ const Header = () => {
               {user ? (
                 <div className="flex items-center space-x-2">
                   <div className="relative" style={{ minWidth: '36px' }}>
-                    <Link to="/perfil" className="block w-9 h-9 rounded-full overflow-hidden border-2 border-amber-300 dark:border-amber-600">
-                      <div className="w-full h-full flex items-center justify-center bg-amber-100 dark:bg-amber-900">
+                    <Link to="/perfil" className="block w-9 h-9 rounded-full overflow-hidden border-2 border-primary">
+                      <div className="w-full h-full flex items-center justify-center bg-primary/10">
                         {user.email ? (
                           <span className="font-medium text-primary text-lg font-bold">
                             {user.email.charAt(0).toUpperCase()}
@@ -162,13 +161,13 @@ const Header = () => {
                         )}
                       </div>
                     </Link>
-                    <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-amber-900"></div>
+                    <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-background"></div>
                   </div>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={handleAuthAction}
-                    className="text-muted-foreground hover:text-destructive hover:bg-accent/50 transition-colors text-sm"
+                    className="text-sillage-gold-dark hover:text-destructive hover:bg-sillage-gold/10 transition-colors text-sm px-3 py-2 rounded-md"
                   >
                     Salir
                   </Button>
@@ -178,7 +177,7 @@ const Header = () => {
                   variant="ghost"
                   size="icon"
                   onClick={handleAuthAction}
-                  className="text-muted-foreground hover:text-primary hover:bg-accent/50 transition-colors"
+                  className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors"
                 >
                   <User className="h-5 w-5" />
                 </Button>
@@ -189,7 +188,7 @@ const Header = () => {
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden text-[#c4965a] hover:text-[#f0c674] hover:bg-amber-50 dark:text-[#c4965a] dark:hover:text-[#f0c674] dark:hover:bg-amber-800/20"
+              className="md:hidden text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -203,32 +202,32 @@ const Header = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden mt-4 pt-4 border-t border-gray-200 dark:border-amber-700"
+            className="md:hidden mt-4 pt-4 border-t border-border"
           >
             <nav className="flex flex-col space-y-4">
               <Link
                 to="/"
-                className="text-muted-foreground hover:text-primary transition-colors font-medium"
+                className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium px-3 py-2 rounded-md"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Inicio
               </Link>
               <Link
                 to="/productos"
-                className="text-muted-foreground hover:text-primary transition-colors font-medium"
+                className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium px-3 py-2 rounded-md"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Productos
               </Link>
               <Link
                 to="/favoritos"
-                className="text-[#c4965a] hover:text-[#f0c674] dark:text-[#c4965a] dark:hover:text-[#f0c674] transition-colors font-medium flex items-center"
+                className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium flex items-center px-3 py-2 rounded-md"
                 onClick={() => setIsMenuOpen(false)}
               >
                 <Heart className="h-4 w-4 mr-2" />
                 Favoritos
                 {getFavoritesCount() > 0 && (
-                  <span className="ml-2 bg-[#f0c674] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                  <span className="ml-2 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold border-2 border-background shadow-lg">
                     {getFavoritesCount()}
                   </span>
                 )}
@@ -236,7 +235,7 @@ const Header = () => {
               {user?.role === 'admin' && (
                 <Link
                   to="/admin"
-                  className="text-muted-foreground hover:text-primary transition-colors font-medium"
+                  className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium px-3 py-2 rounded-md"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Admin
@@ -251,3 +250,4 @@ const Header = () => {
 };
 
 export default Header;
+

@@ -218,7 +218,7 @@ const ProductManagement = () => {
                         variant="ghost"
                         size="icon"
                         onClick={() => handleToggleFeatured(product)}
-                        className={`${product.is_featured ? 'text-yellow-400' : 'text-gray-400'} hover:bg-yellow-500/10 h-10 w-10`}
+                        className={`${product.is_featured ? 'text-yellow-400' : 'text-muted-foreground'} hover:bg-yellow-500/10 h-10 w-10`}
                         title={product.is_featured ? 'Quitar de destacados' : 'Destacar producto'}
                       >
                         <Star className={`h-5 w-5 ${product.is_featured ? 'fill-current' : ''}`} />
@@ -240,7 +240,7 @@ const ProductManagement = () => {
                             handleDeleteProduct(product.id);
                           }
                         }}
-                        className="text-red-400 hover:bg-red-500/10 h-10 w-10"
+                        className="text-destructive hover:bg-destructive/10 h-10 w-10"
                         title="Eliminar producto"
                       >
                         <Trash2 className="h-5 w-5" />

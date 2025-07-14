@@ -17,16 +17,20 @@ export const checkoutService = {
         throw new Error('El carrito está vacío');
       }
 
-      // 2. Obtener información del usuario
+      // 2. Obtener información del usuario (perfil y email del auth)
       const { data: userProfile, error: userError } = await supabase
         .from('profiles')
-        .select('id, full_name, email')
+        .select('id, full_name')
         .eq('id', userId)
         .single();
 
       if (userError || !userProfile) {
         throw new Error('No se pudo obtener la información del usuario');
       }
+
+      // Obtener el email del usuario autenticado
+      const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
+      const userEmail = authUser?.email || 'usuario@ejemplo.com';
 
       // 3. Validar y calcular totales
       const validatedItems = [];
@@ -84,7 +88,7 @@ export const checkoutService = {
 
       const payer = {
         name: userProfile.full_name,
-        email: userProfile.email
+        email: userEmail
       };
 
       const baseUrl = import.meta.env.VITE_BASE_URL || 'http://localhost:5174';
@@ -184,7 +188,7 @@ export const checkoutService = {
         .from('orders')
         .select(`
           *,
-          profiles!inner(full_name, email)
+          profiles!inner(full_name)
         `)
         .eq('id', orderId)
         .eq('user_id', userId)

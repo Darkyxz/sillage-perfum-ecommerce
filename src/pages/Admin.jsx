@@ -17,25 +17,25 @@ const Admin = () => {
       title: "Total Productos",
       value: "0",
       icon: Package,
-      color: "text-yellow-400"
+      color: "text-sillage-gold"
     },
     {
       title: "Ventas del Mes",
       value: "$0",
       icon: DollarSign,
-      color: "text-yellow-400"
+      color: "text-sillage-gold"
     },
     {
       title: "Usuarios Activos",
       value: "0",
       icon: Users,
-      color: "text-yellow-400"
+      color: "text-sillage-gold"
     },
     {
       title: "Pedidos Pendientes",
       value: "0",
       icon: BarChart3,
-      color: "text-yellow-400"
+      color: "text-sillage-gold"
     }
   ]);
 
@@ -79,10 +79,10 @@ const Admin = () => {
       <div className="min-h-screen py-8">
         <div className="container mx-auto px-4">
           <div className="text-center py-16">
-            <h1 className="text-3xl font-bold text-yellow-50 mb-4">
+            <h1 className="text-3xl font-bold text-destructive mb-4">
               Acceso Denegado
             </h1>
-            <p className="text-yellow-100/80">
+            <p className="text-muted-foreground">
               No tienes permisos para acceder al panel de administración.
             </p>
           </div>

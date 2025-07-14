@@ -150,8 +150,8 @@ const Cart = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center">
-              <Loader2 className="h-12 w-12 animate-spin text-amber-600 dark:text-amber-400 mx-auto mb-4" />
-              <p className="text-amber-800 dark:text-amber-100/80">Cargando carrito...</p>
+              <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
+              <p className="text-muted-foreground">Cargando carrito...</p>
             </div>
           </div>
         </div>
@@ -174,22 +174,22 @@ const Cart = () => {
             className="text-center py-16"
           >
             <div className="glass-effect w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
-              <ShoppingCart className="h-12 w-12 text-amber-600 dark:text-amber-400" />
+              <ShoppingCart className="h-12 w-12 text-primary" />
             </div>
             
-            <h1 className="text-3xl font-display font-bold text-amber-800 dark:text-amber-200 mb-4">
+            <h1 className="text-3xl font-display font-bold text-foreground mb-4">
               Tu carrito está vacío
             </h1>
             
-            <p className="text-amber-700 dark:text-amber-300 text-lg mb-8">
+            <p className="text-muted-foreground text-lg mb-8">
               Descubre nuestra increíble colección de perfumes
             </p>
             
-            <Link to="/productos">
-              <Button className="floating-button font-semibold px-8 py-3">
-                Explorar Productos
-              </Button>
-            </Link>
+              <Link to="/productos">
+                <Button className="bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white font-semibold px-8 py-3 transition-all duration-300">
+                  Explorar Productos
+                </Button>
+              </Link>
           </motion.div>
         </div>
       </div>
@@ -211,14 +211,14 @@ const Cart = () => {
         >
           <Link
             to="/productos"
-            className="inline-flex items-center text-yellow-100/80 hover:text-yellow-50 transition-colors mb-4"
+            className="inline-flex items-center text-muted-foreground hover:text-foreground transition-colors mb-4"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Continuar comprando
           </Link>
           
           <div className="flex items-center justify-between">
-            <h1 className="text-4xl font-display font-bold text-yellow-50">
+            <h1 className="text-4xl font-display font-bold text-foreground">
               Carrito de Compras
             </h1>
             
@@ -228,7 +228,7 @@ const Cart = () => {
                 clearCart();
                 setPreferenceId(null); 
               }}
-              className="glass-effect border-yellow-400/30 text-yellow-50 hover:bg-yellow-400/15"
+              className="glass-effect border-border/30 text-foreground hover:bg-accent/15"
             >
               Vaciar carrito
             </Button>
@@ -245,7 +245,7 @@ const Cart = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
               >
-                <Card className="glass-effect border-yellow-400/20">
+                <Card className="glass-effect border-border/20">
                   <CardContent className="p-6">
                     <div className="flex items-center space-x-4">
                       <div className="w-20 h-20 rounded-lg overflow-hidden glass-effect">
@@ -257,15 +257,15 @@ const Cart = () => {
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
-                            <ShoppingCart className="h-8 w-8 text-yellow-400/60" />
+                            <ShoppingCart className="h-8 w-8 text-muted-foreground/60" />
                           </div>
                         )}
                       </div>
                       
                       <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-yellow-50">{item.name}</h3>
-                        <p className="text-yellow-100/70 text-sm">{item.brand}</p>
-                        <p className="text-yellow-100/60 text-xs">SKU: {item.sku}</p>
+                        <h3 className="text-lg font-semibold text-foreground">{item.name}</h3>
+                        <p className="text-muted-foreground text-sm">{item.brand}</p>
+                        <p className="text-muted-foreground/80 text-xs">SKU: {item.sku}</p>
                       </div>
                       
                       <div className="flex items-center space-x-2">
@@ -273,12 +273,12 @@ const Cart = () => {
                           variant="outline"
                           size="icon"
                           onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                          className="glass-effect border-yellow-400/30 text-yellow-50 hover:bg-yellow-400/15"
+                          className="glass-effect border-border/30 text-foreground hover:bg-accent/15"
                         >
                           <Minus className="h-4 w-4" />
                         </Button>
                         
-                        <span className="text-yellow-50 font-semibold min-w-[2rem] text-center">
+                        <span className="text-foreground font-semibold min-w-[2rem] text-center">
                           {item.quantity}
                         </span>
                         
@@ -286,17 +286,17 @@ const Cart = () => {
                           variant="outline"
                           size="icon"
                           onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                          className="glass-effect border-yellow-400/30 text-yellow-50 hover:bg-yellow-400/15"
+                          className="glass-effect border-border/30 text-foreground hover:bg-accent/15"
                         >
                           <Plus className="h-4 w-4" />
                         </Button>
                       </div>
                       
                       <div className="text-right">
-                        <p className="text-yellow-400 font-semibold">
+                        <p className="text-primary font-semibold">
                           ${(parseFloat(item.price) * item.quantity).toLocaleString('es-CL')}
                         </p>
-                        <p className="text-yellow-100/70 text-sm">
+                        <p className="text-muted-foreground text-sm">
                           ${parseFloat(item.price).toLocaleString('es-CL')} c/u
                         </p>
                       </div>
@@ -305,7 +305,7 @@ const Cart = () => {
                         variant="outline"
                         size="icon"
                         onClick={() => removeFromCart(item.id)}
-                        className="glass-effect border-yellow-400/30 text-yellow-50 hover:bg-red-500/20 hover:border-red-500/50"
+                        className="glass-effect border-border/30 text-foreground hover:bg-destructive/20 hover:border-destructive/50"
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -323,27 +323,27 @@ const Cart = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <Card className="glass-effect border-yellow-400/20 sticky top-8">
+              <Card className="glass-effect border-border/20 sticky top-8">
                 <CardContent className="p-6">
-                  <h2 className="text-2xl font-display font-bold text-yellow-50 mb-6">
+                  <h2 className="text-2xl font-display font-bold text-foreground mb-6">
                     Resumen del Pedido
                   </h2>
                   
                   <div className="space-y-4 mb-6">
-                    <div className="flex justify-between text-yellow-100/80">
+                    <div className="flex justify-between text-muted-foreground">
                       <span>Subtotal ({items.length} productos)</span>
                       <span>${getTotalPrice().toLocaleString('es-CL')}</span>
                     </div>
                     
-                    <div className="flex justify-between text-yellow-100/80">
+                    <div className="flex justify-between text-muted-foreground">
                       <span>Envío</span>
-                      <span className="text-yellow-400">Gratis</span>
+                      <span className="text-primary">Gratis</span>
                     </div>
                     
-                    <div className="border-t border-yellow-400/30 pt-4">
-                      <div className="flex justify-between text-yellow-50 font-semibold text-lg">
+                    <div className="border-t border-border/30 pt-4">
+                      <div className="flex justify-between text-foreground font-semibold text-lg">
                         <span>Total</span>
-                        <span className="text-yellow-400">${getTotalPrice().toLocaleString('es-CL')}</span>
+                        <span className="text-primary">${getTotalPrice().toLocaleString('es-CL')}</span>
                       </div>
                     </div>
                   </div>
@@ -351,7 +351,7 @@ const Cart = () => {
                   <Button
                     onClick={handleCheckout}
                     disabled={isLoadingCheckout || !user}
-                    className="w-full floating-button text-black font-semibold py-3"
+                    className="w-full bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white font-semibold py-3 transition-all duration-300"
                   >
                     {isLoadingCheckout ? (
                       <>
@@ -367,14 +367,14 @@ const Cart = () => {
                   </Button>
                   
                   {!user && (
-                    <p className="text-yellow-100/70 text-sm text-center mt-4">
+                    <p className="text-muted-foreground text-sm text-center mt-4">
                       Debes iniciar sesión para continuar
                     </p>
                   )}
                   
                   {preferenceId && (
                     <div className="mt-4 p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
-                      <div className="flex items-center text-yellow-400">
+                      <div className="flex items-center text-primary">
                         <CheckCircle className="mr-2 h-4 w-4" />
                         <span className="text-sm">Preferencia creada: {preferenceId}</span>
                       </div>
