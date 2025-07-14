@@ -33,23 +33,23 @@ const Favorites = () => {
               animate={{ opacity: 1, y: 0 }}
               className="mb-8"
             >
-              <Heart className="w-16 h-16 text-amber-600 dark:text-amber-400 mx-auto mb-4" />
-              <h1 className="text-3xl font-bold text-amber-800 dark:text-amber-200 mb-2">
+              <Heart className="w-16 h-16 text-primary mx-auto mb-4" />
+              <h1 className="text-3xl font-bold text-foreground mb-2">
                 Tu lista de favoritos está vacía
               </h1>
-              <p className="text-amber-700 dark:text-amber-300 text-lg">
+              <p className="text-muted-foreground text-lg">
                 Agrega productos a tus favoritos para verlos aquí
               </p>
             </motion.div>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/productos">
-                <Button className="floating-button px-8 py-3">
+                <Button className="bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white font-semibold px-8 py-3 transition-all duration-300">
                   Explorar productos
                 </Button>
               </Link>
               <Link to="/">
-                <Button variant="outline" className="glass-effect border-amber-600 text-amber-600 hover:bg-amber-50 dark:border-amber-400 dark:text-amber-400 dark:hover:bg-amber-900/20">
+                <Button variant="outline" className="glass-effect border-border text-foreground hover:bg-accent">
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Volver al inicio
                 </Button>
@@ -71,11 +71,11 @@ const Favorites = () => {
         >
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <Heart className="w-8 h-8 text-amber-600 dark:text-amber-400" />
-              <h1 className="text-3xl font-bold text-amber-800 dark:text-amber-200">
+              <Heart className="w-8 h-8 text-primary" />
+              <h1 className="text-3xl font-bold text-foreground">
                 Mis Favoritos
               </h1>
-              <span className="bg-amber-600 text-white px-3 py-1 rounded-full text-sm font-semibold">
+              <span className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-semibold">
                 {favorites.length}
               </span>
             </div>
@@ -84,13 +84,13 @@ const Favorites = () => {
               <Button
                 variant="outline"
                 onClick={handleClearFavorites}
-                className="glass-effect border-red-500 text-red-500 hover:bg-red-50 dark:border-red-400 dark:text-red-400 dark:hover:bg-red-900/20"
+                className="glass-effect border-destructive text-destructive hover:bg-destructive/10"
               >
                 <Trash2 className="w-4 h-4 mr-2" />
                 Limpiar favoritos
               </Button>
               <Link to="/productos">
-                <Button variant="outline" className="glass-effect border-amber-600 text-amber-600 hover:bg-amber-50 dark:border-amber-400 dark:text-amber-400 dark:hover:bg-amber-900/20">
+                <Button variant="outline" className="glass-effect border-border text-foreground hover:bg-accent">
                   Continuar comprando
                 </Button>
               </Link>
@@ -117,7 +117,7 @@ const Favorites = () => {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="absolute top-2 right-2 glass-effect text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                      className="absolute top-2 right-2 glass-effect text-destructive hover:text-destructive/80 hover:bg-destructive/10"
                       onClick={() => handleRemoveFromFavorites(product.id)}
                     >
                       <Trash2 className="w-4 h-4" />
@@ -126,20 +126,20 @@ const Favorites = () => {
                 </CardHeader>
                 
                 <CardContent className="p-4">
-                  <CardTitle className="text-lg font-semibold text-amber-800 dark:text-amber-200 mb-2">
+                  <CardTitle className="text-lg font-semibold text-foreground mb-2">
                     {product.name}
                   </CardTitle>
-                  <p className="text-amber-700 dark:text-amber-300 text-sm mb-2">
+                  <p className="text-muted-foreground text-sm mb-2">
                     {product.brand}
                   </p>
-                  <p className="text-amber-600 dark:text-amber-400 text-sm line-clamp-2 mb-3">
+                  <p className="text-muted-foreground/80 text-sm line-clamp-2 mb-3">
                     {product.description}
                   </p>
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-amber-700 dark:text-amber-400">
+                    <span className="text-2xl font-bold text-primary">
                       ${product.price}
                     </span>
-                    <span className="text-sm text-amber-600 dark:text-amber-400">
+                    <span className="text-sm text-muted-foreground">
                       {product.size}
                     </span>
                   </div>
@@ -148,13 +148,13 @@ const Favorites = () => {
                 <CardFooter className="p-4 pt-0 flex gap-2">
                   <Button
                     onClick={() => handleAddToCart(product)}
-                    className="flex-1 floating-button"
+                    className="flex-1 bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white font-semibold transition-all duration-300"
                   >
                     <ShoppingCart className="w-4 h-4 mr-2" />
                     Agregar al carrito
                   </Button>
                   <Link to={`/productos/${product.id}`}>
-                    <Button variant="outline" className="glass-effect border-amber-600 text-amber-600 hover:bg-amber-50 dark:border-amber-400 dark:text-amber-400 dark:hover:bg-amber-900/20">
+                    <Button variant="outline" className="glass-effect border-border text-foreground hover:bg-accent">
                       Ver detalles
                     </Button>
                   </Link>

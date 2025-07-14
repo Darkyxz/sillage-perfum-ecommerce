@@ -22,7 +22,7 @@ export const QuantityDialog = ({ open, onOpenChange, product, onAddToCart }) => 
       <DialogContent className="max-w-md mx-auto p-0 overflow-hidden border-0 bg-transparent">
         <div className="relative">
           {/* Fondo con degradado dorado */}
-          <div className="absolute inset-0 bg-gradient-to-br from-amber-400 via-yellow-500 to-amber-600 dark:from-amber-500 dark:via-yellow-600 dark:to-amber-700 opacity-95 rounded-lg" />
+          <div className="absolute inset-0 bg-gradient-to-br from-sillage-gold via-sillage-gold-bright to-sillage-gold-dark opacity-95 rounded-lg" />
           
           {/* Patrón decorativo sutil */}
           <div className="absolute inset-0 opacity-5">
@@ -71,7 +71,7 @@ export const QuantityDialog = ({ open, onOpenChange, product, onAddToCart }) => 
             <DialogFooter className="space-y-3">
               <Button 
                 onClick={handleAddToCart} 
-                className="w-full bg-white text-amber-600 hover:bg-gray-100 font-bold py-3 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105"
+                className="w-full bg-white text-sillage-dark hover:bg-white/90 font-bold py-3 rounded-lg shadow-lg transition-all duration-300 transform hover:scale-105"
               >
                 Agregar al Carrito
               </Button>

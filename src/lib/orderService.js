@@ -114,44 +114,29 @@ export const orderService = {
   // Obtener todos los pedidos (para admin)
   async getAllOrders() {
     try {
-      // 1. Obtener todos los pedidos con sus items
+      console.log('🔍 orderService: Obteniendo todos los pedidos...');
+      
+      // Usar una consulta que haga JOIN con profiles para obtener la información del usuario
       const { data: orders, error: ordersError } = await supabase
         .from('orders')
         .select(`
           *,
-          order_items (
-            *,
-            product:products (*)
+          profiles!inner(
+            full_name
           )
         `)
         .order('created_at', { ascending: false });
 
-      if (ordersError) throw ordersError;
-      if (!orders || orders.length === 0) return [];
-
-      // 2. Extraer los IDs de usuario únicos
-      const userIds = [...new Set(orders.map(o => o.user_id))];
-
-      // 3. Obtener los perfiles para esos usuarios
-      const { data: profilesData, error: profilesError } = await supabase
-        .from('profiles')
-        .select('id, full_name, email')
-        .in('id', userIds);
-
-      if (profilesError) throw profilesError;
-
-      // 4. Mapear los perfiles a un objeto para búsqueda rápida
-      const profilesMap = new Map(profilesData.map(p => [p.id, p]));
-
-      // 5. Combinar los pedidos con la información de perfil
-      const ordersWithProfiles = orders.map(order => ({
-        ...order,
-        profiles: profilesMap.get(order.user_id) || { full_name: 'Usuario no encontrado', email: '' }
-      }));
-
-      return ordersWithProfiles;
+      if (ordersError) {
+        console.error('❌ orderService: Error obteniendo pedidos:', ordersError);
+        throw ordersError;
+      }
+      
+      console.log('📦 orderService: Pedidos obtenidos:', orders?.length || 0);
+      return orders || [];
     } catch (error) {
-      console.error('Error fetching all orders:', error);
+      console.error('❌ orderService: Error fetching all orders:', error);
+      console.error('❌ orderService: Error details:', error.message);
       throw error;
     }
   },
@@ -159,11 +144,14 @@ export const orderService = {
   // Obtener un pedido específico
   async getOrderById(orderId) {
     try {
-      // 1. Obtener el pedido y sus items
+      // Obtener el pedido con profile y sus items en una sola consulta
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .select(`
           *,
+          profiles!inner(
+            full_name
+          ),
           order_items (
             *,
             product:products (*)
@@ -173,24 +161,7 @@ export const orderService = {
         .single();
 
       if (orderError) throw orderError;
-      if (!order) return null;
-
-      // 2. Obtener el perfil del usuario
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('full_name, email')
-        .eq('id', order.user_id)
-        .single();
-      
-      if (profileError) {
-        console.warn("Could not fetch profile for order:", profileError);
-      }
-
-      // 3. Combinar pedido y perfil
-      return {
-        ...order,
-        profiles: profile || { full_name: 'Usuario no encontrado', email: '' }
-      };
+      return order;
     } catch (error) {
       console.error('Error fetching order:', error);
       throw error;

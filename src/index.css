@@ -1,1060 +1,182 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  /* Base colors - Light theme */
-  --background: 0 0% 100%;
-  --foreground: 240 10% 3.9%;
-  --card: 0 0% 100%;
-  --card-foreground: 240 10% 3.9%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 240 10% 3.9%;
-  --primary: 43 96% 50%; /* Gold */
-  --primary-foreground: 0 0% 100%;
-  --secondary: 240 4.8% 95.9%;
-  --secondary-foreground: 240 5.9% 10%;
-  --muted: 240 4.8% 95.9%;
-  --muted-foreground: 240 3.8% 46.1%;
-  --accent: 240 4.8% 95.9%;
-  --accent-foreground: 240 5.9% 10%;
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 0 0% 98%;
-  --border: 240 5.9% 90%;
-  --input: 240 5.9% 90%;
-  --ring: 43 96% 50%; /* Gold ring */
-  --radius: 0.5rem;
+@layer base {
+  :root {
+    /* Colores base de Sillage */
+    --background: 45 18% 85%; /* Fondo beige/crema elegante como la imagen */
+    --foreground: 35 50% 25%; /* Texto dorado oscuro */
+    --card: 45 22% 87%; /* Cards ligeramente más claras */
+    --card-foreground: 35 50% 25%;
+    --popover: 45 22% 87%;
+    --popover-foreground: 35 50% 25%;
+    
+    /* Colores principales - Sillage Gold */
+    --primary: 43 96% 50%; /* Gold principal */
+    --primary-foreground: 0 0% 100%;
+    --sillage-gold: 43 96% 50%; /* Variable principal dorada */
+    --sillage-gold-dark: 36 73% 38%; /* #c4965a en HSL */
+    --sillage-gold-bright: 48 85% 69%; /* #f0c674 en HSL */
+    --sillage-gold-warm: 42 68% 60%; /* #daaf60 en HSL */
+    
+    /* Colores neutros y oscuros */
+    --sillage-dark: 220 13% 18%; /* Slate-800 aproximado */
+    --sillage-dark-900: 222 47% 11%; /* Slate-900 más oscuro */
+    --sillage-dark-lighter: 32 24% 21%; /* #3C2415 */
+    --sillage-gray-light: 0 0% 83%; /* Para textos suaves */
+    --sillage-gray-medium: 0 0% 64%; /* Para textos intermedios */
+    
+    /* Colores semánticos */
+    --secondary: 45 15% 78%; /* Secondary beige más oscuro */
+    --secondary-foreground: 36 73% 38%; /* Texto dorado oscuro */
+    --muted: 45 12% 76%; /* Muted beige */
+    --muted-foreground: 36 73% 38%; /* Texto dorado oscuro para muted */
+    --accent: 45 15% 80%;
+    --accent-foreground: 36 73% 38%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 43 96% 50%; /* Bordes dorados */
+    --input: 45 20% 88%; /* Inputs con fondo beige */
+    --ring: 43 96% 50%; /* Gold ring */
+    
+    /* Gradientes personalizados */
+    --gradient-purple-pink: linear-gradient(to right, #a855f7, #ec4899);
+    --gradient-gold: linear-gradient(to right, hsl(var(--sillage-gold)), hsl(var(--sillage-gold-dark)));
+    
+    --radius: 0.5rem;
+  }
 
-  /* Gold color palette */
-  --primary-50: 48 100% 96%;
-  --primary-100: 45 96% 89%;
-  --primary-200: 45 96% 78%;
-  --primary-300: 45 96% 71%;
-  --primary-400: 44 96% 65%;
-  --primary-500: 43 96% 50%; /* Main gold */
-  --primary-600: 40 96% 45%;
-  --primary-700: 37 96% 40%;
-  --primary-800: 34 96% 35%;
-  --primary-900: 31 96% 30%;
 }
 
-.dark {
-  --background: 20 14.3% 4.1%;
-  --foreground: 0 0% 95%;
-  --card: 24 9.8% 10%;
-  --card-foreground: 0 0% 95%;
-  --popover: 0 0% 9%;
-  --popover-foreground: 0 0% 95%;
-  --primary: 43 96% 50%; /* Gold - same as light mode */
-  --primary-foreground: 0 0% 100%;
-  --secondary: 240 3.7% 15.9%;
-  --secondary-foreground: 0 0% 98%;
-  --muted: 0 0% 14.9%;
-  --muted-foreground: 240 5% 64.9%;
-  --accent: 12 6.5% 15.1%;
-  --accent-foreground: 0 0% 98%;
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 0 85.7% 97.3%;
-  --border: 240 3.7% 15.9%;
-  --input: 240 3.7% 15.9%;
-  --ring: 43 96% 50%; /* Gold ring - same as light mode */
+@layer base {
+  html {
+    background-color: hsl(var(--background)) !important;
+  }
+  * {
+    @apply border-border;
+  }
+  body {
+    background-color: hsl(var(--background)) !important;
+    color: hsl(var(--foreground)) !important;
+    font-family: 'Inter', sans-serif;
+  }
+  .font-display {
+    font-family: 'Playfair Display', serif;
+  }
+}
+
+@layer components {
+  /* Estilos personalizados de Sillage */
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary via-primary to-destructive bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--sillage-gold-bright)), hsl(var(--destructive)));
+  }
   
-  /* Dark mode gold palette */
-  --primary-50: 43 96% 96%;
-  --primary-100: 43 96% 89%;
-  --primary-200: 43 96% 78%;
-  --primary-300: 43 96% 71%;
-  --primary-400: 43 96% 65%;
-  --primary-500: 43 96% 50%; /* Main gold */
-  --primary-600: 43 96% 45%;
-  --primary-700: 43 96% 40%;
-  --primary-800: 43 96% 35%;
-  --primary-900: 43 96% 30%;
-}
-
-/* Asegurar que los textos en modo oscuro usen los colores correctos */
-.dark .text-foreground {
-  color: hsl(var(--foreground)) !important;
-}
-
-.dark .text-muted-foreground {
-  color: hsl(var(--muted-foreground)) !important;
-}
-
-.dark .text-primary {
-  color: hsl(var(--primary)) !important;
-}
-
-.dark .text-destructive {
-  color: hsl(var(--destructive)) !important;
-}
-
-* {
-  border-color: hsl(var(--border));
-}
-
-body {
-  background: hsl(var(--background));
-  font-family: 'Inter', sans-serif;
-  color: hsl(var(--foreground));
-  min-height: 100vh;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* Solo mejoras para modo claro - NO tocar modo oscuro */
-body:not(.dark) .text-gray-300 {
-  color: #daaf60; /* Warm gold instead of gray */
-}
-
-body:not(.dark) .text-gray-400 {
-  color: #c4965a; /* Slightly darker warm gold */
-}
-
-body:not(.dark) .bg-slate-800\/70 {
-  background-color: rgba(252, 248, 237, 0.95) !important; /* Warm cream background */
-  border-color: rgba(218, 165, 32, 0.3) !important; /* Gold border */
-}
-
-body:not(.dark) .border-slate-700 {
-  border-color: rgba(218, 165, 32, 0.4) !important; /* Gold border */
-}
-
-body:not(.dark) .text-pink-400 {
-  color: #daaf60 !important; /* Warm gold instead of pink */
-}
-
-body:not(.dark) .text-purple-400 {
-  color: #DAA520 !important; /* Gold instead of purple */
-}
-
-body:not(.dark) .text-red-400 {
-  color: #e6b960 !important; /* Bright warm gold instead of red */
-}
-
-body:not(.dark) .bg-slate-800\/50 {
-  background-color: rgba(253, 250, 243, 0.9) !important; /* Lighter warm cream */
-  border-color: rgba(218, 165, 32, 0.25) !important; /* Subtle gold border */
-}
-
-/* Text color overrides for light mode */
-body:not(.dark) .text-foreground {
-  color: hsl(var(--foreground)) !important;
-}
-
-body:not(.dark) .text-muted-foreground {
-  color: hsl(var(--muted-foreground)) !important;
-}
-
-body:not(.dark) .text-primary {
-  color: hsl(var(--primary)) !important;
-}
-
-/* Keep these for backward compatibility */
-body:not(.dark) .text-white {
-  color: var(--foreground) !important;
-}
-
-body:not(.dark) .text-white\/60 {
-  color: var(--muted-foreground) !important;
-}
-
-body:not(.dark) .text-white\/70 {
-  color: var(--foreground) !important;
-  opacity: 0.9;
-}
-
-body:not(.dark) .bg-slate-900\/80 {
-  background-color: rgba(255, 255, 255, 0.9) !important;
-}
-
-body:not(.dark) .bg-slate-700\/60 {
-  background-color: rgba(255, 255, 255, 0.9) !important;
-  border-color: rgba(160, 160, 160, 0.8) !important;
-}
-
-body:not(.dark) .border-slate-600 {
-  border-color: rgba(218, 165, 32, 0.4) !important; /* Gold border */
-}
-
-body:not(.dark) .placeholder-gray-400::placeholder {
-  color: #c4965a !important; /* Warm gold placeholder */
-}
-
-/* Additional overrides for general consistency */
-body:not(.dark) .text-foreground {
-  color: #daaf60 !important; /* Warm gold for main text */
-}
-
-body:not(.dark) .text-muted-foreground {
-  color: #c4965a !important; /* Slightly darker gold for muted text */
-}
-
-/* Focus ring colors */
-body:not(.dark) .focus\:ring-pink-500:focus {
-  --tw-ring-color: rgba(218, 165, 32, 0.5) !important;
-}
-
-body:not(.dark) .focus\:border-pink-500:focus {
-  border-color: rgba(218, 165, 32, 0.8) !important;
-}
-
-/* Hover states for buttons */
-body:not(.dark) .hover\:bg-purple-400:hover {
-  background-color: rgba(218, 165, 32, 0.9) !important;
-  color: white !important;
-}
-
-body:not(.dark) .hover\:text-slate-900:hover {
-  color: white !important;
-}
-
-/* Testimonials - Diseño consistente para modo claro */
-body:not(.dark) .bg-yellow-900\/20 {
-  background-color: rgba(254, 252, 237, 0.95) !important; /* Warm cream background */
-  border-color: rgba(218, 165, 32, 0.3) !important; /* Gold border */
-  box-shadow: 0 1px 3px 0 rgba(218, 165, 32, 0.1), 0 1px 2px 0 rgba(218, 165, 32, 0.06);
-}
-
-body:not(.dark) .border-yellow-400\/20 {
-  border-color: rgba(218, 165, 32, 0.3) !important; /* Gold border */
-}
-
-body:not(.dark) .border-yellow-400\/30 {
-  border-color: rgba(218, 165, 32, 0.4) !important; /* Stronger gold border */
-}
-
-body:not(.dark) .text-yellow-50 {
-  color: #daaf60 !important; /* Warm gold - readable and elegant */
-}
-
-body:not(.dark) .text-yellow-100\/80 {
-  color: #c4965a !important; /* Slightly darker gold - warm readable */
-}
-
-body:not(.dark) .text-yellow-200\/70 {
-  color: #b8864f !important; /* Deeper gold instead of gray */
-}
-
-/* FORZAR testimonials del mismo color que el fondo */
-.dark section[class*="bg-yellow-900"] {
-  background-color: rgba(26, 26, 26, 0.8) !important;
-  border-color: rgba(45, 45, 45, 0.5) !important;
-}
-
-.dark section [class*="bg-yellow-900"] {
-  background-color: rgba(26, 26, 26, 0.6) !important;
-  border-color: rgba(45, 45, 45, 0.4) !important;
-}
-
-/* Forzar textos claros en testimonials oscuros */
-.dark section [class*="text-yellow-50"],
-.dark section [class*="text-yellow-100"],
-.dark section [class*="text-yellow-200"] {
-  color: #e2e8f0 !important;
-}
-
-/* Fondo limpio para modo claro (por defecto) */
-body:not(.dark) {
-  background: #ffffff;
-}
-
-/* Fondo con tema café/beige para modo oscuro */
-.dark body {
-  background: linear-gradient(135deg, #3C2415 0%, #2D1810 50%, #1F0F0A 100%);
-}
-
-.font-display {
-  font-family: 'Playfair Display', serif;
-}
-
-/* Glass effect para modo claro (por defecto) */
-.glass-effect {
-  background: rgba(218, 165, 32, 0.15); /* Dorado transparente más sutil para modo claro */
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(218, 165, 32, 0.25); /* Borde dorado sutil */
-}
-
-/* Glass effect para modo oscuro (cuando se activa .dark) */
-.dark .glass-effect {
-  background: rgba(255, 215, 0, 0.1); /* Dorado transparente */
-  border: 1px solid rgba(255, 215, 0, 0.3); /* Borde dorado */
-}
-
-/* Estilos adicionales para consistencia visual */
-.section-padding {
-  padding: 4rem 0;
-}
-
-.section-padding-sm {
-  padding: 2rem 0;
-}
-
-/* Mejorar cards de productos */
-.product-card {
-  transition: all 0.3s ease;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.product-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-}
-
-/* Mejor tipografía para headings */
-.heading-primary {
-  font-size: 3rem;
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.025em;
-}
-
-.heading-secondary {
-  font-size: 2.25rem;
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: -0.025em;
-}
-
-.heading-tertiary {
-  font-size: 1.875rem;
-  font-weight: 600;
-  line-height: 1.3;
-}
-
-/* Botones mejorados */
-.btn-primary {
-  background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
-  border: none;
-  border-radius: 8px;
-  padding: 0.75rem 1.5rem;
-  font-weight: 600;
-  font-size: 0.875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-.btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-}
-
-.btn-secondary {
-  background: transparent;
-  border: 2px solid #d97706;
-  color: #d97706;
-  border-radius: 8px;
-  padding: 0.625rem 1.5rem;
-  font-weight: 600;
-  font-size: 0.875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  transition: all 0.3s ease;
-}
-
-.btn-secondary:hover {
-  background: #d97706;
-  color: white;
-  transform: translateY(-1px);
-}
-
-/* Mejorar spacing y consistency */
-.container-custom {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
-}
-
-@media (min-width: 640px) {
-  .container-custom {
-    padding: 0 2rem;
+  .floating-button {
+    @apply bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold;
+    @apply text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300;
   }
-}
-
-/* Animaciones suaves */
-.fade-in {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
-
-.fade-in.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Mejorar testimonials específicamente */
-body:not(.dark) .testimonial-card {
-  background: rgba(254, 252, 237, 0.95); /* Warm cream background */
-  border: 1px solid rgba(218, 165, 32, 0.3); /* Gold border */
-  border-radius: 12px;
-  padding: 2rem;
-  box-shadow: 0 4px 6px -1px rgba(218, 165, 32, 0.1), 0 2px 4px -1px rgba(218, 165, 32, 0.06);
-  transition: all 0.3s ease;
-}
-
-body:not(.dark) .testimonial-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 25px -5px rgba(218, 165, 32, 0.15), 0 10px 10px -5px rgba(218, 165, 32, 0.08);
-  border-color: rgba(218, 165, 32, 0.5); /* Stronger gold border on hover */
-}
   
-/* Glass effect dark - para modo claro (por defecto) */
-.glass-effect-dark {
-  background: rgba(245, 241, 232, 0.9); /* Beige claro para modo claro */
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(218, 165, 32, 0.3); /* Borde dorado */
-}
-
-/* Glass effect dark para modo oscuro (cuando se activa .dark) */
-.dark .glass-effect-dark {
-  background: rgba(26, 26, 26, 0.8); /* Negro con transparencia para modo oscuro */
-  border: 1px solid rgba(255, 215, 0, 0.2); /* Borde dorado sutil */
-}
-
-.gradient-text {
-  background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #DAA520 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Perfume cards - modo claro (por defecto) */
-.perfume-card {
-  background: linear-gradient(145deg, rgba(218, 165, 32, 0.12), rgba(245, 222, 179, 0.15));
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(218, 165, 32, 0.25);
-  transition: all 0.3s ease;
-}
-
-/* Perfume cards - modo oscuro (cuando se activa .dark) */
-.dark .perfume-card {
-  background: linear-gradient(145deg, rgba(255, 215, 0, 0.1), rgba(245, 222, 179, 0.08));
-  border: 1px solid rgba(255, 215, 0, 0.2);
-}
-
-.perfume-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(218, 165, 32, 0.25);
-  border-color: rgba(218, 165, 32, 0.4);
-}
-
-.dark .perfume-card:hover {
-  box-shadow: 0 20px 40px rgba(255, 215, 0, 0.3);
-  border-color: rgba(255, 215, 0, 0.4);
-}
-
-/* Admin Panel Styles - Consistent with main design */
-.admin-panel {
-  background: linear-gradient(145deg, rgba(218, 165, 32, 0.12), rgba(245, 222, 179, 0.15));
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(218, 165, 32, 0.25);
-  transition: all 0.3s ease;
-}
-
-.dark .admin-panel {
-  background: linear-gradient(145deg, rgba(255, 215, 0, 0.1), rgba(245, 222, 179, 0.08));
-  border: 1px solid rgba(255, 215, 0, 0.2);
-}
-
-.admin-panel:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(218, 165, 32, 0.2);
-  border-color: rgba(218, 165, 32, 0.4);
-}
-
-.dark .admin-panel:hover {
-  box-shadow: 0 10px 25px rgba(255, 215, 0, 0.3);
-  border-color: rgba(255, 215, 0, 0.4);
-}
-
-.cart-item {
-  background: rgba(255, 215, 0, 0.05);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 215, 0, 0.15);
-  transition: all 0.2s ease;
-}
-
-.cart-item:hover {
-  background: rgba(255, 215, 0, 0.15);
-}
-
-/* Floating button - modo claro (por defecto) */
-.floating-button {
-  background: linear-gradient(90deg, #B8860B, #DAA520);
-  box-shadow: 0 8px 32px rgba(184, 134, 11, 0.4);
-  transition: all 0.3s ease;
-}
-
-/* Floating button - modo oscuro (cuando se activa .dark) */
-.dark .floating-button {
-  background: linear-gradient(90deg, #DAA520, #FFD700);
-  box-shadow: 0 8px 32px rgba(255, 215, 0, 0.4);
-}
-
-.floating-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 40px rgba(184, 134, 11, 0.5);
-}
-
-.dark .floating-button:hover {
-  box-shadow: 0 12px 40px rgba(255, 215, 0, 0.6);
-}
-
-.barcode-scanner {
-  background: linear-gradient(135deg, #DAA520 0%, #FFD700 100%);
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
-}
-
-.product-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 2rem;
-}
-
-@media (max-width: 768px) {
-  .product-grid {
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1rem;
+  .glass-effect {
+    @apply backdrop-blur-sm bg-card/80 border border-border/30;
+    backdrop-filter: blur(8px);
+    background: hsla(var(--card), 0.8);
+  }
+  
+  .perfume-card {
+    @apply bg-card border-border/30 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300;
+    backdrop-filter: blur(8px);
+  }
+  
+  /* Navbar personalizada */
+  .navbar-bg {
+    background: hsla(var(--sillage-dark-900), 0.8);
+    backdrop-filter: blur(12px);
+  }
+  
+  .navbar-link {
+    @apply text-muted-foreground hover:text-foreground transition-colors p-2 rounded-md;
+    &:hover {
+      background: hsla(var(--sillage-dark), 0.5);
+    }
+  }
+  
+  .navbar-cart-icon {
+    color: hsl(var(--sillage-gold-dark));
+    &:hover {
+      color: hsl(var(--sillage-gold-bright));
+    }
+  }
+  
+  .navbar-cart-badge {
+    background: hsl(var(--primary));
+    @apply text-primary-foreground border-2 border-background shadow-lg;
+  }
+  
+  .navbar-gradient-button {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--destructive)));
+    @apply hover:opacity-90 transition-opacity;
+  }
+  
+  .navbar-brand {
+    background: var(--gradient-purple-pink);
+    @apply bg-clip-text text-transparent;
   }
 }
 
-.filter-sidebar {
-  background: rgba(255, 215, 0, 0.08);
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 215, 0, 0.2);
-}
-
-.search-bar {
-  background: rgba(255, 215, 0, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 215, 0, 0.3);
-  transition: all 0.3s ease;
-}
-
-.search-bar:focus-within {
-  background: rgba(255, 215, 0, 0.15);
-  border-color: rgba(255, 215, 0, 0.5);
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
-}
-
-/* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* Firefox */
-input[type=number] {
-  -moz-appearance: textfield;
-}
-
-/* Video background styles */
-.hero-video {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  min-width: 100%;
-  min-height: 100%;
-  width: auto;
-  height: auto;
-  transform: translateX(-50%) translateY(-50%);
-  object-fit: cover;
-  z-index: 5;
-}
-
-/* Header video styles */
-.header-video {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  pointer-events: none;
-  z-index: -1;
-}
-
-/* Z-index utility classes */
-.z-5 {
-  z-index: 5;
-}
-
-/* Hero section z-index overrides - Force proper layering */
-.hero-background {
-  z-index: 1 !important;
-  position: absolute;
-  inset: 0;
-}
-
-.hero-video-layer {
-  z-index: 2 !important;
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  pointer-events: none;
-}
-
-.hero-overlay {
-  z-index: 3 !important;
-  position: absolute;
-  inset: 0;
-}
-
-.hero-content {
-  z-index: 10 !important;
-  position: relative;
-}
-
-.hero-floating {
-  z-index: 15 !important;
-  position: absolute;
-}
-
-/* Ensure video covers full container on mobile */
-@media (max-aspect-ratio: 16/9) {
-  .hero-video {
-    width: 100%;
-    height: auto;
+@layer utilities {
+  /* Utilidades adicionales */
+  .text-sillage-gold {
+    color: hsl(var(--sillage-gold));
   }
-}
-
-@media (min-aspect-ratio: 16/9) {
-  .hero-video {
-    width: auto;
-    height: 100%;
+  
+  .text-sillage-gold-dark {
+    color: hsl(var(--sillage-gold-dark));
   }
-}
-
-/* =================================== */
-/* ADMIN PANEL COMPLETE STYLES */
-/* =================================== */
-
-/* Admin page background - hereda el fondo del body */
-.admin-page {
-  background: inherit;
-  min-height: 100vh;
-}
-
-/* Admin tabs styling */
-.admin-tabs .tabs-list {
-  background: linear-gradient(145deg, rgba(218, 165, 32, 0.15), rgba(245, 222, 179, 0.20));
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(218, 165, 32, 0.3);
-  border-radius: 8px;
-  padding: 4px;
-}
-
-.dark .admin-tabs .tabs-list {
-  background: linear-gradient(145deg, rgba(255, 215, 0, 0.12), rgba(245, 222, 179, 0.10));
-  border: 1px solid rgba(255, 215, 0, 0.25);
-}
-
-/* Admin tab triggers */
-.admin-tabs .tabs-trigger {
-  background: transparent;
-  color: hsl(var(--foreground));
-  border: none;
-  border-radius: 6px;
-  padding: 8px 16px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.admin-tabs .tabs-trigger:hover {
-  background: rgba(218, 165, 32, 0.2);
-  color: hsl(var(--foreground));
-}
-
-.dark .admin-tabs .tabs-trigger:hover {
-  background: rgba(255, 215, 0, 0.2);
-}
-
-.admin-tabs .tabs-trigger[data-state="active"] {
-  background: linear-gradient(90deg, #B8860B, #DAA520);
-  color: white;
-  box-shadow: 0 2px 8px rgba(184, 134, 11, 0.3);
-}
-
-.dark .admin-tabs .tabs-trigger[data-state="active"] {
-  background: linear-gradient(90deg, #DAA520, #FFD700);
-  color: #1a1a1a;
-  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
-}
-
-/* Admin statistics cards */
-.admin-stat-card {
-  background: linear-gradient(145deg, rgba(218, 165, 32, 0.12), rgba(245, 222, 179, 0.15));
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(218, 165, 32, 0.25);
-  border-radius: 12px;
-  padding: 1.5rem;
-  transition: all 0.3s ease;
-}
-
-.dark .admin-stat-card {
-  background: linear-gradient(145deg, rgba(255, 215, 0, 0.1), rgba(245, 222, 179, 0.08));
-  border: 1px solid rgba(255, 215, 0, 0.2);
-}
-
-.admin-stat-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(218, 165, 32, 0.2);
-  border-color: rgba(218, 165, 32, 0.4);
-}
-
-.dark .admin-stat-card:hover {
-  box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3);
-  border-color: rgba(255, 215, 0, 0.4);
-}
-
-/* Admin buttons */
-.admin-button {
-  background: linear-gradient(90deg, #B8860B, #DAA520);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 20px;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(184, 134, 11, 0.3);
-}
-
-.dark .admin-button {
-  background: linear-gradient(90deg, #DAA520, #FFD700);
-  color: #1a1a1a;
-  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
-}
-
-.admin-button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(184, 134, 11, 0.4);
-}
-
-.dark .admin-button:hover {
-  box-shadow: 0 6px 16px rgba(255, 215, 0, 0.4);
-}
-
-/* Admin outline buttons */
-.admin-button-outline {
-  background: transparent;
-  color: hsl(var(--foreground));
-  border: 2px solid rgba(218, 165, 32, 0.5);
-  border-radius: 8px;
-  padding: 8px 16px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.dark .admin-button-outline {
-  border-color: rgba(255, 215, 0, 0.5);
-}
-
-.admin-button-outline:hover {
-  background: rgba(218, 165, 32, 0.1);
-  border-color: rgba(218, 165, 32, 0.7);
-}
-
-.dark .admin-button-outline:hover {
-  background: rgba(255, 215, 0, 0.1);
-  border-color: rgba(255, 215, 0, 0.7);
-}
-
-/* Admin form elements */
-.admin-input {
-  background: linear-gradient(145deg, rgba(218, 165, 32, 0.08), rgba(245, 222, 179, 0.12));
-  border: 1px solid rgba(218, 165, 32, 0.3);
-  border-radius: 6px;
-  padding: 10px 12px;
-  color: hsl(var(--foreground));
-  font-size: 14px;
-  transition: all 0.2s ease;
-}
-
-.dark .admin-input {
-  background: linear-gradient(145deg, rgba(255, 215, 0, 0.08), rgba(245, 222, 179, 0.06));
-  border-color: rgba(255, 215, 0, 0.25);
-}
-
-.admin-input:focus {
-  outline: none;
-  border-color: rgba(218, 165, 32, 0.6);
-  box-shadow: 0 0 0 3px rgba(218, 165, 32, 0.1);
-}
-
-.dark .admin-input:focus {
-  border-color: rgba(255, 215, 0, 0.6);
-  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.1);
-}
-
-/* Admin table styles */
-.admin-table {
-  background: linear-gradient(145deg, rgba(218, 165, 32, 0.05), rgba(245, 222, 179, 0.08));
-  border: 1px solid rgba(218, 165, 32, 0.2);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.dark .admin-table {
-  background: linear-gradient(145deg, rgba(255, 215, 0, 0.05), rgba(245, 222, 179, 0.03));
-  border-color: rgba(255, 215, 0, 0.2);
-}
-
-/* Admin icons */
-.admin-icon {
-  color: #B8860B;
-  width: 20px;
-  height: 20px;
-}
-
-.dark .admin-icon {
-  color: #DAA520;
-}
-
-/* Admin text styles */
-.admin-title {
-  color: #daaf60;
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-}
-
-.admin-subtitle {
-  color: #c4965a;
-  font-size: 1rem;
-  margin-bottom: 2rem;
-}
-
-.admin-text {
-  color: #daaf60;
-  font-size: 0.875rem;
-}
-
-.admin-text-muted {
-  color: #c4965a;
-  font-size: 0.875rem;
-}
-
-/* Admin dashboard values with golden styling */
-.admin-value {
-  color: #f0c674;
-  font-weight: 700;
-  text-shadow: 0 1px 2px rgba(240, 198, 116, 0.3);
-}
-
-/* Admin dashboard prices */
-.admin-price {
-  color: #f0c674;
-  font-weight: 700;
-  text-shadow: 0 1px 3px rgba(240, 198, 116, 0.4);
-}
-
-/* Admin dialog styles */
-.admin-dialog {
-  background: linear-gradient(145deg, rgba(218, 165, 32, 0.08), rgba(245, 222, 179, 0.12));
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(218, 165, 32, 0.25);
-  border-radius: 12px;
-}
-
-.dark .admin-dialog {
-  background: linear-gradient(145deg, rgba(255, 215, 0, 0.08), rgba(245, 222, 179, 0.06));
-  border-color: rgba(255, 215, 0, 0.2);
-}
-
-/* Admin error states */
-.admin-error {
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  color: #dc2626;
-  padding: 12px;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-/* Admin success states */
-.admin-success {
-  background: rgba(34, 197, 94, 0.1);
-  border: 1px solid rgba(34, 197, 94, 0.3);
-  color: #16a34a;
-  padding: 12px;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-/* =================================== */
-/* PRODUCT PAGE IMPROVEMENTS */
-/* =================================== */
-
-/* Mejoras para la página de productos - modo claro */
-body:not(.dark) .bg-slate-700\/60 {
-  background-color: rgba(252, 248, 237, 0.9) !important; /* Warm cream background */
-  border-color: rgba(218, 165, 32, 0.3) !important; /* Gold border */
-}
-
-body:not(.dark) .border-slate-600 {
-  border-color: rgba(218, 165, 32, 0.4) !important; /* Gold border */
-}
-
-body:not(.dark) .text-slate-900 {
-  color: #daaf60 !important; /* Warm gold text */
-}
-
-body:not(.dark) .placeholder-gray-400::placeholder {
-  color: #c4965a !important; /* Warm gold placeholder */
-}
-
-/* Consistent button colors for product pages */
-body:not(.dark) .text-purple-400 {
-  color: #DAA520 !important; /* Gold instead of purple */
-}
-
-body:not(.dark) .border-purple-400 {
-  border-color: rgba(218, 165, 32, 0.6) !important; /* Gold border */
-}
-
-body:not(.dark) .hover\:bg-purple-400:hover {
-  background-color: rgba(218, 165, 32, 0.9) !important; /* Gold hover background */
-  color: white !important;
-}
-
-/* Verified badge styling - consistent with admin buttons */
-body:not(.dark) .bg-amber-700 {
-  background: linear-gradient(90deg, #B8860B, #DAA520) !important;
-  color: white !important;
-  border: 1px solid rgba(218, 165, 32, 0.3) !important;
-  box-shadow: 0 2px 4px rgba(184, 134, 11, 0.2) !important;
-}
-
-body:not(.dark) .text-amber-50 {
-  color: white !important;
-}
-
-body:not(.dark) .border-amber-600\/50 {
-  border-color: rgba(218, 165, 32, 0.5) !important;
-}
-
-/* Dark mode verified badge */
-.dark .bg-amber-800\/90 {
-  background: linear-gradient(90deg, #DAA520, #FFD700) !important;
-  color: #1a1a1a !important;
-  border: 1px solid rgba(255, 215, 0, 0.3) !important;
-  box-shadow: 0 2px 4px rgba(255, 215, 0, 0.2) !important;
-}
-
-/* Consistency for all amber text colors */
-body:not(.dark) .text-amber-900 {
-  color: #daaf60 !important; /* Warm gold - main text */
-}
-
-body:not(.dark) .text-amber-800\/90 {
-  color: #c4965a !important; /* Slightly darker gold */
-}
-
-body:not(.dark) .text-amber-700\/90 {
-  color: #b8864f !important; /* Deeper gold */
-}
-
-body:not(.dark) .text-amber-600 {
-  color: #f0c674 !important; /* Bright gold for highlights */
-}
-
-body:not(.dark) .text-amber-500 {
-  color: #e6b960 !important; /* Bright warm gold */
-}
-
-/* =================================== */
-/* PRICE HIGHLIGHTING STYLES */
-/* =================================== */
-
-/* Estilos específicos para precios que resalten */
-body:not(.dark) .text-primary {
-  color: #f0c674 !important; /* Bright gold for prices */
-  font-weight: 600;
-  text-shadow: 0 1px 2px rgba(240, 198, 116, 0.3);
-}
-
-/* Precios en cards de productos */
-body:not(.dark) .text-2xl.text-primary {
-  color: #f0c674 !important;
-  font-weight: 700;
-  text-shadow: 0 1px 3px rgba(240, 198, 116, 0.4);
-}
-
-/* Precios con gradiente para mayor impacto */
-.price-highlight {
-  background: linear-gradient(135deg, #f0c674 0%, #e6b960 50%, #daaf60 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-weight: 700;
-}
-
-/* Precios tachados (originales) */
-body:not(.dark) .line-through {
-  color: #c4965a !important;
-  opacity: 0.7;
-}
-
-/* Texto de ahorro */
-body:not(.dark) .text-primary\/80 {
-  color: #e6b960 !important;
-  font-weight: 600;
-}
-
-/* =================================== */
-/* UTILITY CLASSES FOR CONSISTENT BACKGROUNDS */
-/* =================================== */
-
-/* Utilidad para páginas que necesitan background general */
-.page-background {
-  background: inherit;
-}
-
-/* Clase para asegurar que el fondo sea transparente */
-.transparent-background {
-
-/* =================================== */
-/* COHERENCIA VISUAL MEJORADA */
-/* =================================== */
-
-/* 
- * Cambios realizados para mejorar la coherencia visual:
- * 
- * 1. Reemplazados colores negros/grises por tonos dorados cálidos
- * 2. Eliminados colores naranjas/púrpuras/rosas por tonos dorados
- * 3. Mejorado el badge "Verificado" para que coincida con botones del dashboard
- * 4. Unificada la paleta de colores usando la escala de amber/gold existente
- * 5. Mantenida la legibilidad usando dorados cálidos (#daaf60, #c4965a, #b8864f)
- * 6. Conservados los efectos visuales pero con colores coherentes
- * 7. Agregados efectos especiales para precios que resalten
- * 
- * Colores principales utilizados:
- * - Warm Gold (#daaf60) - Textos principales
- * - Darker Gold (#c4965a) - Textos secundarios
- * - Deep Gold (#b8864f) - Textos suaves
- * - Bright Gold (#f0c674) - Precios y highlights
- * - Warm Gold Bright (#e6b960) - Elementos que resaltan
- * - Goldenrod (#DAA520) - Botones y acentos
- * - Warm Cream (rgba(252, 248, 237)) - Fondos suaves
- */
-  background: transparent !important;
+  
+  .text-sillage-gold-bright {
+    color: hsl(var(--sillage-gold-bright));
+  }
+  
+  .bg-sillage-gold {
+    background-color: hsl(var(--sillage-gold));
+  }
+  
+  .bg-sillage-dark {
+    background-color: hsl(var(--sillage-dark));
+  }
+  
+  .bg-sillage-dark-900 {
+    background-color: hsl(var(--sillage-dark-900));
+  }
+  
+  .border-sillage-gold {
+    border-color: hsl(var(--sillage-gold));
+  }
+  
+  /* Clases adicionales usadas en el Footer y componentes */
+  .admin-button {
+    @apply bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold;
+    @apply text-white font-semibold transition-all duration-200;
+  }
+  
+  .price-highlight {
+    @apply shadow-lg hover:shadow-xl transform hover:scale-105;
+  }
+  
+  /* Clases de estado para hover y focus */
+  .hover\:text-sillage-gold:hover {
+    color: hsl(var(--sillage-gold));
+  }
+  
+  .hover\:bg-sillage-gold:hover {
+    background-color: hsl(var(--sillage-gold));
+  }
+  
+  .focus\:border-sillage-gold:focus {
+    border-color: hsl(var(--sillage-gold));
+  }
 }

@@ -61,8 +61,10 @@ export const AuthProvider = ({ children }) => {
   };
   
   const login = async (email, password) => {
+    console.log('Logging in with:', email);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
+      console.error('Login error:', error);
       toast({ title: "Error al iniciar sesión", description: error.message, variant: "destructive" });
     }
     return { error };

@@ -49,6 +49,30 @@ export const productService = {
     }
   },
 
+  // Obtener un producto por SKU
+  async getProductBySku(sku) {
+    try {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('sku', sku)
+        .single();
+
+      if (error) throw error;
+      
+      // Convertir precio a CLP
+      const productWithCLP = data ? {
+        ...data,
+        price: data.price * 10 // Convertir a CLP
+      } : null;
+      
+      return productWithCLP;
+    } catch (error) {
+      console.error('Error fetching product by SKU:', error);
+      throw error;
+    }
+  },
+
   // Crear un nuevo producto
   async createProduct(productData) {
     // Quitamos el ID nulo del objeto para que la DB genere uno nuevo.
@@ -216,7 +240,7 @@ export const productService = {
   },
 
   // Buscar productos
-  async searchProducts(searchTerm, category = null, priceRange = null) {
+  async searchProducts(searchTerm, category = null, sortOption = null) {
     try {
       let query = supabase
         .from('products')
@@ -232,22 +256,30 @@ export const productService = {
         query = query.eq('category', category);
       }
 
-      // Filtro de precio
-      if (priceRange && priceRange !== 'all') {
-        switch (priceRange) {
-          case 'under50':
-            query = query.lt('price', 50);
+      // Aplicar ordenamiento
+      if (sortOption && sortOption !== 'all') {
+        switch (sortOption) {
+          case 'price-low':
+            query = query.order('price', { ascending: true });
             break;
-          case '50to100':
-            query = query.gte('price', 50).lte('price', 100);
+          case 'price-high':
+            query = query.order('price', { ascending: false });
             break;
-          case 'over100':
-            query = query.gt('price', 100);
+          case 'newest':
+            query = query.order('created_at', { ascending: false });
             break;
+          case 'popular':
+            // Asumir que productos con más stock o destacados son más populares
+            query = query.order('stock_quantity', { ascending: false });
+            break;
+          default:
+            query = query.order('created_at', { ascending: false });
         }
+      } else {
+        query = query.order('created_at', { ascending: false });
       }
 
-      const { data, error } = await query.order('created_at', { ascending: false });
+      const { data, error } = await query;
 
       if (error) throw error;
       

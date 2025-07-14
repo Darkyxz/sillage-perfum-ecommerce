@@ -123,14 +123,19 @@ export const orderAutomationService = {
           id,
           created_at,
           status,
-          total_amount,
-          profiles!inner(full_name, email)
+          total_amount
         `)
         .in('status', ['pending', 'paid'])
         .lt('created_at', cutoffDate.toISOString())
         .order('created_at', { ascending: true });
 
       if (error) throw error;
+
+      console.log('✅ Expiring orders fetched:', orders?.length || 0);
+      if (!orders || orders.length === 0) {
+        console.log('ℹ️ No expiring orders currently');
+        return [];
+      }
 
       return orders.map(order => ({
         ...order,

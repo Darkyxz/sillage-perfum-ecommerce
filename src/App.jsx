@@ -5,7 +5,6 @@ import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { CartProvider } from '@/contexts/CartContext';
 import { FavoritesProvider } from '@/contexts/FavoritesContext';
-import { ThemeProvider } from '@/theme/ThemeProvider';
 import Layout from '@/components/Layout';
 import Home from '@/pages/Home';
 import Products from '@/pages/Products';
@@ -21,25 +20,18 @@ import PaymentFailurePage from '@/pages/PaymentFailurePage';
 import PaymentPendingPage from '@/pages/PaymentPendingPage';
 
 function App() {
-  // Set initial theme based on system preference
-  const getInitialTheme = () => {
-    if (typeof window !== 'undefined') {
-      const savedTheme = localStorage.getItem('theme');
-      if (savedTheme) return savedTheme;
-      
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      return prefersDark ? 'dark' : 'light';
-    }
-    return 'light';
-  };
+  useEffect(() => {
+    // Forzar tema claro eliminando cualquier clase dark
+    document.documentElement.classList.remove('dark');
+    document.documentElement.classList.add('light');
+  }, []);
 
   return (
-    <ThemeProvider defaultTheme={getInitialTheme()}>
-      <AuthProvider>
-        <CartProvider>
-          <FavoritesProvider>
-            <Router>
-              <div className="min-h-screen transition-colors duration-300 bg-background text-foreground">
+    <AuthProvider>
+      <CartProvider>
+        <FavoritesProvider>
+          <Router>
+            <div className="min-h-screen transition-colors duration-300 bg-background text-foreground">
                 <Helmet>
                   <title>Sillage-Perfum - Perfumes Premium</title>
                   <meta name="description" content="Descubre nuestra exclusiva colección de perfumes de lujo. Fragancias únicas para cada ocasión especial." />
@@ -50,7 +42,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/productos" element={<Products />} />
-                <Route path="/producto/:id" element={<ProductDetail />} />
+                <Route path="/productos/:sku" element={<ProductDetail />} />
                 <Route path="/carrito" element={<Cart />} />
                 <Route path="/favoritos" element={<Favorites />} />
                 <Route path="/admin" element={<Admin />} />
@@ -69,7 +61,6 @@ function App() {
           </FavoritesProvider>
         </CartProvider>
       </AuthProvider>
-    </ThemeProvider>
   );
 }
 
