@@ -17,7 +17,7 @@
     /* Colores principales - Sillage Gold */
     --primary: 43 96% 50%; /* Gold principal */
     --primary-foreground: 0 0% 100%;
-    --sillage-gold: 43 96% 50%; /* Variable principal dorada */
+    --sillage-gold: 37 95% 66%; /* Variable principal dorada */
     --sillage-gold-dark: 36 73% 38%; /* #c4965a en HSL */
     --sillage-gold-bright: 48 85% 69%; /* #f0c674 en HSL */
     --sillage-gold-warm: 42 68% 60%; /* #daaf60 en HSL */
@@ -43,7 +43,7 @@
     --ring: 43 96% 50%; /* Gold ring */
     
     /* Gradientes personalizados */
-    --gradient-purple-pink: linear-gradient(to right, #a855f7, #ec4899);
+    --gradient-purple-pink: linear-gradient(to right, #f7c455, #ecc648);
     --gradient-gold: linear-gradient(to right, hsl(var(--sillage-gold)), hsl(var(--sillage-gold-dark)));
     
     --radius: 0.5rem;

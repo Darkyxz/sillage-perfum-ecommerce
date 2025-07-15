@@ -70,7 +70,7 @@ const Home = () => {
         
         {/* Video reposicionado más arriba y a la izquierda */}
         <motion.div
-          className="absolute left-4 top-24" // Ajustado más arriba (top-24) y más a la izquierda (left-4)
+          className="absolute left-1 top-1" // Ajustado más arriba (top-24) y más a la izquierda (left-4)
           style={{ 
             zIndex: 2, 
             width: '400px', 
@@ -249,9 +249,9 @@ const Home = () => {
                       <img 
                         alt={`Perfume ${product.name}`}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                        src={product.image_url || "https://images.unsplash.com/photo-1635865165118-917ed9e20936"}
+                        src={product.image_url || "./sillap-3.png"}
                         onError={(e) => {
-                          e.target.src = "https://images.unsplash.com/photo-1635865165118-917ed9e20936";
+                          e.target.src = "./sillap-3.png";
                         }}
                       />
                     </div>

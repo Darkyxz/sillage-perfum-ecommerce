@@ -6,7 +6,7 @@ export const theme = {
       50: '#FFFAF0',
       100: '#FEF3C7', 
       200: '#FDE68A',
-      300: '#FCD34D',
+      300: '#FBBF4D',
       400: '#FBBF24',
       500: '#DAA520', // Goldenrod principal
       600: '#c4965a', // Dorado oscuro usado en build
