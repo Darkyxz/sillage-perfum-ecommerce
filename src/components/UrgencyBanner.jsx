@@ -62,7 +62,7 @@ const UrgencyBanner = () => {
         <div className="bg-gradient-to-r from-sillage-gold via-sillage-gold-bright to-sillage-gold-dark rounded-xl shadow-2xl border border-sillage-gold/50 p-4 backdrop-blur-md">
           <button
             onClick={handleClose}
-            className="absolute top-2 right-2 text-white hover:text-white/80 transition-colors"
+            className="absolute top-2 right-2 text-white hover:text-sillage-gold transition-colors"
           >
             <X size={18} />
           </button>
@@ -72,13 +72,13 @@ const UrgencyBanner = () => {
               <Clock className="text-white" size={20} />
             </div>
             <div>
-              <h3 className="text-white font-bold text-lg">¡Oferta Flash!</h3>
-              <p className="text-white/90 text-sm">40% OFF en toda la tienda</p>
+              <h3 className="text-sillage-gold font-bold text-lg">¡Oferta Flash!</h3>
+              <p className="text-sillage-gold-dark text-sm">40% OFF en toda la tienda</p>
             </div>
           </div>
 
           <div className="flex items-center justify-between mb-4">
-            <div className="text-white">
+            <div className="text-sillage-gold">
               <p className="text-sm font-medium">Termina en:</p>
               <div className="flex space-x-2 text-lg font-bold">
                 <span className="bg-white/20 px-2 py-1 rounded">
@@ -95,13 +95,13 @@ const UrgencyBanner = () => {
           </div>
 
           <Link to="/productos" className="block" onClick={handleClose}>
-            <Button className="w-full bg-white text-sillage-dark hover:bg-white/90 font-bold py-2 transition-all duration-300 transform hover:scale-105">
+            <Button className="w-full bg-white text-sillage-gold-dark hover:bg-white/90 font-bold py-2 transition-all duration-300 transform hover:scale-105">
               <ShoppingCart className="mr-2 h-4 w-4" />
               ¡Comprar Ahora!
             </Button>
           </Link>
 
-          <p className="text-white/90 text-xs text-center mt-2">
+          <p className="text-sillage-gold-dark/90 text-xs text-center mt-2">
             *Solo válido por tiempo limitado
           </p>
         </div>

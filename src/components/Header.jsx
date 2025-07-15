@@ -43,9 +43,7 @@ const Header = () => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3">
-            <div className="w-8 h-8 flex items-center justify-center">
-              <img src="/icon.svg" alt="Sillage Perfum" className="w-8 h-8" />
-            </div>
+            
             <span className="text-2xl font-display font-bold text-sillage-gold">
               Sillage Perfum
             </span>

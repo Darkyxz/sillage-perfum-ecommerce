@@ -14,9 +14,10 @@ const Footer = () => {
             <div className="mb-6">
               <h3 className="text-2xl font-display font-bold text-sillage-gold-warm mb-3">Sillage Perfum</h3>
               <p className="text-sillage-gold-dark text-sm leading-relaxed mb-4">
-                Descubre la esencia de tu personalidad con nuestra exclusiva colección de perfumes premium. 
-                Cada fragancia cuenta una historia única.
+              Despierta tus sentidos con una fragancia única,pensando para ti, y El aroma que te define. obteniendo Un toque de elegancia en cada 
+              ocasión, Descubre el perfume que cuenta tu historia. 
               </p>
+              <p className="text-sillage-gold-dark text-sm leading-relaxed mb-4">Sumérgete en un mundo de aromas exquisitos. Y duraderos.</p>
             </div>
             
             {/* Redes sociales */}
@@ -39,6 +40,8 @@ const Footer = () => {
             <ul className="space-y-3">
               <li><Link to="/" className="text-sillage-gold-dark hover:text-sillage-gold-bright transition-colors text-sm">Inicio</Link></li>
               <li><Link to="/productos" className="text-sillage-gold-dark hover:text-sillage-gold-bright transition-colors text-sm">Catálogo</Link></li>
+              <li><Link to="/contacto" className="text-sillage-gold-dark hover:text-sillage-gold-bright transition-colors text-sm">Contacto</Link></li>
+              <li><Link to="/listado" className="text-sillage-gold-dark hover:text-sillage-gold-bright transition-colors text-sm">Listado</Link></li>
               <li>
                 <button 
                   onClick={() => {
@@ -54,8 +57,6 @@ const Footer = () => {
                   Sobre Nosotros
                 </button>
               </li>
-              <li><Link to="/contacto" className="text-sillage-gold-dark hover:text-sillage-gold-bright transition-colors text-sm">Contacto</Link></li>
-              <li><Link to="/perfil" className="text-sillage-gold-dark hover:text-sillage-gold-bright transition-colors text-sm">Mi Cuenta</Link></li>
             </ul>
           </div>
           
@@ -63,11 +64,11 @@ const Footer = () => {
           <div>
             <h4 className="text-lg font-semibold text-sillage-gold-warm mb-4">Información</h4>
             <ul className="space-y-3">
+            <li><a href="#" className="text-sillage-gold-dark hover:text-sillage-gold-bright transition-colors text-sm">Búsqueda</a></li>
+              <li><a href="#" className="text-sillage-gold-dark hover:text-sillage-gold-bright transition-colors text-sm">Politica de Reembolsos</a></li>
               <li><a href="#" className="text-sillage-gold-dark hover:text-sillage-gold-bright transition-colors text-sm">Políticas de Privacidad</a></li>
               <li><a href="#" className="text-sillage-gold-dark hover:text-sillage-gold-bright transition-colors text-sm">Términos y Condiciones</a></li>
-              <li><a href="#" className="text-sillage-gold-dark hover:text-sillage-gold-bright transition-colors text-sm">Envíos y Devoluciones</a></li>
-              <li><a href="#" className="text-sillage-gold-dark hover:text-sillage-gold-bright transition-colors text-sm">Preguntas Frecuentes</a></li>
-              <li><a href="#" className="text-sillage-gold-dark hover:text-sillage-gold-bright transition-colors text-sm">Guía de Tallas</a></li>
+              <li><a href="#" className="text-sillage-gold-dark hover:text-sillage-gold-bright transition-colors text-sm">Politicas de Envio</a></li>
             </ul>
           </div>
           
