@@ -13,11 +13,12 @@ const About = () => {
           className="text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-display font-bold text-sillage-gold mb-6">
-            Sobre Sillage Perfum
+            Sillage Perfum Spa
           </h2>
           <p className="text-xl text-sillage-gold-dark max-w-3xl mx-auto leading-relaxed">
-            Descubre el arte de la perfumería de lujo con nuestra exclusiva colección de fragancias premium. 
-            En Sillage Perfum, cada aroma cuenta una historia única y define tu personalidad.
+          Fue creada, con la misión de promover perfumes de alta calidad. La idea surge, en tiempos de reinversión. 
+          Y crecimiento permitiéndonos llegar a nuestros clientes, ofreciendo una  línea completa  de nuestras mejores interpretaciones, 
+          inspiradas en fragancias. de alta gama, para quienes gustan dejar una huella. 
           </p>
         </motion.div>
 
@@ -30,12 +31,10 @@ const About = () => {
             className="space-y-6"
           >
             <h3 className="text-3xl font-display font-semibold text-sillage-gold mb-4">
-              La Esencia de la Elegancia
+            "Sillage”
             </h3>
             <p className="text-sillage-gold-dark leading-relaxed">
-              Desde nuestros inicios, hemos estado comprometidos con la creación de experiencias olfativas 
-              extraordinarias. Cada perfume en nuestra colección es cuidadosamente seleccionado por 
-              expertos perfumistas internacionales.
+             proviene del francés y significa "estela" o "rastro". En perfumes, describe la huella olfativa que deja una fragancia en el ambiente.
             </p>
             <p className="text-sillage-gold-dark leading-relaxed">
               Trabajamos con las mejores casas perfumeras del mundo para ofrecerte fragancias que van 
@@ -48,18 +47,18 @@ const About = () => {
             </p>
           </motion.div>
 
-          {/* Imagen */}
+          {/* Imagen - Contenedor circular modificado */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="relative"
+            className="relative flex justify-center"
           >
-            <div className="relative rounded-lg overflow-hidden shadow-2xl">
+            <div className="relative w-96 h-96 rounded-full border-4 border-sillage-gold overflow-hidden shadow-2xl">
               <img 
-                src="https://images.unsplash.com/photo-1594035910387-fea47794261f?w=600&h=400&fit=crop&crop=center"
+                src="./sillageround.png"
                 alt="Colección de perfumes premium"
-                className="w-full h-80 object-cover"
+                className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-sillage-dark/30 to-transparent"></div>
             </div>

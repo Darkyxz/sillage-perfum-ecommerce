@@ -18,11 +18,10 @@ import Register from '@/pages/Register';
 import PaymentSuccessPage from '@/pages/PaymentSuccessPage';
 import PaymentFailurePage from '@/pages/PaymentFailurePage';
 import PaymentPendingPage from '@/pages/PaymentPendingPage';
+import ContactForm from '@/pages/ContactForm';
 
 function App() {
   useEffect(() => {
-    // Forzar tema claro eliminando cualquier clase dark
-    document.documentElement.classList.remove('dark');
     document.documentElement.classList.add('light');
   }, []);
 
@@ -49,6 +48,7 @@ function App() {
                 <Route path="/perfil" element={<Profile />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/contacto" element={<ContactForm />} /> {/* Nueva ruta */}
                 <Route path="/pago-exitoso" element={<PaymentSuccessPage />} />
                 <Route path="/pago-fallido" element={<PaymentFailurePage />} />
                 <Route path="/pago-pendiente" element={<PaymentPendingPage />} />

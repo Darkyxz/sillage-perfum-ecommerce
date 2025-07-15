@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -19,7 +18,6 @@ const Home = () => {
     const fetchFeaturedProducts = async () => {
       try {
         setLoading(true);
-        // Obtener productos destacados usando la función específica
         const products = await productService.getFeaturedProducts(3);
         setFeaturedProducts(products);
       } catch (error) {
@@ -37,17 +35,13 @@ const Home = () => {
     fetchFeaturedProducts();
   }, []);
 
-
-  // Hook para manejar la reproducción del video de fondo
   useEffect(() => {
     const video = document.querySelector('.hero-video');
     if (video) {
-      // Intentar reproducir el video si el navegador lo permite
       const playPromise = video.play();
       if (playPromise !== undefined) {
         playPromise.catch(error => {
-          // Auto-play fue prevenido, pero esto es normal y esperado
-          console.log('Video autoplay was prevented, which is normal:', error);
+          console.log('Video autoplay was prevented:', error);
         });
       }
     }
@@ -69,85 +63,67 @@ const Home = () => {
 
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Background layer - fondo claro */}
+        {/* Background layer */}
         <div className="absolute inset-0" style={{ zIndex: 1 }}>
           <div className="absolute inset-0 bg-background" />
         </div>
         
-        {/* Background Video */}
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="auto"
-          className="hero-video absolute inset-0 w-full h-full object-cover"
-          style={{ pointerEvents: 'none', zIndex: 2 }}
+        {/* Video reposicionado más arriba y a la izquierda */}
+        <motion.div
+          className="absolute left-4 top-24" // Ajustado más arriba (top-24) y más a la izquierda (left-4)
+          style={{ 
+            zIndex: 2, 
+            width: '400px', 
+            height: '400px',
+            filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.2))'
+          }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
         >
-          <source src="/logo.webm" type="video/webm" />
-          {/* Fallback para navegadores que no soporten el video */}
-          Tu navegador no soporta videos HTML5.
-        </video>
-        
-        {/* Decorative Coco Images - Above video */}
-        <div className="absolute inset-0 w-full h-full" style={{ zIndex: 3 }}>
-          {/* Coco Noir (left side) */}
-          <div 
-            className="absolute top-1/2 left-16 md:left-32 w-56 md:w-64 h-60 md:h-80 opacity-60 transform -translate-y-1/2"
-            style={{
-              backgroundImage: 'url(/coco2.png)',
-              backgroundSize: 'contain',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat',
-              filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.3))'
-            }}
-          ></div>
-          
-          {/* Coco Eau de Parfum (right side) */}
-          <div 
-            className="absolute top-1/2 right-16 md:right-32 w-56 md:w-64 h-60 md:h-80 opacity-60 transform -translate-y-1/2"
-            style={{
-              backgroundImage: 'url(/coco.png)',
-              backgroundSize: 'contain',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat',
-              filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.3))'
-            }}
-          ></div>
-        </div>
-        
-        {/* Overlay sutil para mejor legibilidad del texto */}
-        <div className="absolute inset-0" style={{ zIndex: 3 }}>
-          <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-white/20" />
-        </div>
-        
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            className="hero-video w-full h-full object-contain rounded-lg"
+          >
+            <source src="/logo.webm" type="video/webm" />
+            Tu navegador no soporta videos HTML5.
+          </video>
+        </motion.div>
+
+        {/* Contenido del hero centrado */}
         <div className="container mx-auto px-4 text-center relative" style={{ zIndex: 10 }}>
           <motion.div
             initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
+            whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             className="max-w-4xl mx-auto"
           >
             <motion.h1
               className="text-5xl md:text-7xl font-display font-bold text-sillage-gold mb-6"
               initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
+              whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, delay: 0.2 }}
             >
               Descubre tu
-              <span className="block text-sillage-gold font-bold drop-shadow-lg" style={{
+              <span className="block font-bold drop-shadow-lg" style={{
                 background: 'linear-gradient(135deg, #f0c674, #DAA520, #c4965a)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
                 textShadow: '2px 2px 4px rgba(218, 165, 32, 0.3)'
-              }}>Fragancia Perfecta</span>
+              }}>
+                Fragancia Perfecta
+              </span>
             </motion.h1>
             
             <motion.p
               className="text-xl md:text-2xl text-sillage-gold-dark mb-8 max-w-2xl mx-auto"
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              whileInView={{ opacity: 1 }}
               transition={{ duration: 0.8, delay: 0.4 }}
             >
               Colección exclusiva de perfumes de lujo que definen tu personalidad única
@@ -156,7 +132,7 @@ const Home = () => {
             <motion.div
               className="flex flex-col sm:flex-row gap-4 justify-center items-center"
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6 }}
             >
               <Link to="/productos">
@@ -225,7 +201,6 @@ const Home = () => {
 
           <div className="grid md:grid-cols-3 gap-8">
             {loading ? (
-              // Estado de carga
               Array.from({ length: 3 }).map((_, index) => (
                 <motion.div
                   key={index}
@@ -250,7 +225,6 @@ const Home = () => {
                 </motion.div>
               ))
             ) : featuredProducts.length > 0 ? (
-              // Productos disponibles - reordenar para poner el de nombre más largo al centro
               (() => {
                 const sortedProducts = [...featuredProducts];
                 const longestNameProduct = sortedProducts.reduce((longest, current) => 
@@ -312,7 +286,6 @@ const Home = () => {
                 ));
               })()
             ) : (
-              // No hay productos disponibles
               <div className="col-span-3 text-center py-12">
                 <motion.div
                   initial={{ opacity: 0, y: 30 }}
@@ -340,7 +313,7 @@ const Home = () => {
         </div>
       </section>
 
-{/* Testimonials Section */}
+      {/* Testimonials Section */}
       <Testimonials />
 
       {/* Features Section */}
@@ -405,4 +378,3 @@ const Home = () => {
 };
 
 export default Home;
-

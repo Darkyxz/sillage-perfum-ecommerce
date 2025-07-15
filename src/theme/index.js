@@ -51,8 +51,8 @@ export const theme = {
     
     // Colores de gradientes para botones y elementos especiales
     'sillage-gradient': {
-      'purple-pink': 'linear-gradient(to right, #a855f7, #ec4899)',
-      'purple-to-pink': 'linear-gradient(to right, #8b5cf6, #ec4899)',
+      'purple-pink': 'linear-gradient(to right,rgb(247, 196, 85),rgb(201, 171, 40))',
+      'purple-to-pink': 'linear-gradient(to right,rgb(246, 218, 92),rgb(236, 192, 72))',
       'gold-warm': 'linear-gradient(to right, #DAA520, #c4965a)',
       'gold-bright': 'linear-gradient(to right, #f0c674, #DAA520)',
     },
