@@ -56,7 +56,7 @@ const About = () => {
           >
             <div className="relative w-96 h-96 rounded-full border-4 border-sillage-gold overflow-hidden shadow-2xl">
               <img 
-                src="./sillageround.png"
+                src="./sillap-3.png"
                 alt="Colección de perfumes premium"
                 className="w-full h-full object-cover"
               />

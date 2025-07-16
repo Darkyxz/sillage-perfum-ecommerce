@@ -67,13 +67,33 @@ const Home = () => {
         <div className="absolute inset-0" style={{ zIndex: 1 }}>
           <div className="absolute inset-0 bg-background" />
         </div>
-        
+
+        {/* Background image behind text - Desktop */}
+        <div className="absolute inset-0 hidden md:flex items-center justify-center" style={{ zIndex: 1 }}>
+          <img
+            src="/sillap-2.png"
+            alt="Background perfume desktop"
+            className="w-auto h-[500px] lg:h-[700px] xl:h-[900px] object-contain opacity-60"
+            style={{ filter: 'none', backdropFilter: 'none' }}
+          />
+        </div>
+
+        {/* Background image behind text - Mobile */}
+        <div className="absolute inset-0 flex items-center justify-center md:hidden" style={{ zIndex: 1 }}>
+          <img
+            src="/sillap-3.png"
+            alt="Background perfume mobile"
+            className="w-auto h-64 xs:h-72 sm:h-80 object-contain opacity-60"
+            style={{ filter: 'none', backdropFilter: 'none' }}
+          />
+        </div>
+
         {/* Video reposicionado más arriba y a la izquierda */}
         <motion.div
           className="absolute left-1 top-1" // Ajustado más arriba (top-24) y más a la izquierda (left-4)
-          style={{ 
-            zIndex: 2, 
-            width: '400px', 
+          style={{
+            zIndex: 2,
+            width: '400px',
             height: '400px',
             filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.2))'
           }}
@@ -119,7 +139,7 @@ const Home = () => {
                 Fragancia Perfecta
               </span>
             </motion.h1>
-            
+
             <motion.p
               className="text-xl md:text-2xl text-sillage-gold-dark mb-8 max-w-2xl mx-auto"
               initial={{ opacity: 0 }}
@@ -128,7 +148,7 @@ const Home = () => {
             >
               Colección exclusiva de perfumes de lujo que definen tu personalidad única
             </motion.p>
-            
+
             <motion.div
               className="flex flex-col sm:flex-row gap-4 justify-center items-center"
               initial={{ opacity: 0, y: 20 }}
@@ -141,7 +161,7 @@ const Home = () => {
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              
+
               <Button
                 variant="outline"
                 size="lg"
@@ -168,7 +188,7 @@ const Home = () => {
         >
           <Sparkles size={40} />
         </motion.div>
-        
+
         <motion.div
           className="absolute bottom-20 right-10 text-sillage-gold/60"
           style={{ zIndex: 15 }}
@@ -227,7 +247,7 @@ const Home = () => {
             ) : featuredProducts.length > 0 ? (
               (() => {
                 const sortedProducts = [...featuredProducts];
-                const longestNameProduct = sortedProducts.reduce((longest, current) => 
+                const longestNameProduct = sortedProducts.reduce((longest, current) =>
                   current.name.length > longest.name.length ? current : longest
                 );
                 const otherProducts = sortedProducts.filter(p => p.id !== longestNameProduct.id);
@@ -238,51 +258,51 @@ const Home = () => {
                   ...otherProducts.slice(middleIndex)
                 ];
                 return reorderedProducts.map((product, index) => (
-                <motion.div
-                  key={product.id}
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.2 }}
-                >
-                  <Card className="perfume-card border-0 overflow-hidden group cursor-pointer">
-                    <div className="aspect-square overflow-hidden">
-                      <img 
-                        alt={`Perfume ${product.name}`}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                        src={product.image_url || "./sillap-3.png"}
-                        onError={(e) => {
-                          e.target.src = "./sillap-3.png";
-                        }}
-                      />
-                    </div>
-                    
-                    <CardContent className="p-6 bg-card">
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="text-xl font-semibold text-sillage-gold pr-2">
-                          {product.name}
-                        </h3>
-                        <div className="flex items-center space-x-1 flex-shrink-0">
-                          <Star className="h-4 w-4 fill-sillage-gold text-sillage-gold" />
-                          <span className="text-sillage-gold-dark text-sm font-medium">{product.rating || 4.5}</span>
+                  <motion.div
+                    key={product.id}
+                    initial={{ opacity: 0, y: 50 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: index * 0.2 }}
+                  >
+                    <Card className="perfume-card border-0 overflow-hidden group cursor-pointer">
+                      <div className="aspect-square overflow-hidden">
+                        <img
+                          alt={`Perfume ${product.name}`}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          src={product.image_url || "./sillap-3.png"}
+                          onError={(e) => {
+                            e.target.src = "./sillap-3.png";
+                          }}
+                        />
+                      </div>
+
+                      <CardContent className="p-6 bg-card">
+                        <div className="flex justify-between items-start mb-2">
+                          <h3 className="text-xl font-semibold text-sillage-gold pr-2">
+                            {product.name}
+                          </h3>
+                          <div className="flex items-center space-x-1 flex-shrink-0">
+                            <Star className="h-4 w-4 fill-sillage-gold text-sillage-gold" />
+                            <span className="text-sillage-gold-dark text-sm font-medium">{product.rating || 4.5}</span>
+                          </div>
                         </div>
-                      </div>
-                      <p className="text-sillage-gold-dark text-sm mb-4">
-                        {product.brand || 'Marca Premium'}
-                      </p>
-                      
-                      <div className="mt-4 flex justify-between items-center">
-                        <p className="text-2xl font-bold text-sillage-gold-dark">
-                          {formatPrice(product.price)}
+                        <p className="text-sillage-gold-dark text-sm mb-4">
+                          {product.brand || 'Marca Premium'}
                         </p>
-                        <Link to={`/productos/${product.sku}`}>
-                          <Button variant="outline" className="border-sillage-gold text-sillage-gold-dark hover:bg-sillage-gold hover:text-white transition-all duration-300">
-                            Ver Detalles
-                          </Button>
-                        </Link>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
+
+                        <div className="mt-4 flex justify-between items-center">
+                          <p className="text-2xl font-bold text-sillage-gold-dark">
+                            {formatPrice(product.price)}
+                          </p>
+                          <Link to={`/productos/${product.sku}`}>
+                            <Button variant="outline" className="border-sillage-gold text-sillage-gold-dark hover:bg-sillage-gold hover:text-white transition-all duration-300">
+                              Ver Detalles
+                            </Button>
+                          </Link>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </motion.div>
                 ));
               })()
             ) : (
