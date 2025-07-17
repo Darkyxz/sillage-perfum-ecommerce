@@ -2,45 +2,15 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Plus, BarChart3, Database } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import OrderStats from './OrderStats';
-import ProductForm from './ProductForm';
-import { productService } from '@/lib/productService';
 
-const AdminDashboard = ({ stats, products, onProductAdded }) => {
-  const [isAddFormOpen, setIsAddFormOpen] = useState(false);
+const AdminDashboard = ({ stats, products, onProductAdded, onOpenAddForm }) => {
   const [loadingZacharProducts, setLoadingZacharProducts] = useState(false);
-
-  const handleAddProduct = async (newProductData) => {
-    try {
-      const product = await productService.createProduct({
-        ...newProductData,
-        price: parseFloat(newProductData.price),
-        stock_quantity: parseInt(newProductData.stock_quantity) || 0,
-        in_stock: (parseInt(newProductData.stock_quantity) || 0) > 0
-      });
-      
-      setIsAddFormOpen(false);
-      toast({
-        title: "¡Producto agregado!",
-        description: `${product.name} ha sido agregado al catálogo`,
-      });
-      
-      // Notificar al componente padre para actualizar la lista
-      if (onProductAdded) {
-        onProductAdded(product);
-      }
-    } catch (error) {
-      console.error('Error adding product:', error);
-      toast({
-        title: "Error al agregar producto",
-        description: "No se pudo agregar el producto. Intenta de nuevo.",
-        variant: "destructive",
-      });
-    }
-  };
+  
+  // Debug: verificar que la función se recibe correctamente
+  console.log('🔧 AdminDashboard received onOpenAddForm:', typeof onOpenAddForm, onOpenAddForm);
 
   const handleLoadZacharProducts = async () => {
     if (!window.confirm('¿Estás seguro? Esto eliminará todos los productos actuales y los reemplazará con los productos de Zachary Perfumes.')) {
@@ -127,7 +97,18 @@ const AdminDashboard = ({ stats, products, onProductAdded }) => {
           </CardHeader>
           <CardContent className="space-y-4">
             <Button
-              onClick={() => setIsAddFormOpen(true)}
+              onClick={() => {
+                console.log('🔥 BUTTON CLICKED in AdminDashboard!');
+                console.log('🔥 onOpenAddForm type:', typeof onOpenAddForm);
+                console.log('🔥 onOpenAddForm function:', onOpenAddForm);
+                if (onOpenAddForm) {
+                  console.log('🔥 Calling onOpenAddForm...');
+                  onOpenAddForm();
+                  console.log('🔥 onOpenAddForm called successfully');
+                } else {
+                  console.error('❌ onOpenAddForm is not defined!');
+                }
+              }}
               className="w-full admin-button"
             >
               <Plus className="mr-2 h-4 w-4" />
@@ -161,22 +142,7 @@ const AdminDashboard = ({ stats, products, onProductAdded }) => {
         </Card>
       </div>
 
-      {/* Diálogo para agregar producto */}
-      <Dialog open={isAddFormOpen} onOpenChange={setIsAddFormOpen}>
-        <DialogContent className="admin-dialog max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="admin-text font-semibold text-lg">Agregar Nuevo Producto</DialogTitle>
-            <DialogDescription className="admin-text-muted">
-              Completa los detalles del producto. Haz clic en guardar cuando termines.
-            </DialogDescription>
-          </DialogHeader>
-          <ProductForm 
-            onSubmit={handleAddProduct}
-            initialData={null}
-            onCancel={() => setIsAddFormOpen(false)}
-          />
-        </DialogContent>
-      </Dialog>
+
     </>
   );
 };

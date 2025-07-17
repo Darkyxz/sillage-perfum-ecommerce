@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet';
-import { Star, Heart, ShoppingCart, ArrowLeft, Plus, Minus, Loader2 } from 'lucide-react';
+import { Star, Heart, ShoppingCart, ArrowLeft, Plus, Minus, Loader2, ChevronDown, ChevronUp, Clock, Truck, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useCart } from '@/contexts/CartContext';
@@ -33,6 +33,9 @@ const ProductDetail = () => {
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [selectedSize, setSelectedSize] = useState('100ml');
+  const [isNotesOpen, setIsNotesOpen] = useState(false);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const { addToCart } = useCart();
   const { toggleFavorite, isInFavorites } = useFavorites();
 
@@ -59,7 +62,7 @@ const ProductDetail = () => {
           base: []
         };
 
-        // Obtener información adicional basada en el SKU
+        // Obtener información adicional basada en el SKU (fallback para productos antiguos)
         const getProductExtraInfo = (sku) => {
           const productData = zacharProducts.find(p => p.code === sku);
           return {
@@ -71,35 +74,44 @@ const ProductDetail = () => {
 
         const extraInfo = getProductExtraInfo(productData.sku);
 
-        if (extraInfo.notes && extraInfo.notes !== "Notas no disponibles") {
-          // Las notas vienen como string separado por comas
+        // Priorizar las notas de la base de datos
+        if (productData.fragrance_notes && typeof productData.fragrance_notes === 'object') {
+          // Las notas vienen directamente de la base de datos
+          notes = {
+            top: productData.fragrance_notes.top || [],
+            middle: productData.fragrance_notes.middle || [],
+            base: productData.fragrance_notes.base || []
+          };
+        } else if (productData.fragrance_notes && typeof productData.fragrance_notes === 'string') {
+          try {
+            // Si vienen como string JSON, parsearlas
+            const parsedNotes = JSON.parse(productData.fragrance_notes);
+            notes = {
+              top: parsedNotes.top || [],
+              middle: parsedNotes.middle || [],
+              base: parsedNotes.base || []
+            };
+          } catch (e) {
+            console.warn('Error parsing fragrance_notes JSON:', e);
+            // Fallback a notas por defecto
+            notes = { top: [], middle: [], base: [] };
+          }
+        } else if (extraInfo.notes && extraInfo.notes !== "Notas no disponibles") {
+          // Fallback: usar datos hardcodeados para productos antiguos
           const notesArray = extraInfo.notes.split(', ');
-          // Distribuir las notas en las tres categorías
           notes = {
             top: notesArray.slice(0, Math.ceil(notesArray.length / 3)),
             middle: notesArray.slice(Math.ceil(notesArray.length / 3), Math.ceil(2 * notesArray.length / 3)),
             base: notesArray.slice(Math.ceil(2 * notesArray.length / 3))
           };
         } else if (productData.notes) {
-          // Las notas vienen como string separado por comas
+          // Otro fallback: campo notes como string
           const notesArray = productData.notes.split(', ');
-          // Distribuir las notas en las tres categorías
           notes = {
             top: notesArray.slice(0, Math.ceil(notesArray.length / 3)),
             middle: notesArray.slice(Math.ceil(notesArray.length / 3), Math.ceil(2 * notesArray.length / 3)),
             base: notesArray.slice(Math.ceil(2 * notesArray.length / 3))
           };
-        } else if (productData.fragrance_notes) {
-          try {
-            notes = JSON.parse(productData.fragrance_notes);
-          } catch (e) {
-            // Si no se puede parsear, usar valores por defecto
-            notes = {
-              top: productData.fragrance_notes?.top || [],
-              middle: productData.fragrance_notes?.middle || [],
-              base: productData.fragrance_notes?.base || []
-            };
-          }
         }
 
         // Crear array de imágenes
@@ -269,155 +281,297 @@ const ProductDetail = () => {
             transition={{ duration: 0.8 }}
             className="space-y-6"
           >
-            {/* Brand and Rating */}
-            <div className="flex items-center justify-between">
-              <span className="text-muted-foreground text-lg">{product.brand}</span>
-              <div className="flex items-center space-x-2">
-                <div className="flex items-center space-x-1">
-                  <Star className="h-5 w-5 fill-primary text-primary" />
-                  <span className="text-foreground font-medium">{product.rating}</span>
-                </div>
-                <span className="text-muted-foreground/80">({product.reviews} reseñas)</span>
-              </div>
-            </div>
-
-            <h1 className="text-4xl font-display font-bold text-foreground mb-2">
-              {product.name}
-            </h1>
-            <p className="text-xl text-muted-foreground mb-4">
-              {product.brand || 'Zachary Perfumes'}
-            </p>
+            {/* Inspiration Badge */}
             {product.originalInspiration && (
-              <p className="text-sm text-muted-foreground/80 mb-4 italic">
-                Inspirado en {product.originalInspiration}
-              </p>
-            )}
-            <p className="text-muted-foreground text-lg leading-relaxed mb-6">
-              {product.description || 'Una fragancia exclusiva de alta calidad que combina las mejores notas para crear una experiencia olfativa única.'}
-            </p>
-
-            {/* Price */}
-            <div className="text-3xl font-bold text-primary mb-4">
-              ${product.price?.toLocaleString('es-CL') || '0'} CLP
-            </div>
-
-            {/* Description */}
-            <p className="text-muted-foreground text-lg leading-relaxed">
-              {product.longDescription}
-            </p>
-
-            {/* Fragrance Notes */}
-            <Card className="glass-effect border-primary/20">
-              <CardContent className="p-6">
-                <h3 className="text-foreground font-semibold mb-4">Notas de Fragancia</h3>
-                <div className="space-y-3">
-                  <div>
-                    <span className="text-muted-foreground text-sm">Notas de Salida:</span>
-                    <p className="text-foreground">{product.notes.top.join(', ')}</p>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground text-sm">Notas de Corazón:</span>
-                    <p className="text-foreground">{product.notes.middle.join(', ')}</p>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground text-sm">Notas de Base:</span>
-                    <p className="text-foreground">{product.notes.base.join(', ')}</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Quantity and Add to Cart */}
-            <div className="space-y-4">
-              <div className="flex items-center space-x-4">
-                <span className="text-foreground font-medium">Cantidad:</span>
-                <div className="flex items-center space-x-2">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => handleQuantityChange(-1)}
-                    disabled={quantity <= 1}
-                    className="glass-effect border-primary/30 text-foreground hover:bg-accent/15"
-                  >
-                    <Minus className="h-4 w-4" />
-                  </Button>
-                  <span className="text-foreground font-semibold text-lg w-12 text-center">
-                    {quantity}
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => handleQuantityChange(1)}
-                    disabled={quantity >= product.stock_quantity}
-                    className="glass-effect border-primary/30 text-foreground hover:bg-accent/15"
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                </div>
-                <span className="text-muted-foreground text-sm">
-                  ({product.stock_quantity} disponibles)
+              <div className="inline-block">
+                <span className="bg-sillage-gold text-black text-xs font-medium px-3 py-1 rounded-full">
+                  Inspirado en {product.originalInspiration.split(' - ')[0]}
                 </span>
               </div>
+            )}
 
-              <div className="flex space-x-4">
-                <Button
-                  onClick={handleAddToCart}
-                  disabled={!product.in_stock}
-                  className="flex-1 bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white font-semibold py-3 disabled:opacity-50 transition-all duration-300"
-                >
-                  <ShoppingCart className="mr-2 h-5 w-5" />
-                  Agregar al Carrito
-                </Button>
-                
+            {/* Brand */}
+            <div>
+              <h2 className="text-2xl font-bold text-foreground">{product.brand}</h2>
+            </div>
+
+            {/* Product Name */}
+            <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground leading-tight">
+              {product.name}
+            </h1>
+
+            {/* Price */}
+            <div className="text-3xl font-bold text-foreground">
+              ${product.price?.toLocaleString('es-CL') || '0'}
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Impuesto incluido. <span className="underline cursor-pointer">gastos de envío</span> se calculan en la pantalla de pagos.
+            </p>
+
+            {/* Rating */}
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-1">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="h-4 w-4 fill-sillage-gold text-sillage-gold" />
+                ))}
+              </div>
+              <span className="text-sm text-muted-foreground">
+                {product.reviews} reseñas
+              </span>
+            </div>
+
+            {/* Stock Status */}
+            <div className="flex items-center space-x-2">
+              <CheckCircle className="h-4 w-4 text-green-500" />
+              <span className="text-sm text-green-600 font-medium">En stock, listo para enviar</span>
+            </div>
+
+            {/* Shipping Info */}
+            <div className="space-y-2 text-sm text-muted-foreground">
+              <div className="flex items-center space-x-2">
+                <Clock className="h-4 w-4" />
+                <span>RM De 2 a 4 días hábiles, por $4.000</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Truck className="h-4 w-4" />
+                <span>regiones De 3 a 10 días hábiles, por $5.000</span>
+              </div>
+            </div>
+
+            {/* Golden Divider */}
+            <div className="border-t border-sillage-gold-dark my-6"></div>
+
+            {/* Size Selection */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <label className="text-sm font-medium text-foreground">Tamaño: {selectedSize}</label>
+                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+              </div>
+              <div className="flex space-x-2">
+                {['18 ml', '30 ml', '50 ml', '100 ml'].map((size) => (
+                  <button
+                    key={size}
+                    onClick={() => setSelectedSize(size)}
+                    className={`px-4 py-2 text-sm border rounded-md transition-all ${
+                      selectedSize === size
+                        ? 'bg-black text-white border-black'
+                        : 'bg-white text-foreground border-border hover:border-sillage-gold-dark'
+                    }`}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Quantity */}
+            <div className="space-y-3">
+              <label className="text-sm font-medium text-foreground">Cantidad</label>
+              <div className="flex items-center space-x-2">
                 <Button
                   variant="outline"
                   size="icon"
-                  className={`glass-effect p-3 transition-all duration-200 ${
-                    isInFavorites(product.id)
-                      ? 'bg-destructive/80 border-destructive text-white hover:bg-destructive/90'
-                      : 'border-primary/30 text-foreground hover:bg-accent/15'
-                  }`}
-                  onClick={() => toggleFavorite(product)}
+                  onClick={() => handleQuantityChange(-1)}
+                  disabled={quantity <= 1}
+                  className="h-10 w-10 border-border hover:border-sillage-gold-dark"
                 >
-                  <Heart className={`h-5 w-5 transition-colors ${
-                    isInFavorites(product.id) ? 'fill-current' : ''
-                  }`} />
+                  <Minus className="h-4 w-4" />
+                </Button>
+                <span className="text-foreground font-medium text-lg w-12 text-center">
+                  {quantity}
+                </span>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => handleQuantityChange(1)}
+                  disabled={quantity >= product.stock_quantity}
+                  className="h-10 w-10 border-border hover:border-sillage-gold-dark"
+                >
+                  <Plus className="h-4 w-4" />
                 </Button>
               </div>
             </div>
 
-            {/* Product Details */}
-            <Card className="glass-effect border-primary/20">
-              <CardContent className="p-6">
-                <h3 className="text-foreground font-semibold mb-4">Detalles del Producto</h3>
-                <div className="grid grid-cols-2 gap-4 text-sm">
+            {/* Golden Divider */}
+            <div className="border-t border-sillage-gold-dark my-6"></div>
+
+            {/* Collapsible Notes Section */}
+            <div className="space-y-4">
+              <button
+                onClick={() => setIsNotesOpen(!isNotesOpen)}
+                className="w-full flex items-center justify-between py-3 text-left"
+              >
+                <span className="text-lg font-medium text-foreground">Notas principales</span>
+                {isNotesOpen ? (
+                  <ChevronUp className="h-5 w-5 text-muted-foreground" />
+                ) : (
+                  <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                )}
+              </button>
+
+              {isNotesOpen && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="space-y-4"
+                >
+                  {/* Fragrance Profile - Dynamic */}
+                  {product.fragrance_profile && product.fragrance_profile.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {product.fragrance_profile.map((profileId) => {
+                        // Mapear IDs a información visual
+                        const profileMap = {
+                          'fresh_spicy': { emoji: '🌿', label: 'Fresco especiado', color: 'bg-amber-100 text-amber-800' },
+                          'amber': { emoji: '🌰', label: 'Ámbar', color: 'bg-amber-100 text-amber-800' },
+                          'citrus': { emoji: '🍋', label: 'Cítrico', color: 'bg-green-100 text-green-800' },
+                          'aromatic': { emoji: '🌸', label: 'Aromático', color: 'bg-purple-100 text-purple-800' },
+                          'musky': { emoji: '🧊', label: 'Almizclado', color: 'bg-blue-100 text-blue-800' },
+                          'woody': { emoji: '🌳', label: 'Amaderado', color: 'bg-brown-100 text-brown-800' },
+                          'floral': { emoji: '🌺', label: 'Floral', color: 'bg-pink-100 text-pink-800' },
+                          'oriental': { emoji: '🌙', label: 'Oriental', color: 'bg-indigo-100 text-indigo-800' }
+                        };
+                        
+                        const profile = profileMap[profileId];
+                        if (!profile) return null;
+                        
+                        return (
+                          <span key={profileId} className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${profile.color}`}>
+                            {profile.emoji} {profile.label}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    // Fallback para productos sin perfil definido
+                    <div className="flex flex-wrap gap-2">
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-amber-100 text-amber-800">
+                        🌿 Fresco especiado
+                      </span>
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-amber-100 text-amber-800">
+                        🌰 Ámbar
+                      </span>
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
+                        🍋 Cítrico
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Notes Details */}
+                  <div className="space-y-3 text-sm">
+                    <div>
+                      <span className="font-medium text-foreground">Notas olfativas:</span>
+                    </div>
+                    <div className="ml-4 space-y-2">
+                      <div>
+                        <span className="text-muted-foreground">- Notas de salida:</span>
+                        <span className="ml-2 text-foreground">
+                          {product.notes.top.length > 0 ? product.notes.top.join(', ') : 'bergamota de Calabria, pimienta'}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">- Notas de corazón:</span>
+                        <span className="ml-2 text-foreground">
+                          {product.notes.middle.length > 0 ? product.notes.middle.join(', ') : 'pimienta de Sichuan, lavanda, pimienta rosa, vetiver, pachulí, geranio, elemi'}
+                        </span>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">- Notas de fondo:</span>
+                        <span className="ml-2 text-foreground">
+                          {product.notes.base.length > 0 ? product.notes.base.join(', ') : 'ambroxan, cedro, ládano'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </div>
+
+            {/* Golden Divider */}
+            <div className="border-t border-sillage-gold-dark my-6"></div>
+
+            {/* Collapsible Details Section */}
+            <div className="space-y-4">
+              <button
+                onClick={() => setIsDetailsOpen(!isDetailsOpen)}
+                className="w-full flex items-center justify-between py-3 text-left"
+              >
+                <span className="text-lg font-medium text-foreground">Detalles</span>
+                {isDetailsOpen ? (
+                  <ChevronUp className="h-5 w-5 text-muted-foreground" />
+                ) : (
+                  <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                )}
+              </button>
+
+              {isDetailsOpen && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="space-y-4 text-sm"
+                >
                   <div>
-                    <span className="text-muted-foreground text-sm">SKU:</span>
-                    <p className="text-foreground">{product.sku}</p>
+                    <h4 className="font-medium text-foreground mb-2">
+                      {product.originalInspiration ? `Inspirado en ${product.originalInspiration.split(' - ')[0]}` : 'Fragancia Premium'}
+                    </h4>
                   </div>
                   <div>
-                    <span className="text-muted-foreground text-sm">Categoría:</span>
-                    <p className="text-foreground capitalize">{product.category === 'women' ? 'Femenino' : product.category === 'men' ? 'Masculino' : 'Unisex'}</p>
+                    <h4 className="font-medium text-foreground mb-2">Descripción general:</h4>
+                    <p className="text-muted-foreground leading-relaxed">
+                      {product.description || product.longDescription || 'Una fragancia audaz y sofisticada, diseñada para el hombre moderno que busca dejar una impresión duradera. Con un aroma fresco y especiado, este perfume ofrece una intensidad equilibrada que se adapta tanto a eventos formales como a encuentros casuales. Inspirado en la naturaleza salvaje, refleja una personalidad segura y carismática.'}
+                    </p>
                   </div>
-                  <div>
-                    <span className="text-muted-foreground text-sm">Tamaño:</span>
-                    <p className="text-foreground">{product.size}</p>
+                  <div className="grid grid-cols-2 gap-4 mt-4">
+                    <div>
+                      <span className="text-muted-foreground">SKU:</span>
+                      <p className="text-foreground font-medium">{product.sku}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Concentración:</span>
+                      <p className="text-foreground font-medium">{product.concentration || 'Eau de Parfum'}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Duración:</span>
+                      <p className="text-foreground font-medium">{product.duration}</p>
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Categoría:</span>
+                      <p className="text-foreground font-medium capitalize">
+                        {product.category === 'women' ? 'Femenino' : product.category === 'men' ? 'Masculino' : 'Unisex'}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <span className="text-muted-foreground text-sm">Concentración:</span>
-                    <p className="text-foreground">{product.concentration}</p>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground text-sm">Duración:</span>
-                    <p className="text-foreground">{product.duration}</p>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground text-sm">Stock:</span>
-                    <p className="text-foreground">{product.stock_quantity} unidades</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </motion.div>
+              )}
+            </div>
+
+            {/* Add to Cart and Favorites */}
+            <div className="flex space-x-4 pt-6">
+              <Button
+                onClick={handleAddToCart}
+                disabled={!product.in_stock}
+                className="flex-1 bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white font-semibold py-3 disabled:opacity-50 transition-all duration-300"
+              >
+                <ShoppingCart className="mr-2 h-5 w-5" />
+                Agregar al Carrito
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="icon"
+                className={`p-3 transition-all duration-200 ${
+                  isInFavorites(product.id)
+                    ? 'bg-destructive/80 border-destructive text-white hover:bg-destructive/90'
+                    : 'border-sillage-gold-dark text-foreground hover:bg-sillage-gold/10'
+                }`}
+                onClick={() => toggleFavorite(product)}
+              >
+                <Heart className={`h-5 w-5 transition-colors ${
+                  isInFavorites(product.id) ? 'fill-current' : ''
+                }`} />
+              </Button>
+            </div>
           </motion.div>
         </div>
       </div>

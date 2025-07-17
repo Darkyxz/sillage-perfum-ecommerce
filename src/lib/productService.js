@@ -78,10 +78,19 @@ export const productService = {
     // Quitamos el ID nulo del objeto para que la DB genere uno nuevo.
     const { id, ...newProductData } = productData;
 
+    // Preparar datos para la base de datos
+    const dataForDb = {
+      ...newProductData,
+      price: parseFloat(newProductData.price) / 10, // Convertir de CLP a unidad base
+      // Asegurar que las notas olfativas estén en el formato correcto
+      fragrance_profile: newProductData.fragrance_profile || [],
+      fragrance_notes: newProductData.fragrance_notes || { top: [], middle: [], base: [] }
+    };
+
     try {
       const { data, error } = await supabase
         .from('products')
-        .insert([newProductData])
+        .insert([dataForDb])
         .select()
         .single();
 
@@ -129,7 +138,10 @@ export const productService = {
     // Revertir la conversión de CLP a la unidad base antes de guardar en la DB.
     const detailsForDb = {
       ...details,
-      price: parseFloat(details.price) / 10
+      price: parseFloat(details.price) / 10,
+      // Asegurar que las notas olfativas estén en el formato correcto
+      fragrance_profile: details.fragrance_profile || [],
+      fragrance_notes: details.fragrance_notes || { top: [], middle: [], base: [] }
     };
 
     try {

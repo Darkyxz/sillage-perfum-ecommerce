@@ -47,29 +47,29 @@ const About = () => {
             </p>
           </motion.div>
 
-          {/* Imagen - Contenedor circular modificado */}
+          {/* Imagen - Contenedor circular responsive */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
             className="relative flex justify-center"
           >
-            <div className="relative w-96 h-96 rounded-full border-4 border-sillage-gold overflow-hidden shadow-2xl">
+            <div className="relative w-64 h-64 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-full border-2 sm:border-3 md:border-4 border-sillage-gold overflow-hidden shadow-xl md:shadow-2xl">
               <img 
-                src="./sillap-3.png"
+                src="./sillap-1.jpg"
                 alt="Colección de perfumes premium"
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-sillage-dark/30 to-transparent"></div>
             </div>
             
-            {/* Elemento decorativo */}
+            {/* Elemento decorativo responsive */}
             <motion.div
-              className="absolute -top-4 -right-4 w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-lg"
+              className="absolute -top-2 -right-2 sm:-top-3 sm:-right-3 md:-top-4 md:-right-4 w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 bg-primary rounded-full flex items-center justify-center shadow-lg"
               animate={{ rotate: 360 }}
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
             >
-              <Sparkles className="h-6 w-6 text-primary-foreground" />
+              <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-primary-foreground" />
             </motion.div>
           </motion.div>
         </div>
@@ -139,10 +139,10 @@ const About = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button className="bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white font-semibold px-8 py-3 rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
-                Contactar Experto
+                Productos
               </button>
               <button className="border border-primary text-primary hover:bg-primary hover:text-primary-foreground font-semibold px-8 py-3 rounded-lg transition-all duration-300">
-                Ver Nuestra Historia
+                Listado
               </button>
             </div>
           </div>

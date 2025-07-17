@@ -368,7 +368,15 @@ const Cart = () => {
                   
                   {!user && (
                     <p className="text-muted-foreground text-sm text-center mt-4">
-                      Debes iniciar sesión para continuar
+                      Debes{' '}
+                      <Link 
+                        to="/login"
+                        className="text-sillage-gold-dark hover:text-sillage-gold transition-colors relative inline-block"
+                      >
+                        iniciar sesión
+                        <span className="absolute bottom-0 left-0 w-full h-0.5 bg-sillage-gold-dark"></span>
+                      </Link>
+                      {' '}para continuar
                     </p>
                   )}
                   

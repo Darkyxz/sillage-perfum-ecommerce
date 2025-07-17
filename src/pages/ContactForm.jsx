@@ -72,7 +72,7 @@ const ContactForm = () => {
           >
             <div className="relative w-108 h-108 rounded-full border-4 border-sillage-gold overflow-hidden shadow-2xl">
               <img 
-                src="./sillageround.png"
+                src="./sillap-1.jpg"
                 alt="Sillage Perfum Spa"
                 className="w-full h-full object-cover"
               />

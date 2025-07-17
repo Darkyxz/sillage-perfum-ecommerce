@@ -13,26 +13,43 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [profileLoading, setProfileLoading] = useState(false);
 
   useEffect(() => {
     const getSessionAndProfile = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        await getProfile(session.user.id);
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        setUser(session?.user ?? null);
+        if (session?.user) {
+          setProfileLoading(true);
+          await getProfile(session.user.id);
+          setProfileLoading(false);
+        }
+      } catch (error) {
+        console.error('Error getting session:', error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
 
     getSessionAndProfile();
 
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setUser(session?.user ?? null);
-      setProfile(null); // Reset profile on auth change
-      if (session?.user) {
-        await getProfile(session.user.id);
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('🔐 Auth state changed:', event, session?.user?.email);
+      
+      // Solo procesar cambios reales de autenticación, no eventos repetitivos
+      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
+        setUser(session?.user ?? null);
+        
+        if (session?.user) {
+          setProfileLoading(true);
+          await getProfile(session.user.id);
+          setProfileLoading(false);
+        } else {
+          setProfile(null);
+          setProfileLoading(false);
+        }
       }
-      // No poner setLoading(false) aquí para evitar flashes de contenido
     });
 
     return () => {
@@ -95,10 +112,13 @@ export const AuthProvider = ({ children }) => {
     user,
     profile,
     loading,
+    profileLoading,
     login,
     signup,
     logout,
     isAdmin: profile?.role === 'admin',
+    // Estado combinado para saber si aún se está cargando la autenticación completa
+    isAuthLoading: loading || (user && profileLoading),
   };
 
   return (
