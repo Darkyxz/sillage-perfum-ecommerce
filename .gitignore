@@ -82,7 +82,7 @@ dist
 # Add further Gatsby-specific rules here
 # public - Allow public folder but exclude test subfolder
 public/test/
-
+public/backup/
 # vuepress build output
 .vuepress/dist
 

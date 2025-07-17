@@ -71,9 +71,9 @@ const Home = () => {
         {/* Background image behind text - Desktop */}
         <div className="absolute inset-0 hidden md:flex items-center justify-center" style={{ zIndex: 1 }}>
           <img
-            src="/sillap-2.png"
+            src="/sillap-2.jpg"
             alt="Background perfume desktop"
-            className="w-auto h-[500px] lg:h-[700px] xl:h-[900px] object-contain opacity-60"
+            className="w-auto h-[400px] lg:h-[600px] xl:h-[800px] object-contain opacity-80"
             style={{ filter: 'none', backdropFilter: 'none' }}
           />
         </div>
@@ -81,7 +81,7 @@ const Home = () => {
         {/* Background image behind text - Mobile */}
         <div className="absolute inset-0 flex items-center justify-center md:hidden" style={{ zIndex: 1 }}>
           <img
-            src="/sillap-3.png"
+            src="/sillap-3.jpg"
             alt="Background perfume mobile"
             className="w-auto h-64 xs:h-72 sm:h-80 object-contain opacity-60"
             style={{ filter: 'none', backdropFilter: 'none' }}
@@ -269,9 +269,9 @@ const Home = () => {
                         <img
                           alt={`Perfume ${product.name}`}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                          src={product.image_url || "./sillap-3.png"}
+                          src={product.image_url || "./sillap-3.jpg"}
                           onError={(e) => {
-                            e.target.src = "./sillap-3.png";
+                            e.target.src = "./sillap-3.jpg";
                           }}
                         />
                       </div>
