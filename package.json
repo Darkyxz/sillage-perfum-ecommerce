@@ -12,6 +12,7 @@
     "preview": "vite preview --host 0.0.0.0",
     "start": "node server.js",
     "verify": "node verify-build.js",
+    "debug": "node debug-render.js",
     "deploy": "node scripts/deploy.js",
     "deploy:netlify": "bun run build && netlify deploy --prod --dir dist",
     "deploy:vercel": "bun run build && vercel --prod",
