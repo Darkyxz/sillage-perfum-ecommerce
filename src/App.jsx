@@ -20,6 +20,7 @@ import PaymentSuccessPage from '@/pages/PaymentSuccessPage';
 import PaymentFailurePage from '@/pages/PaymentFailurePage';
 import PaymentPendingPage from '@/pages/PaymentPendingPage';
 import ContactForm from '@/pages/ContactForm';
+import AdminDebug from '@/components/AdminDebug';
 
 function App() {
   useEffect(() => {
@@ -58,6 +59,7 @@ function App() {
                   </Layout>
                   
                   <Toaster />
+                  <AdminDebug />
                 </div>
               </Router>
             </FavoritesProvider>
