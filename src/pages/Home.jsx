@@ -73,7 +73,7 @@ const Home = () => {
           <img
             src="/sillap-2.jpg"
             alt="Background perfume desktop"
-            className="w-auto h-[400px] lg:h-[600px] xl:h-[800px] object-contain opacity-80"
+            className="w-auto h-[400px] lg:h-[600px] xl:h-[800px] object-contain opacity-60"
             style={{ filter: 'none', backdropFilter: 'none' }}
           />
         </div>
@@ -123,18 +123,18 @@ const Home = () => {
             className="max-w-4xl mx-auto"
           >
             <motion.h1
-              className="text-5xl md:text-7xl font-display font-bold text-sillage-gold mb-6"
+              className="text-5xl md:text-7xl font-display font-bold text-sillage-dark mb-6"
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 1, delay: 0.2 }}
             >
               Descubre tu
               <span className="block font-bold drop-shadow-lg" style={{
-                background: 'linear-gradient(135deg, #f0c674, #DAA520, #c4965a)',
+                background: 'linear-gradient(135deg, #b8860b, #8B7500, #daa520)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text',
-                textShadow: '2px 2px 4px rgba(218, 165, 32, 0.3)'
+                textShadow: '2px 2px 4px rgba(139, 117, 0, 0.4)'
               }}>
                 Fragancia Perfecta
               </span>

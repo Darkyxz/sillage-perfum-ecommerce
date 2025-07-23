@@ -10,6 +10,9 @@
     "dev:clean": "node dev-server.js",
     "build": "node tools/generate-llms.js || true && vite build",
     "preview": "vite preview",
+    "deploy": "node scripts/deploy.js",
+    "deploy:netlify": "bun run build && netlify deploy --prod --dir dist",
+    "deploy:vercel": "bun run build && vercel --prod",
     "theme:check": "node scripts/check-theme.js",
     "theme:update": "node scripts/update-theme.js",
     "theme:migrate": "node scripts/migrate-theme.js"
