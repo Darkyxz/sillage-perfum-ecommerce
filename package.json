@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Tienda de perfumes premium para el mercado chileno",
   "main": "index.js",
-  "type": "module",
+
   "private": true,
   "scripts": {
     "dev": "vite",
@@ -11,6 +11,7 @@
     "build": "node tools/generate-llms.js || true && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "start": "node server.js",
+    "verify": "node verify-build.js",
     "deploy": "node scripts/deploy.js",
     "deploy:netlify": "bun run build && netlify deploy --prod --dir dist",
     "deploy:vercel": "bun run build && vercel --prod",
