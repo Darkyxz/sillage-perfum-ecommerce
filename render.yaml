@@ -3,5 +3,6 @@ services:
     name: sillage-perfum-ecommerce
     env: node
     plan: free
-    buildCommand: bun install && bun run build
+    buildCommand: chmod +x render-build.sh && ./render-build.sh
     startCommand: node server.js
+    healthCheckPath: /health
