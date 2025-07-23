@@ -433,7 +433,7 @@ const SillageDemo = () => {
       {/* Panel de Control */}
       <div style={styles.controlPanel}>
         <div style={styles.controlTitle}>Controles de Demo</div>
-        
+
         <div style={styles.controlGroup}>
           <label style={styles.controlLabel}>Paleta de Colores:</label>
           <select
@@ -459,10 +459,10 @@ const SillageDemo = () => {
         <div style={styles.controlGroup}>
           <label style={styles.controlLabel}>Colores Actuales:</label>
           <div style={styles.colorPreview}>
-            <div style={{...styles.colorSwatch, backgroundColor: currentColors.primary}}>Primary</div>
-            <div style={{...styles.colorSwatch, backgroundColor: currentColors.secondary}}>Secondary</div>
-            <div style={{...styles.colorSwatch, backgroundColor: currentColors.accent}}>Accent</div>
-            <div style={{...styles.colorSwatch, backgroundColor: currentColors.surface}}>Surface</div>
+            <div style={{ ...styles.colorSwatch, backgroundColor: currentColors.primary }}>Primary</div>
+            <div style={{ ...styles.colorSwatch, backgroundColor: currentColors.secondary }}>Secondary</div>
+            <div style={{ ...styles.colorSwatch, backgroundColor: currentColors.accent }}>Accent</div>
+            <div style={{ ...styles.colorSwatch, backgroundColor: currentColors.surface }}>Surface</div>
           </div>
         </div>
       </div>
@@ -507,7 +507,7 @@ const SillageDemo = () => {
             <button style={styles.button}>Explorar Ahora</button>
           </div>
           <div>
-            <img 
+            <img
               src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9IjQwMCIgdmlld0JveD0iMCAwIDUwMCA0MDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI0Y3RTdDRSIvPgo8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNFOEQ1QjciLz4KPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPgo8cmVjdCB3aWR0aD0iNTAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0idXJsKCNiZykiLz4KPGNpcmNsZSBjeD0iMjUwIiBjeT0iMjAwIiByPSIxMDAiIGZpbGw9IiNGRkZGRkYiIGZpbGwtb3BhY2l0eT0iMC4yIi8+CjxyZWN0IHg9IjIwMCIgeT0iMTAwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjIwMCIgcng9IjEwIiBmaWxsPSIjRkZGRkZGIi8+CjxyZWN0IHg9IjIyNSIgeT0iNzAiIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCIgcng9IjUiIGZpbGw9IiNENEFGMzciLz4KPGVsbGlwc2UgY3g9IjI1MCIgY3k9IjIwMCIgcng9IjMwIiByeT0iNzAiIGZpbGw9IiNGN0U3Q0UiLz4KPHR5cGUgaWQ9InRleHQiIGZpbGw9IiMzQzNDM0MiIGZvbnQtZmFtaWx5PSJzZXJpZiIgZm9udC1zaXplPSIyNCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgeD0iMjUwIiB5PSIzNTAiPkZMT1JBTCBBUk9NQVM8L3R5cGU+Cjwvc3ZnPg=="
               alt="Perfume"
               style={styles.heroImage}
@@ -521,8 +521,8 @@ const SillageDemo = () => {
         <h2 style={styles.sectionTitle}>Productos Destacados</h2>
         <div style={styles.productGrid}>
           {products.map((product) => (
-            <div 
-              key={product.id} 
+            <div
+              key={product.id}
               style={styles.productCard}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = 'translateY(-5px)';
@@ -540,11 +540,11 @@ const SillageDemo = () => {
                 <div style={styles.productPrice}>{product.price}</div>
                 <div style={styles.rating}>
                   {renderStars(product.rating)}
-                  <span style={{fontSize: '0.9rem', color: currentColors.textSecondary}}>
+                  <span style={{ fontSize: '0.9rem', color: currentColors.textSecondary }}>
                     ({product.rating})
                   </span>
                 </div>
-                <div style={{display: 'flex', gap: '0.5rem'}}>
+                <div style={{ display: 'flex', gap: '0.5rem' }}>
                   <button style={styles.button}>Agregar al Carrito</button>
                   <button style={styles.buttonSecondary}>♡</button>
                 </div>
@@ -558,13 +558,13 @@ const SillageDemo = () => {
       <section style={styles.newsletter}>
         <div style={styles.section}>
           <h2 style={styles.sectionTitle}>Mantente Actualizado</h2>
-          <p style={{color: currentColors.textSecondary, marginBottom: '2rem'}}>
+          <p style={{ color: currentColors.textSecondary, marginBottom: '2rem' }}>
             Suscríbete a nuestro newsletter para recibir las últimas novedades y ofertas exclusivas
           </p>
           <div style={styles.newsletterForm}>
-            <input 
-              type="email" 
-              placeholder="Tu email" 
+            <input
+              type="email"
+              placeholder="Tu email"
               style={styles.input}
             />
             <button style={styles.button}>Suscribirse</button>
@@ -581,19 +581,19 @@ const SillageDemo = () => {
           </div>
           <div style={styles.footerSection}>
             <div style={styles.footerTitle}>Enlaces Rápidos</div>
-            <ul style={{listStyle: 'none', padding: 0}}>
-              <li style={{marginBottom: '0.5rem'}}>
-                <a href="#" style={{color: currentColors.textSecondary, textDecoration: 'none'}}>
+            <ul style={{ listStyle: 'none', padding: 0 }}>
+              <li style={{ marginBottom: '0.5rem' }}>
+                <a href="#" style={{ color: currentColors.textSecondary, textDecoration: 'none' }}>
                   Fragancias
                 </a>
               </li>
-              <li style={{marginBottom: '0.5rem'}}>
-                <a href="#" style={{color: currentColors.textSecondary, textDecoration: 'none'}}>
+              <li style={{ marginBottom: '0.5rem' }}>
+                <a href="#" style={{ color: currentColors.textSecondary, textDecoration: 'none' }}>
                   Marcas
                 </a>
               </li>
-              <li style={{marginBottom: '0.5rem'}}>
-                <a href="#" style={{color: currentColors.textSecondary, textDecoration: 'none'}}>
+              <li style={{ marginBottom: '0.5rem' }}>
+                <a href="#" style={{ color: currentColors.textSecondary, textDecoration: 'none' }}>
                   Ofertas
                 </a>
               </li>
@@ -601,15 +601,15 @@ const SillageDemo = () => {
           </div>
           <div style={styles.footerSection}>
             <div style={styles.footerTitle}>Contacto</div>
-            <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem'}}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
               <Mail size={16} />
               <span>info@sillageperfum.com</span>
             </div>
-            <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem'}}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
               <Phone size={16} />
               <span>+1 (555) 123-4567</span>
             </div>
-            <div style={{display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <MapPin size={16} />
               <span>123 Fragrance Ave, NY</span>
             </div>

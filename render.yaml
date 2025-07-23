@@ -3,6 +3,6 @@ services:
     name: sillage-perfum-ecommerce
     env: node
     plan: free
-    buildCommand: chmod +x render-build.sh && ./render-build.sh
-    startCommand: node server.js
+    buildCommand: npm install && npm run build
+    startCommand: node simple-server.js
     healthCheckPath: /health
