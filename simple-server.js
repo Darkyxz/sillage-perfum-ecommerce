@@ -1,30 +1,45 @@
-import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const express = require('express');
+const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 10000;
 
-console.log('🚀 Starting server...');
-console.log('📁 __dirname:', __dirname);
-console.log('🌐 PORT:', port);
+console.log('🚀 Starting Render server...');
+console.log('📁 Serving from:', path.join(__dirname, 'dist'));
+console.log('🌐 Port:', port);
+
+// Middleware para logging
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
 
 // Servir archivos estáticos
 app.use(express.static(path.join(__dirname, 'dist')));
 
 // Health check
 app.get('/health', (req, res) => {
-  res.json({ status: 'OK', timestamp: new Date().toISOString() });
+  console.log('Health check requested');
+  res.json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    port: port 
+  });
 });
 
-// SPA - Todas las rutas devuelven index.html
+// SPA routing - DEBE estar al final
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  console.log(`SPA route: ${req.url}`);
+  const indexPath = path.join(__dirname, 'dist', 'index.html');
+  res.sendFile(indexPath, (err) => {
+    if (err) {
+      console.error('Error serving index.html:', err);
+      res.status(500).send('Error loading page');
+    }
+  });
 });
 
 app.listen(port, '0.0.0.0', () => {
-  console.log(`Server running on port ${port}`);
+  console.log(`✅ Server running on http://0.0.0.0:${port}`);
+  console.log(`🔧 Admin should be available at: http://0.0.0.0:${port}/admin`);
 });
