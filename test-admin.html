@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Admin - Sillage Perfum</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        .info { background: #d1ecf1; border-color: #bee5eb; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Test Admin - Sillage Perfum</h1>
+    
+    <div class="test info">
+        <h3>📍 URL Actual</h3>
+        <p id="current-url"></p>
+    </div>
+    
+    <div class="test info">
+        <h3>🌐 Variables de Entorno</h3>
+        <p>Supabase URL: <span id="supabase-url"></span></p>
+        <p>Supabase Key: <span id="supabase-key"></span></p>
+    </div>
+    
+    <div class="test">
+        <h3>🧪 Tests de Navegación</h3>
+        <button onclick="testHome()">Test Home (/)</button>
+        <button onclick="testAdmin()">Test Admin (/admin)</button>
+        <button onclick="testProducts()">Test Productos (/productos)</button>
+        <div id="nav-results"></div>
+    </div>
+    
+    <div class="test">
+        <h3>📦 Test de Archivos</h3>
+        <button onclick="testAssets()">Test Assets</button>
+        <div id="asset-results"></div>
+    </div>
+
+    <script>
+        // Mostrar información actual
+        document.getElementById('current-url').textContent = window.location.href;
+        
+        // Variables de entorno (si están disponibles)
+        const supabaseUrl = typeof import !== 'undefined' ? 
+            import.meta?.env?.VITE_SUPABASE_URL || 'No disponible' : 'No disponible';
+        const supabaseKey = typeof import !== 'undefined' ? 
+            import.meta?.env?.VITE_SUPABASE_ANON_KEY ? 'Configurada ✅' : 'No configurada ❌' : 'No disponible';
+            
+        document.getElementById('supabase-url').textContent = supabaseUrl;
+        document.getElementById('supabase-key').textContent = supabaseKey;
+        
+        function testHome() {
+            window.location.href = '/';
+        }
+        
+        function testAdmin() {
+            window.location.href = '/admin';
+        }
+        
+        function testProducts() {
+            window.location.href = '/productos';
+        }
+        
+        async function testAssets() {
+            const results = document.getElementById('asset-results');
+            results.innerHTML = '<p>Probando assets...</p>';
+            
+            const assets = [
+                '/assets/index-051e1630.js',
+                '/assets/index-5259be34.css'
+            ];
+            
+            let html = '';
+            for (const asset of assets) {
+                try {
+                    const response = await fetch(asset);
+                    const status = response.ok ? '✅' : '❌';
+                    html += `<p>${status} ${asset} (${response.status})</p>`;
+                } catch (error) {
+                    html += `<p>❌ ${asset} (Error: ${error.message})</p>`;
+                }
+            }
+            
+            results.innerHTML = html;
+        }
+        
+        // Auto-test al cargar
+        window.onload = function() {
+            console.log('🔧 Test Admin cargado');
+            console.log('URL:', window.location.href);
+            console.log('User Agent:', navigator.userAgent);
+        };
+    </script>
+</body>
+</html>

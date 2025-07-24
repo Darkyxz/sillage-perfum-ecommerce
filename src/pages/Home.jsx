@@ -71,7 +71,7 @@ const Home = () => {
         {/* Background image behind text - Desktop */}
         <div className="absolute inset-0 hidden md:flex items-center justify-center" style={{ zIndex: 1 }}>
           <img
-            src="/sillap-2.jpg"
+            src="/hero.png"
             alt="Background perfume desktop"
             className="w-auto h-[400px] lg:h-[600px] xl:h-[800px] object-contain opacity-60"
             style={{ filter: 'none', backdropFilter: 'none' }}
