@@ -11,11 +11,42 @@ export const createMercadoPagoPreference = async (items, payer, backUrls, extern
       throw new Error('VITE_MERCADOPAGO_ACCESS_TOKEN no está configurado en las variables de entorno');
     }
     
-    console.log('🔄 Creando preferencia de MercadoPago...');
-    console.log('📦 Items:', items);
-    console.log('👤 Payer:', payer);
-    console.log('🔗 Back URLs:', backUrls);
-    console.log('🏷️ External Reference:', externalReference);
+    const finalBackUrls = {
+      success: `${window.location.origin}/pago-exitoso`,
+      failure: `${window.location.origin}/pago-fallido`,
+      pending: `${window.location.origin}/pago-pendiente`
+    };
+
+    const requestBody = {
+      items,
+      payer,
+      back_urls: finalBackUrls,
+      external_reference: externalReference,
+      notification_url: `${import.meta.env.VITE_BASE_URL}/api/webhooks/mercadopago`,
+      // Solo usar auto_return en HTTPS (producción)
+      ...(window.location.protocol === 'https:' ? { auto_return: 'approved' } : {}),
+      statement_descriptor: "SILLAGE-PERFUM",
+      expires: true,
+      expiration_date_to: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+      payment_methods: {
+        excluded_payment_methods: [],
+        excluded_payment_types: [],
+        installments: 12,
+        default_installments: 1
+      },
+      shipments: {
+        mode: "not_specified"
+      },
+      metadata: {
+        order_id: externalReference,
+        store: "sillage-perfum",
+        environment: import.meta.env.VITE_NODE_ENV || 'development',
+        app_id: import.meta.env.VITE_MERCADOPAGO_APP_ID,
+        integration_type: import.meta.env.VITE_MERCADOPAGO_INTEGRATION_TYPE || 'marketplace'
+      }
+    };
+
+
 
     const response = await fetch('https://api.mercadopago.com/checkout/preferences', {
       method: 'POST',
@@ -23,43 +54,15 @@ export const createMercadoPagoPreference = async (items, payer, backUrls, extern
         'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        items,
-        payer,
-        back_urls: backUrls,
-        external_reference: externalReference,
-        notification_url: `${import.meta.env.VITE_BASE_URL}/api/webhooks/mercadopago`,
-        auto_return: 'approved',
-        statement_descriptor: "SILLAGE-PERFUM",
-        expires: true,
-        expiration_date_to: new Date(Date.now() + 30 * 60 * 1000).toISOString(), // 30 minutos
-        payment_methods: {
-          excluded_payment_methods: [],
-          excluded_payment_types: [],
-          installments: 12, // Hasta 12 cuotas
-          default_installments: 1
-        },
-        shipments: {
-          mode: "not_specified"
-        },
-        metadata: {
-          order_id: externalReference,
-          store: "sillage-perfum",
-          environment: import.meta.env.VITE_NODE_ENV || 'development',
-          app_id: import.meta.env.VITE_MERCADOPAGO_APP_ID,
-          integration_type: import.meta.env.VITE_MERCADOPAGO_INTEGRATION_TYPE || 'marketplace'
-        }
-      })
+      body: JSON.stringify(requestBody)
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('❌ Error de MercadoPago:', errorText);
       throw new Error(`MercadoPago API error: ${response.status} - ${errorText}`);
     }
 
     const preference = await response.json();
-    console.log('✅ Preferencia creada:', preference);
     
     return {
       id: preference.id,
@@ -67,7 +70,7 @@ export const createMercadoPagoPreference = async (items, payer, backUrls, extern
       sandbox_init_point: preference.sandbox_init_point
     };
   } catch (error) {
-    console.error('💥 Error creando preferencia:', error);
+    console.error('Error creando preferencia:', error);
     throw error;
   }
 };
@@ -132,4 +135,4 @@ export const processPaymentResult = async (paymentId, orderId) => {
     console.error('Error processing payment result:', error);
     throw error;
   }
-}; 
+};

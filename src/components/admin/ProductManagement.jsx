@@ -22,7 +22,7 @@ const ProductManagement = () => {
   const loadProducts = async () => {
     try {
       setLoading(true);
-      const data = await productService.getAllProducts();
+      const data = await productService.getAllProductsNoPagination();
       setProducts(data);
       setFilteredProducts(data);
     } catch (error) {
@@ -202,7 +202,9 @@ const ProductManagement = () => {
             { value: 'all', label: 'Todos', count: products.length },
             { value: 'women', label: 'Mujeres', count: products.filter(p => p.category === 'women').length },
             { value: 'men', label: 'Hombres', count: products.filter(p => p.category === 'men').length },
-            { value: 'unisex', label: 'Unisex', count: products.filter(p => p.category === 'unisex').length }
+            { value: 'unisex', label: 'Unisex', count: products.filter(p => p.category === 'unisex').length },
+            { value: 'home', label: 'Hogar', count: products.filter(p => p.category === 'home').length },
+            { value: 'body', label: 'Body Mist', count: products.filter(p => p.category === 'body').length }
           ].map((category) => (
             <button
               key={category.value}
@@ -276,10 +278,14 @@ const ProductManagement = () => {
                       <span className={`text-xs px-2 py-1 rounded-full ${
                         product.category === 'women' ? 'bg-pink-100 text-pink-700' :
                         product.category === 'men' ? 'bg-blue-100 text-blue-700' :
+                        product.category === 'home' ? 'bg-green-100 text-green-700' :
+                        product.category === 'body' ? 'bg-orange-100 text-orange-700' :
                         'bg-purple-100 text-purple-700'
                       }`}>
                         {product.category === 'women' ? 'Mujer' : 
-                         product.category === 'men' ? 'Hombre' : 'Unisex'}
+                         product.category === 'men' ? 'Hombre' : 
+                         product.category === 'home' ? 'Hogar' :
+                         product.category === 'body' ? 'Body Mist' : 'Unisex'}
                       </span>
                     </div>
 

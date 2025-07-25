@@ -34,7 +34,8 @@ export const checkoutService = {
 
       // 3. Validar y calcular totales
       const validatedItems = [];
-      let totalAmount = 0;
+      let subtotal = 0;
+      const shippingCost = 5000; // Costo fijo de envío
 
       for (const item of cartItems) {
         // Verificar que el producto existe y tiene stock
@@ -53,7 +54,7 @@ export const checkoutService = {
         }
 
         const itemTotal = product.price * item.quantity;
-        totalAmount += itemTotal;
+        subtotal += itemTotal;
 
         validatedItems.push({
           id: product.id,
@@ -64,7 +65,15 @@ export const checkoutService = {
         });
       }
 
-      console.log('✅ Items validados:', { count: validatedItems.length, totalAmount });
+      // Calcular total incluyendo envío
+      const totalAmount = subtotal + shippingCost;
+
+      console.log('✅ Items validados:', { 
+        count: validatedItems.length, 
+        subtotal,
+        shippingCost,
+        totalAmount 
+      });
 
       // 4. Crear la orden en la base de datos
       const order = await orderService.createOrder(
@@ -72,12 +81,13 @@ export const checkoutService = {
         validatedItems,
         totalAmount,
         null, // payment_id se actualizará después del pago
-        shippingAddress
+        shippingAddress,
+        shippingCost // Añadimos el costo de envío a la orden
       );
 
       console.log('✅ Orden creada:', { orderId: order.id });
 
-      // 5. Preparar datos para MercadoPago
+      // 5. Preparar datos para MercadoPago (incluyendo el costo de envío como un ítem adicional)
       const mercadoPagoItems = validatedItems.map(item => ({
         id: item.id,
         title: item.name,
@@ -85,6 +95,14 @@ export const checkoutService = {
         quantity: item.quantity,
         currency_id: 'CLP'
       }));
+
+      // Añadir el costo de envío como un ítem adicional en MercadoPago
+      mercadoPagoItems.push({
+        title: 'Costo de envío',
+        unit_price: shippingCost,
+        quantity: 1,
+        currency_id: 'CLP'
+      });
 
       const payer = {
         name: userProfile.full_name,
@@ -120,6 +138,8 @@ export const checkoutService = {
         preferenceId: preference.id,
         initPoint: preference.init_point,
         sandboxInitPoint: preference.sandbox_init_point,
+        subtotal,
+        shippingCost,
         totalAmount,
         items: validatedItems
       };

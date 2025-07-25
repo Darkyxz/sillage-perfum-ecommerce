@@ -11,6 +11,8 @@ import { useFavorites } from '@/contexts/FavoritesContext';
 import { toast } from '@/components/ui/use-toast';
 import { productService } from '@/lib/productService';
 import { QuantityDialog } from '@/components/QuantityDialog';
+import { ProductSkeletonGrid } from '@/components/ProductSkeleton';
+
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -19,22 +21,44 @@ const Products = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortOption, setSortOption] = useState('all');
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [totalCount, setTotalCount] = useState(0);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isQuantityDialogOpen, setIsQuantityDialogOpen] = useState(false);
   const { addToCart } = useCart();
   const { toggleFavorite, isInFavorites } = useFavorites();
 
-  // Cargar productos desde Supabase
+  // Cargar productos desde Supabase con paginación
   useEffect(() => {
-    loadProducts();
+    loadProducts(true);
   }, []);
 
-  const loadProducts = async () => {
+  const loadProducts = async (reset = false) => {
     try {
-      setLoading(true);
-      const data = await productService.getAllProducts();
-      setProducts(data);
-      setFilteredProducts(data);
+      if (reset) {
+        setLoading(true);
+        setCurrentPage(1);
+      } else {
+        setLoadingMore(true);
+      }
+
+      const pageToLoad = reset ? 1 : currentPage + 1;
+      const result = await productService.getAllProducts(pageToLoad, 24);
+      
+      if (reset) {
+        setProducts(result.products);
+        setFilteredProducts(result.products);
+      } else {
+        setProducts(prev => [...prev, ...result.products]);
+        setFilteredProducts(prev => [...prev, ...result.products]);
+        setCurrentPage(pageToLoad);
+      }
+      
+      setTotalCount(result.totalCount);
+      setHasMore(result.hasMore);
+      
     } catch (error) {
       console.error('Error loading products:', error);
       toast({
@@ -44,26 +68,71 @@ const Products = () => {
       });
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   };
 
-  // Filtrar productos
+  // Cargar más productos (infinite scroll)
+  const loadMoreProducts = () => {
+    if (!loadingMore && hasMore) {
+      loadProducts(false);
+    }
+  };
+
+  // Filtrar productos localmente (más rápido)
   useEffect(() => {
-    const filterProducts = async () => {
-      try {
-        const filtered = await productService.searchProducts(
-          searchTerm,
-          selectedCategory,
-          sortOption
-        );
-        setFilteredProducts(filtered);
-      } catch (error) {
-        console.error('Error filtering products:', error);
+    let filtered = [...products];
+
+    // Filtrar por término de búsqueda
+    if (searchTerm) {
+      filtered = filtered.filter(product =>
+        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.brand?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.description?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Filtrar por categoría
+    if (selectedCategory && selectedCategory !== 'all') {
+      filtered = filtered.filter(product => product.category === selectedCategory);
+    }
+
+    // Ordenar productos
+    switch (sortOption) {
+      case 'price-low':
+        filtered.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-high':
+        filtered.sort((a, b) => b.price - a.price);
+        break;
+      case 'newest':
+        filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        break;
+      case 'popular':
+        filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        break;
+      default:
+        // Mantener orden original
+        break;
+    }
+
+    setFilteredProducts(filtered);
+  }, [products, searchTerm, selectedCategory, sortOption]);
+
+  // Infinite scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + document.documentElement.scrollTop
+        >= document.documentElement.offsetHeight - 1000 // Cargar cuando falten 1000px
+      ) {
+        loadMoreProducts();
       }
     };
 
-    filterProducts();
-  }, [searchTerm, selectedCategory, sortOption]);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [loadingMore, hasMore]);
 
   const handleAddToCart = (product, quantity) => {
     if (!product.in_stock) {
@@ -127,6 +196,8 @@ const Products = () => {
           </p>
         </motion.div>
 
+
+
         <div className="grid lg:grid-cols-4 gap-4 lg:gap-8">
           {/* Filtros */}
           <motion.div
@@ -167,7 +238,9 @@ const Products = () => {
                       { value: 'all', label: 'Todos' },
                       { value: 'men', label: 'Hombres' },
                       { value: 'women', label: 'Mujeres' },
-                      { value: 'unisex', label: 'Unisex' }
+                      { value: 'unisex', label: 'Unisex' },
+                      { value: 'home', label: 'Hogar' },
+                      { value: 'body', label: 'Body Mist' }
                     ].map((category) => (
                       <button
                         key={category.value}
@@ -215,13 +288,22 @@ const Products = () => {
 
           {/* Grid de Productos */}
           <div className="lg:col-span-3 order-1 lg:order-2">
-            <div className="mb-6">
+            <div className="mb-6 flex items-center justify-between">
               <p className="text-muted-foreground">
-                {filteredProducts.length} producto{filteredProducts.length !== 1 ? 's' : ''} encontrado{filteredProducts.length !== 1 ? 's' : ''}
+                {filteredProducts.length} de {totalCount} producto{totalCount !== 1 ? 's' : ''}
+                {searchTerm || selectedCategory !== 'all' ? ' (filtrados)' : ''}
               </p>
+              {loadingMore && (
+                <div className="flex items-center space-x-2 text-sillage-gold">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span className="text-sm">Cargando más...</span>
+                </div>
+              )}
             </div>
 
-            {filteredProducts.length === 0 ? (
+            {loading ? (
+              <ProductSkeletonGrid count={12} />
+            ) : filteredProducts.length === 0 ? (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -232,7 +314,8 @@ const Products = () => {
                 </p>
               </motion.div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {(() => {
                   const sortedProducts = [...filteredProducts];
                   const longestNameProduct = sortedProducts.reduce((longest, current) =>
@@ -313,7 +396,35 @@ const Products = () => {
                     </motion.div>
                   ));
                 })()}
-              </div>
+                </div>
+                
+                {/* Botón cargar más o skeleton de carga */}
+                {hasMore && !loadingMore && (
+                  <div className="text-center mt-12">
+                    <Button 
+                      onClick={loadMoreProducts}
+                      variant="outline"
+                      className="border-sillage-gold/30 text-sillage-gold-dark hover:bg-sillage-gold hover:text-white transition-all duration-300"
+                    >
+                      Cargar más productos
+                    </Button>
+                  </div>
+                )}
+                
+                {loadingMore && (
+                  <div className="mt-8">
+                    <ProductSkeletonGrid count={6} />
+                  </div>
+                )}
+                
+                {!hasMore && filteredProducts.length > 0 && (
+                  <div className="text-center mt-12 py-8">
+                    <p className="text-muted-foreground">
+                      Has visto todos los productos disponibles
+                    </p>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

@@ -110,8 +110,8 @@ const Admin = () => {
 
   const loadAdminData = async () => {
     try {
-      // Cargar productos para estadísticas
-      const productsData = await productService.getAllProducts();
+      // Cargar productos para estadísticas - usar la función sin paginación
+      const productsData = await productService.getAllProductsNoPagination();
       setProducts(productsData);
       
       // Actualizar estadísticas

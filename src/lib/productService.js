@@ -2,8 +2,41 @@ import { supabase } from './supabase';
 
 // Servicio para manejar productos con Supabase
 export const productService = {
-  // Obtener todos los productos
-  async getAllProducts() {
+  // Obtener todos los productos con paginación
+  async getAllProducts(page = 1, limit = 24) {
+    try {
+      const from = (page - 1) * limit;
+      const to = from + limit - 1;
+
+      const { data, error, count } = await supabase
+        .from('products')
+        .select('*', { count: 'exact' })
+        .order('created_at', { ascending: false })
+        .range(from, to);
+
+      if (error) throw error;
+      
+      // Convertir precios a CLP
+      const productsWithCLP = (data || []).map(product => ({
+        ...product,
+        price: product.price * 10
+      }));
+      
+      return {
+        products: productsWithCLP,
+        totalCount: count,
+        currentPage: page,
+        totalPages: Math.ceil(count / limit),
+        hasMore: to < count - 1
+      };
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      throw error;
+    }
+  },
+
+  // Obtener todos los productos (sin paginación) - para casos específicos
+  async getAllProductsNoPagination() {
     try {
       const { data, error } = await supabase
         .from('products')
@@ -12,10 +45,9 @@ export const productService = {
 
       if (error) throw error;
       
-      // Convertir precios a CLP (multiplicar por 10 para simular precios reales)
       const productsWithCLP = (data || []).map(product => ({
         ...product,
-        price: product.price * 10 // Convertir a CLP
+        price: product.price * 10
       }));
       
       return productsWithCLP;
@@ -359,6 +391,39 @@ export const productService = {
       return productsWithCLP;
     } catch (error) {
       console.error('Error fetching featured products:', error);
+      throw error;
+    }
+  },
+
+  // Obtener productos por categoría con paginación
+  async getProductsByCategory(category, page = 1, limit = 24) {
+    try {
+      const from = (page - 1) * limit;
+      const to = from + limit - 1;
+
+      const { data, error, count } = await supabase
+        .from('products')
+        .select('*', { count: 'exact' })
+        .eq('category', category)
+        .order('created_at', { ascending: false })
+        .range(from, to);
+
+      if (error) throw error;
+      
+      const productsWithCLP = (data || []).map(product => ({
+        ...product,
+        price: product.price * 10
+      }));
+      
+      return {
+        products: productsWithCLP,
+        totalCount: count,
+        currentPage: page,
+        totalPages: Math.ceil(count / limit),
+        hasMore: to < count - 1
+      };
+    } catch (error) {
+      console.error('Error fetching products by category:', error);
       throw error;
     }
   },
