@@ -108,8 +108,9 @@ const Footer = () => {
         {/* Newsletter */}
         <div className="bg-secondary rounded-lg p-4 md:p-6 mb-6 md:mb-8">
           <div className="text-center max-w-md mx-auto">
-            <h4 className="text-base md:text-lg font-semibold text-sillage-gold-warm mb-2">Mantente Informado</h4>
-            <p className="text-sillage-gold-dark text-sm mb-3 md:mb-4">Recibe las últimas novedades y ofertas exclusivas</p>
+            <h4 className="text-base md:text-lg font-semibold text-sillage-gold-warm mb-2">Suscribete</h4>
+            <p className="text-sillage-gold-dark text-sm mb-3 md:mb-4">Suscribete a nuestro bolietin para saber de nuestras promociones.</p>
+            <p className="text-sillage-gold-dark text-sm mb-3 md:mb-4">Introduce tu correo electronico.</p>
             <div className="flex flex-col sm:flex-row gap-2">
               <input
                 type="email"

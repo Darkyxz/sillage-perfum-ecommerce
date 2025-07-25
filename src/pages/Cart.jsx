@@ -265,7 +265,14 @@ const Cart = () => {
                       <div className="flex-1">
                         <h3 className="text-lg font-semibold text-foreground">{item.name}</h3>
                         <p className="text-muted-foreground text-sm">{item.brand}</p>
-                        <p className="text-muted-foreground/80 text-xs">SKU: {item.sku}</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-muted-foreground/80 text-xs">SKU: {item.sku}</span>
+                          {item.size && (
+                            <span className="bg-sillage-gold/20 text-sillage-gold-dark px-2 py-0.5 rounded text-xs font-medium">
+                              {item.size}
+                            </span>
+                          )}
+                        </div>
                       </div>
                       
                       <div className="flex items-center space-x-2">

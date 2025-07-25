@@ -70,13 +70,13 @@ const Header = () => {
               to="/"
               className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium text-sm uppercase tracking-wide px-3 py-2 rounded-md"
             >
-              Home
+              Inicio
             </Link>
             <Link
               to="/productos"
               className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium text-sm uppercase tracking-wide px-3 py-2 rounded-md"
             >
-              Perfumes
+              Catalogo
             </Link>
             <button
               onClick={() => {
@@ -90,13 +90,25 @@ const Header = () => {
               }}
               className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium text-sm uppercase tracking-wide px-3 py-2 rounded-md"
             >
-              About
+              Quienes Somos?
             </button>
+            <Link
+              to="/#"
+              className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium text-sm uppercase tracking-wide px-3 py-2 rounded-md"
+            >
+              Como Comprar
+            </Link>
+            <Link
+              to="/#"
+              className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium text-sm uppercase tracking-wide px-3 py-2 rounded-md"
+            >
+              Seguimiento
+            </Link>
             <Link
               to="/contacto"
               className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium text-sm uppercase tracking-wide px-3 py-2 rounded-md"
             >
-              Contact
+              Contactenos
             </Link>
             {user?.role === 'admin' && (
               <Link
@@ -224,7 +236,7 @@ const Header = () => {
                 className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium px-3 py-2 rounded-md w-full text-left"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Productos
+                Catalogo
               </Link>
               <button
                 onClick={() => {
@@ -238,14 +250,28 @@ const Header = () => {
                 }}
                 className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium px-3 py-2 rounded-md w-full text-left"
               >
-                About
+                Quienes Somos
               </button>
               <Link
                 to="/contacto"
                 className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium px-3 py-2 rounded-md w-full text-left"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Contact
+                Contactenos
+              </Link>
+              <Link
+                to="/#"
+                className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium px-3 py-2 rounded-md w-full text-left"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Como Comprar
+              </Link>
+              <Link
+                to="/#"
+                className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium px-3 py-2 rounded-md w-full text-left"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Seguimiento
               </Link>
               <Link
                 to="/favoritos"
