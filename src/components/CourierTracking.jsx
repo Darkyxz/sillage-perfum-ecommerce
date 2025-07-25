@@ -1,79 +1,93 @@
 import React from 'react';
 import { FaTruck, FaSearch, FaBoxOpen } from 'react-icons/fa';
 
-const CourierTracking = ({ trackingNumber }) => {
-  // Verificar si hay número de seguimiento
-  if (!trackingNumber) {
-    return (
-      <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 my-4">
-        <div className="flex">
-          <div className="flex-shrink-0">
-            <FaBoxOpen className="h-5 w-5 text-yellow-400" />
-          </div>
-          <div className="ml-3">
-            <p className="text-sm text-yellow-700">
-              Este producto aún no tiene número de seguimiento asignado.
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Couriers disponibles
+const CourierTracking = ({ trackingNumber = '' }) => {
   const couriers = [
     {
       name: 'Starken',
-      url: `https://www.starken.cl/seguimiento?codigo=${trackingNumber}`,
+      url: trackingNumber ? 
+        `https://www.starken.cl/seguimiento?codigo=${trackingNumber}` : 
+        'https://www.starken.cl/seguimiento',
       icon: <FaTruck className="text-blue-600" />,
-      color: 'bg-blue-50 hover:bg-blue-100'
+      color: 'bg-blue-50 hover:bg-blue-100',
+      description: 'Sistema de seguimiento de Starken'
     },
     {
       name: 'Chilexpress',
-      url: `https://www.chilexpress.cl/Views/ChilexpressCL/Resultado-busqueda.aspx?DATA=${trackingNumber}`,
+      url: trackingNumber ? 
+        `https://centrodeayuda.chilexpress.cl/home` : 
+        'https://centrodeayuda.chilexpress.cl/home',
       icon: <FaTruck className="text-red-600" />,
-      color: 'bg-red-50 hover:bg-red-100'
+      color: 'bg-red-50 hover:bg-red-100',
+      description: 'Centro de ayuda Chilexpress'
     },
     {
       name: 'CorreosChile',
-      url: `https://www.correos.cl/SitePages/seguimiento/seguimiento.aspx?envio=${trackingNumber}`,
+      url: trackingNumber ? 
+        `https://www.correos.cl/seguimiento-en-linea` : 
+        'https://www.correos.cl/seguimiento-en-linea',
       icon: <FaTruck className="text-green-600" />,
-      color: 'bg-green-50 hover:bg-green-100'
+      color: 'bg-green-50 hover:bg-green-100',
+      description: 'Seguimiento en línea Correos Chile'
     }
   ];
 
   return (
     <div className="mt-6">
       <h3 className="text-lg font-medium text-gray-900 flex items-center">
-        <FaSearch className="mr-2" /> Seguimiento de tu envío
+        <FaSearch className="mr-2" /> Seguimiento de envíos
       </h3>
-      <p className="text-sm text-gray-500 mt-1 mb-3">
-        Haz clic en la empresa de envío correspondiente para rastrear tu paquete.
-      </p>
+      
+      {!trackingNumber && (
+        <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 my-4">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <FaBoxOpen className="h-5 w-5 text-yellow-400" />
+            </div>
+            <div className="ml-3">
+              <p className="text-sm text-yellow-700">
+                {trackingNumber 
+                  ? "Utiliza los siguientes enlaces para rastrear tu envío:" 
+                  : "Este producto no tiene número de seguimiento asignado. Puedes usar los siguientes enlaces para rastrear tu envío cuando lo tengas."}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 mt-4">
         {couriers.map((courier, index) => (
-          <a
-            key={index}
-            href={courier.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`${courier.color} rounded-md p-4 flex items-center justify-start border border-gray-200 transition-colors duration-200`}
+          <div 
+            key={index} 
+            className={`${courier.color} rounded-md p-4 border border-gray-200 transition-colors duration-200`}
           >
-            <div className="flex-shrink-0 mr-3 text-xl">
-              {courier.icon}
+            <div className="flex items-center mb-2">
+              <div className="flex-shrink-0 mr-3 text-xl">
+                {courier.icon}
+              </div>
+              <h4 className="text-sm font-medium text-gray-900">{courier.name}</h4>
             </div>
-            <div>
-              <p className="text-sm font-medium text-gray-900">{courier.name}</p>
-              <p className="text-xs text-gray-500">N°: {trackingNumber}</p>
-            </div>
-          </a>
+            
+            {trackingNumber && (
+              <p className="text-xs text-gray-500 mb-2">N° de seguimiento: {trackingNumber}</p>
+            )}
+            
+            <a
+              href={courier.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-medium text-amber-900 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 hover:from-amber-500 hover:via-amber-600 hover:to-amber-700 py-2 px-4 rounded-md inline-block mt-1 shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105"
+            >
+              Rastrear envío
+            </a>
+          </div>
         ))}
       </div>
 
-      <p className="text-xs text-gray-400 mt-3">
-        * Si no estás seguro de qué empresa está gestionando tu envío, prueba con cada una.
-      </p>
+      <div className="mt-4 text-xs text-gray-500">
+        <p><strong>Nota:</strong> El número de seguimiento debe ser proporcionado por la empresa de envíos.</p>
+        <p className="mt-1">Si tienes problemas con tu envío, contacta directamente con la empresa correspondiente.</p>
+      </div>
     </div>
   );
 };
