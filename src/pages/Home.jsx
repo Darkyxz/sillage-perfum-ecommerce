@@ -73,7 +73,7 @@ const Home = () => {
           <img
             src="/hero.png"
             alt="Background perfume desktop"
-            className="w-auto h-[400px] lg:h-[600px] xl:h-[800px] object-contain opacity-60"
+            className="w-auto h-[400px] lg:h-[600px] xl:h-[980px] object-contain opacity-60"
             style={{ filter: 'none', backdropFilter: 'none' }}
           />
         </div>
@@ -81,16 +81,16 @@ const Home = () => {
         {/* Background image behind text - Mobile */}
         <div className="absolute inset-0 flex items-center justify-center md:hidden" style={{ zIndex: 1 }}>
           <img
-            src="/sillap-3.jpg"
+            src="/hero.png"
             alt="Background perfume mobile"
             className="w-auto h-64 xs:h-72 sm:h-80 object-contain opacity-60"
             style={{ filter: 'none', backdropFilter: 'none' }}
           />
         </div>
 
-        {/* Video reposicionado más arriba y a la izquierda */}
+        {/* Video */}
         <motion.div
-          className="absolute left-1 top-1" // Ajustado más arriba (top-24) y más a la izquierda (left-4)
+          className="absolute left-1 top-1"
           style={{
             zIndex: 2,
             width: '400px',
@@ -114,58 +114,35 @@ const Home = () => {
           </video>
         </motion.div>
 
-        {/* Contenido del hero centrado */}
-        <div className="container mx-auto px-4 text-center relative" style={{ zIndex: 10 }}>
+        {/* Botones posicionados al final de la imagen */}
+        <div className="absolute bottom-20 left-4 right-4 sm:left-14 sm:right-auto" style={{ zIndex: 10 }}>
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             className="max-w-4xl mx-auto"
           >
-            <motion.h1
-              className="text-5xl md:text-7xl font-display font-bold text-sillage-dark mb-6"
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1, delay: 0.2 }}
-            >
-              Descubre tu
-              <span className="block font-bold drop-shadow-lg" style={{
-                background: 'linear-gradient(135deg, #b8860b, #8B7500, #daa520)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                textShadow: '2px 2px 4px rgba(139, 117, 0, 0.4)'
-              }}>
-                Fragancia Perfecta
-              </span>
-            </motion.h1>
-
-            <motion.p
-              className="text-xl md:text-2xl text-sillage-gold-dark mb-8 max-w-2xl mx-auto"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-            >
-              Colección exclusiva de perfumes de lujo que definen tu personalidad única
-            </motion.p>
-
             <motion.div
-              className="flex flex-col sm:flex-row gap-4 justify-center items-center"
+              className="flex flex-row gap-2 sm:gap-4 justify-center sm:justify-start"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6 }}
             >
               <Link to="/productos">
-                <Button size="lg" className="bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white font-semibold px-8 py-3 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
-                  Explorar Colección
-                  <ArrowRight className="ml-2 h-5 w-5" />
+                <Button
+                  size="sm"
+                  className="bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white font-semibold px-3 py-2 sm:px-8 sm:py-3 text-xs sm:text-base shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                >
+                  <span className="hidden sm:inline">Explorar Colección</span>
+                  <span className="sm:hidden">Explorar</span>
+                  <ArrowRight className="ml-1 sm:ml-2 h-3 w-3 sm:h-5 sm:w-5" />
                 </Button>
               </Link>
 
               <Button
                 variant="outline"
-                size="lg"
-                className="border-sillage-gold text-sillage-gold-dark hover:bg-sillage-gold hover:text-white transition-all duration-300 px-8 py-3 shadow-lg hover:shadow-xl transform hover:scale-105"
+                size="sm"
+                className="border-sillage-gold text-sillage-gold-dark hover:bg-sillage-gold hover:text-white transition-all duration-300 px-3 py-2 sm:px-8 sm:py-3 text-xs sm:text-base shadow-lg hover:shadow-xl transform hover:scale-105"
                 onClick={() => {
                   toast({
                     title: "Catálogo",
@@ -173,7 +150,8 @@ const Home = () => {
                   });
                 }}
               >
-                Ver Catálogo
+                <span className="hidden sm:inline">Ver Catálogo</span>
+                <span className="sm:hidden">Catálogo</span>
               </Button>
             </motion.div>
           </motion.div>
@@ -269,9 +247,9 @@ const Home = () => {
                         <img
                           alt={`Perfume ${product.name}`}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                          src={product.image_url || "./sillap-3.jpg"}
+                          src={product.image_url || "./hero.jpg"}
                           onError={(e) => {
-                            e.target.src = "./sillap-3.jpg";
+                            e.target.src = "./hero.jpg";
                           }}
                         />
                       </div>

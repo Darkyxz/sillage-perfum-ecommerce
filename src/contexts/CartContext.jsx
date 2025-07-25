@@ -73,13 +73,14 @@ export const CartProvider = ({ children }) => {
       const remoteCart = await cartService.getCart(user.id);
       
       for (const localItem of localItems) {
+        // Buscar por product_id (cada variante tiene su propio ID único)
         const remoteItem = remoteCart.find(item => item.product_id === localItem.id);
         if (remoteItem) {
-          // Si existe, actualiza la cantidad (suma)
+          // Si existe la misma variante, actualiza la cantidad (suma)
           const newQuantity = remoteItem.quantity + localItem.quantity;
           await cartService.updateQuantity(user.id, localItem.id, newQuantity);
         } else {
-          // Si no existe, lo añade
+          // Si no existe esta variante específica, la añade
           await cartService.addToCart(user.id, localItem.id, localItem.quantity);
         }
       }
@@ -102,6 +103,7 @@ export const CartProvider = ({ children }) => {
       }
     } else {
       setItems(prevItems => {
+        // Identificar producto único por id (que ya incluye la variante específica)
         const existingItem = prevItems.find(item => item.id === product.id);
         if (existingItem) {
           return prevItems.map(item =>
@@ -170,6 +172,7 @@ export const CartProvider = ({ children }) => {
   };
 
   const getTotalItems = () => items.reduce((total, item) => total + (item.quantity || 0), 0);
+  
   const getTotalPrice = () => items.reduce((total, item) => {
     const price = parseFloat(item.price);
     const quantity = parseInt(item.quantity, 10);
@@ -178,6 +181,33 @@ export const CartProvider = ({ children }) => {
     }
     return total;
   }, 0);
+
+  // Función helper para obtener información del carrito agrupada por producto base
+  const getCartSummary = () => {
+    const grouped = {};
+    items.forEach(item => {
+      const key = `${item.name}-${item.brand}`;
+      if (!grouped[key]) {
+        grouped[key] = {
+          name: item.name,
+          brand: item.brand,
+          variants: [],
+          totalQuantity: 0,
+          totalPrice: 0
+        };
+      }
+      grouped[key].variants.push({
+        id: item.id,
+        size: item.size,
+        price: item.price,
+        quantity: item.quantity,
+        sku: item.sku
+      });
+      grouped[key].totalQuantity += item.quantity;
+      grouped[key].totalPrice += item.price * item.quantity;
+    });
+    return Object.values(grouped);
+  };
 
   const value = {
     items,
@@ -188,6 +218,7 @@ export const CartProvider = ({ children }) => {
     clearCart,
     getTotalItems,
     getTotalPrice,
+    getCartSummary,
   };
 
   return (

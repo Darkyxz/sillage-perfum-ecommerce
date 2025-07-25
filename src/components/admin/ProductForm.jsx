@@ -248,9 +248,9 @@ const ProductForm = ({ onSubmit, initialData, onCancel }) => {
         <div className="space-y-2">
           <Label className="admin-text font-medium">Tamaño</Label>
           <select name="size" value={productData.size} onChange={handleChange} className="admin-input w-full h-10">
+            <option value="30ml">30ml</option>
             <option value="50ml">50ml</option>
             <option value="100ml">100ml</option>
-            <option value="150ml">150ml</option>
           </select>
         </div>
         <div className="space-y-2">

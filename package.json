@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Tienda de perfumes premium para el mercado chileno",
   "main": "index.js",
-
+  "type": "module",
   "private": true,
   "scripts": {
     "dev": "vite",

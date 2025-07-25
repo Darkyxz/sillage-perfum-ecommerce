@@ -348,7 +348,7 @@ const ProductDetail = () => {
                 <ChevronDown className="h-4 w-4 text-muted-foreground" />
               </div>
               <div className="flex space-x-2">
-                {['18 ml', '30 ml', '50 ml', '100 ml'].map((size) => (
+                {['30 ml', '50 ml', '100 ml'].map((size) => (
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}

@@ -1,7 +1,6 @@
 import React from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import UrgencyBanner from '@/components/UrgencyBanner';
 
 const Layout = ({ children }) => {
   return (
@@ -14,7 +13,6 @@ const Layout = ({ children }) => {
         {children}
       </main>
       <Footer />
-      <UrgencyBanner />
     </div>
   );
 };
