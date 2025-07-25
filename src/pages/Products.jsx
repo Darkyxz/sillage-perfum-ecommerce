@@ -127,14 +127,14 @@ const Products = () => {
           </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-4 gap-8">
+        <div className="grid lg:grid-cols-4 gap-4 lg:gap-8">
           {/* Filtros */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
-            className="lg:col-span-1"
+            className="lg:col-span-1 order-2 lg:order-1"
           >
-            <Card className="glass-effect border-sillage-gold/20 sticky top-24">
+            <Card className="glass-effect border-sillage-gold/20 lg:sticky lg:top-24">
               <CardContent className="p-6">
                 <div className="flex items-center mb-6">
                   <Filter className="h-5 w-5 text-sillage-gold mr-2" />
@@ -216,7 +216,7 @@ const Products = () => {
           </motion.div>
 
           {/* Grid de Productos */}
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-3 order-1 lg:order-2">
             <div className="mb-6">
               <p className="text-muted-foreground">
                 {filteredProducts.length} producto{filteredProducts.length !== 1 ? 's' : ''} encontrado{filteredProducts.length !== 1 ? 's' : ''}
