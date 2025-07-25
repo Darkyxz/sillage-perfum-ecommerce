@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { CartProvider } from '@/contexts/CartContext';
@@ -29,10 +29,11 @@ function App() {
 
   return (
     <ContentProtection>
-      <AuthProvider>
-        <CartProvider>
-          <FavoritesProvider>
-            <Router>
+      <HelmetProvider>
+        <AuthProvider>
+          <CartProvider>
+            <FavoritesProvider>
+              <Router>
               <div className="min-h-screen transition-colors duration-300 bg-background text-foreground">
                   <Helmet>
                     <title>Sillage-Perfum - Perfumes Premium</title>
@@ -61,10 +62,11 @@ function App() {
                   <Toaster />
                   <AdminDebug />
                 </div>
-              </Router>
-            </FavoritesProvider>
-          </CartProvider>
-        </AuthProvider>
+                </Router>
+              </FavoritesProvider>
+            </CartProvider>
+          </AuthProvider>
+        </HelmetProvider>
     </ContentProtection>
   );
 }

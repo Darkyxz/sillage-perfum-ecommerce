@@ -15,7 +15,10 @@
 }
 
 /* Permitir selección en elementos de formulario */
-input, textarea, [contenteditable="true"], .admin-input {
+input,
+textarea,
+[contenteditable="true"],
+.admin-input {
   -webkit-user-select: text !important;
   -moz-user-select: text !important;
   -ms-user-select: text !important;
@@ -33,7 +36,8 @@ img {
 }
 
 /* Permitir interacción con imágenes en admin */
-.admin-page img, .admin-panel img {
+.admin-page img,
+.admin-panel img {
   pointer-events: auto !important;
 }
 
@@ -51,12 +55,55 @@ img {
   border-radius: 3px;
 }
 
+/* Utilidad para truncar texto en múltiples líneas */
+@layer utilities {
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Botón de favoritos siempre visible en móvil */
+  .favorite-button-mobile {
+    opacity: 0.95;
+    background: linear-gradient(135deg, rgb(240, 180, 3), rgba(255, 193, 7, 0.7));
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 193, 7, 0.3);
+    box-shadow: 0 2px 8px rgba(255, 193, 7, 0.2);
+    transition: all 0.2s ease;
+  }
+
+  .favorite-button-mobile:hover {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 1), rgba(255, 193, 7, 0.9));
+    border: 1px solid rgba(255, 193, 7, 0.5);
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+    transform: scale(1.05);
+  }
+
+  @media (min-width: 768px) {
+    .favorite-button-mobile {
+      opacity: 0;
+      background: linear-gradient(135deg, rgb(218, 176, 52), rgba(255, 193, 7, 0.6));
+    }
+
+    .group:hover .favorite-button-mobile {
+      opacity: 1;
+    }
+
+    .group:hover .favorite-button-mobile:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 16px rgba(255, 193, 7, 0.4);
+    }
+  }
+}
+
 /* Protección contra print screen */
 @media print {
   * {
     display: none !important;
   }
-  
+
   body::after {
     content: "🚫 Contenido protegido - No se permite imprimir";
     display: block !important;
@@ -70,45 +117,65 @@ img {
 @layer base {
   :root {
     /* Colores base de Sillage */
-    --background: 35 4% 82%; /* Fondo beige/crema elegante como la imagen */
-    --foreground: 35 50% 25%; /* Texto dorado oscuro */
-    --card: 45 22% 87%; /* Cards ligeramente más claras */
+    --background: 35 4% 82%;
+    /* Fondo beige/crema elegante como la imagen */
+    --foreground: 35 50% 25%;
+    /* Texto dorado oscuro */
+    --card: 45 22% 87%;
+    /* Cards ligeramente más claras */
     --card-foreground: 35 50% 25%;
     --popover: 45 22% 87%;
     --popover-foreground: 35 50% 25%;
-    
+
     /* Colores principales - Sillage Gold */
-    --primary: 43 96% 50%; /* Gold principal */
+    --primary: 43 96% 50%;
+    /* Gold principal */
     --primary-foreground: 0 0% 100%;
-    --sillage-gold: 37 95% 66%; /* Variable principal dorada */
-    --sillage-gold-dark: 36 73% 38%; /* #c4965a en HSL */
-    --sillage-gold-bright: 48 85% 69%; /* #f0c674 en HSL */
-    --sillage-gold-warm: 42 68% 60%; /* #daaf60 en HSL */
-    
+    --sillage-gold: 37 95% 66%;
+    /* Variable principal dorada */
+    --sillage-gold-dark: 36 73% 38%;
+    /* #c4965a en HSL */
+    --sillage-gold-bright: 48 85% 69%;
+    /* #f0c674 en HSL */
+    --sillage-gold-warm: 42 68% 60%;
+    /* #daaf60 en HSL */
+
     /* Colores neutros y oscuros */
-    --sillage-dark: 220 13% 18%; /* Slate-800 aproximado */
-    --sillage-dark-900: 222 47% 11%; /* Slate-900 más oscuro */
-    --sillage-dark-lighter: 32 24% 21%; /* #3C2415 */
-    --sillage-gray-light: 0 0% 83%; /* Para textos suaves */
-    --sillage-gray-medium: 0 0% 64%; /* Para textos intermedios */
-    
+    --sillage-dark: 220 13% 18%;
+    /* Slate-800 aproximado */
+    --sillage-dark-900: 222 47% 11%;
+    /* Slate-900 más oscuro */
+    --sillage-dark-lighter: 32 24% 21%;
+    /* #3C2415 */
+    --sillage-gray-light: 0 0% 83%;
+    /* Para textos suaves */
+    --sillage-gray-medium: 0 0% 64%;
+    /* Para textos intermedios */
+
     /* Colores semánticos */
-    --secondary: 45 15% 78%; /* Secondary beige más oscuro */
-    --secondary-foreground: 36 73% 38%; /* Texto dorado oscuro */
-    --muted: 45 12% 76%; /* Muted beige */
-    --muted-foreground: 36 73% 38%; /* Texto dorado oscuro para muted */
+    --secondary: 45 15% 78%;
+    /* Secondary beige más oscuro */
+    --secondary-foreground: 36 73% 38%;
+    /* Texto dorado oscuro */
+    --muted: 45 12% 76%;
+    /* Muted beige */
+    --muted-foreground: 36 73% 38%;
+    /* Texto dorado oscuro para muted */
     --accent: 45 15% 80%;
     --accent-foreground: 36 73% 38%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 43 96% 50%; /* Bordes dorados */
-    --input: 45 20% 88%; /* Inputs con fondo beige */
-    --ring: 43 96% 50%; /* Gold ring */
-    
+    --border: 43 96% 50%;
+    /* Bordes dorados */
+    --input: 45 20% 88%;
+    /* Inputs con fondo beige */
+    --ring: 43 96% 50%;
+    /* Gold ring */
+
     /* Gradientes personalizados */
     --gradient-purple-pink: linear-gradient(to right, #f7c455, #ecc648);
     --gradient-gold: linear-gradient(to right, hsl(var(--sillage-gold)), hsl(var(--sillage-gold-dark)));
-    
+
     --radius: 0.5rem;
   }
 
@@ -122,10 +189,12 @@ img {
     width: 100%;
     overflow-x: hidden;
   }
+
   * {
     @apply border-border;
     box-sizing: border-box;
   }
+
   body {
     background-color: hsl(var(--background)) !important;
     color: hsl(var(--foreground)) !important;
@@ -135,6 +204,7 @@ img {
     width: 100%;
     overflow-x: hidden;
   }
+
   #root {
     width: 100%;
     min-width: 100%;
@@ -142,64 +212,68 @@ img {
     padding: 0;
     overflow-x: hidden;
   }
+
   .font-display {
     font-family: 'Playfair Display', serif;
   }
 }
 
 @layer components {
+
   /* Estilos personalizados de Sillage */
   .gradient-text {
     @apply bg-gradient-to-r from-primary via-primary to-destructive bg-clip-text text-transparent;
     background-image: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--sillage-gold-bright)), hsl(var(--destructive)));
   }
-  
+
   .floating-button {
     @apply bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold;
     @apply text-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300;
   }
-  
+
   .glass-effect {
     @apply backdrop-blur-sm bg-card/80 border border-border/30;
     backdrop-filter: blur(8px);
     background: hsla(var(--card), 0.8);
   }
-  
+
   .perfume-card {
     @apply bg-card border-border/30 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300;
     backdrop-filter: blur(8px);
   }
-  
+
   /* Navbar personalizada */
   .navbar-bg {
     background: hsla(var(--sillage-dark-900), 0.8);
     backdrop-filter: blur(12px);
   }
-  
+
   .navbar-link {
     @apply text-muted-foreground hover:text-foreground transition-colors p-2 rounded-md;
+
     &:hover {
       background: hsla(var(--sillage-dark), 0.5);
     }
   }
-  
+
   .navbar-cart-icon {
     color: hsl(var(--sillage-gold-dark));
+
     &:hover {
       color: hsl(var(--sillage-gold-bright));
     }
   }
-  
+
   .navbar-cart-badge {
     background: hsl(var(--primary));
     @apply text-primary-foreground border-2 border-background shadow-lg;
   }
-  
+
   .navbar-gradient-button {
     background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--destructive)));
     @apply hover:opacity-90 transition-opacity;
   }
-  
+
   .navbar-brand {
     background: var(--gradient-purple-pink);
     @apply bg-clip-text text-transparent;
@@ -207,54 +281,55 @@ img {
 }
 
 @layer utilities {
+
   /* Utilidades adicionales */
   .text-sillage-gold {
     color: hsl(var(--sillage-gold));
   }
-  
+
   .text-sillage-gold-dark {
     color: hsl(var(--sillage-gold-dark));
   }
-  
+
   .text-sillage-gold-bright {
     color: hsl(var(--sillage-gold-bright));
   }
-  
+
   .bg-sillage-gold {
     background-color: hsl(var(--sillage-gold));
   }
-  
+
   .bg-sillage-dark {
     background-color: hsl(var(--sillage-dark));
   }
-  
+
   .bg-sillage-dark-900 {
     background-color: hsl(var(--sillage-dark-900));
   }
-  
+
   .border-sillage-gold {
     border-color: hsl(var(--sillage-gold));
   }
-  
+
   /* Clases adicionales usadas en el Footer y componentes */
   .admin-button {
     @apply bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold;
     @apply text-white font-semibold transition-all duration-200;
   }
-  
+
   .price-highlight {
     @apply shadow-lg hover:shadow-xl transform hover:scale-105;
   }
-  
+
   /* Clases de estado para hover y focus */
   .hover\:text-sillage-gold:hover {
     color: hsl(var(--sillage-gold));
   }
-  
+
   .hover\:bg-sillage-gold:hover {
     background-color: hsl(var(--sillage-gold));
   }
-  
+
   .focus\:border-sillage-gold:focus {
     border-color: hsl(var(--sillage-gold));
   }
@@ -262,6 +337,7 @@ img {
 
 /* Media queries específicas para dispositivos problemáticos */
 @media screen and (max-width: 768px) {
+
   /* Asegurar que el navbar cubra completamente en móviles */
   header {
     width: 100vw !important;
@@ -273,22 +349,22 @@ img {
     position: sticky !important;
     top: 0 !important;
   }
-  
+
   /* Contenedor principal del navbar */
-  header > div {
+  header>div {
     width: 100% !important;
     max-width: 100% !important;
     margin: 0 !important;
     box-sizing: border-box !important;
   }
-  
+
   /* Asegurar que el body no tenga scroll horizontal */
   body {
     overflow-x: hidden !important;
     width: 100vw !important;
     max-width: 100vw !important;
   }
-  
+
   /* Contenedor principal de la app */
   #root {
     width: 100vw !important;
@@ -304,9 +380,9 @@ img {
     min-width: 100vw !important;
     max-width: 100vw !important;
   }
-  
+
   /* Reducir padding en pantallas muy pequeñas */
-  header > div {
+  header>div {
     padding-left: 12px !important;
     padding-right: 12px !important;
   }
@@ -319,9 +395,9 @@ img {
     min-width: 100vw !important;
     max-width: 100vw !important;
   }
-  
+
   /* Ajustar espaciado para pantallas muy pequeñas */
-  header > div {
+  header>div {
     padding-left: 10px !important;
     padding-right: 10px !important;
   }
@@ -342,13 +418,13 @@ img {
     max-width: 100% !important;
     overflow-x: hidden !important;
   }
-  
+
   footer {
     width: 100% !important;
     max-width: 100% !important;
     overflow-x: hidden !important;
   }
-  
+
   /* Contenedores de secciones */
   section {
     width: 100% !important;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Search, Filter, Star, Heart, ShoppingCart, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -52,8 +52,8 @@ const Products = () => {
     const filterProducts = async () => {
       try {
         const filtered = await productService.searchProducts(
-          searchTerm, 
-          selectedCategory, 
+          searchTerm,
+          selectedCategory,
           sortOption
         );
         setFilteredProducts(filtered);
@@ -172,11 +172,10 @@ const Products = () => {
                       <button
                         key={category.value}
                         onClick={() => setSelectedCategory(category.value)}
-                        className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                          selectedCategory === category.value
-                            ? 'bg-sillage-gold/20 text-sillage-gold-dark border border-sillage-gold/30'
-                            : 'text-muted-foreground hover:bg-sillage-gold/10 hover:text-sillage-gold-dark'
-                        }`}
+                        className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${selectedCategory === category.value
+                          ? 'bg-sillage-gold/20 text-sillage-gold-dark border border-sillage-gold/30'
+                          : 'text-muted-foreground hover:bg-sillage-gold/10 hover:text-sillage-gold-dark'
+                          }`}
                       >
                         {category.label}
                       </button>
@@ -200,11 +199,10 @@ const Products = () => {
                       <button
                         key={sort.value}
                         onClick={() => setSortOption(sort.value)}
-                        className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${
-                          sortOption === sort.value
-                            ? 'bg-sillage-gold/20 text-sillage-gold-dark border border-sillage-gold/30'
-                            : 'text-muted-foreground hover:bg-sillage-gold/10 hover:text-sillage-gold-dark'
-                        }`}
+                        className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${sortOption === sort.value
+                          ? 'bg-sillage-gold/20 text-sillage-gold-dark border border-sillage-gold/30'
+                          : 'text-muted-foreground hover:bg-sillage-gold/10 hover:text-sillage-gold-dark'
+                          }`}
                       >
                         {sort.label}
                       </button>
@@ -237,7 +235,7 @@ const Products = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {(() => {
                   const sortedProducts = [...filteredProducts];
-                  const longestNameProduct = sortedProducts.reduce((longest, current) => 
+                  const longestNameProduct = sortedProducts.reduce((longest, current) =>
                     current.name.length > longest.name.length ? current : longest
                   );
                   const otherProducts = sortedProducts.filter(p => p.id !== longestNameProduct.id);
@@ -248,73 +246,71 @@ const Products = () => {
                     ...otherProducts.slice(middleIndex)
                   ];
                   return reorderedProducts.map((product, index) => (
-                  <motion.div
-                    key={product.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
-                    <Card className="glass-effect border-sillage-gold/20 group hover:border-sillage-gold/40 transition-all duration-300 h-full flex flex-col">
-                      <div className="relative overflow-hidden rounded-t-lg">
-                        <div className="aspect-square bg-sillage-gold/10 flex items-center justify-center">
-                          {product.image_url ? (
-                            <img
-                              src={product.image_url}
-                              alt={product.name}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            />
-                          ) : (
-                            <div className="text-muted-foreground/50 text-center p-8">
-                              <p>Sin imagen</p>
-                            </div>
-                          )}
-                        </div>
-                        
-                        <button
-                          className={`absolute top-3 right-3 p-2 rounded-full glass-effect opacity-0 group-hover:opacity-100 transition-all duration-200 ${
-                            isInFavorites(product.id) 
-                              ? 'bg-sillage-gold/80 hover:bg-sillage-gold/90' 
-                              : 'hover:bg-sillage-gold/20'
-                          }`}
-                          onClick={() => toggleFavorite(product)}
-                        >
-                          <Heart className={`h-5 w-5 transition-colors ${
-                            isInFavorites(product.id) 
-                              ? 'text-white fill-current' 
-                              : 'text-sillage-gold-dark hover:text-sillage-gold'
-                          }`} />
-                        </button>
-                      </div>
-
-                      <CardContent className="p-4 flex flex-col flex-grow">
-                        <div className="flex-grow">
-                          <h3 className="text-lg font-semibold text-foreground mb-2">
-                            {product.name}
-                          </h3>
-                          <p className="text-muted-foreground text-sm mb-2">
-                            {product.brand || 'Marca Premium'}
-                          </p>
-                          <p className="text-muted-foreground/80 text-xs mb-4 line-clamp-2">
-                            {product.description || 'Fragancia exclusiva de alta calidad'}
-                          </p>
-                        </div>
-
-                        <div className="mt-4 pt-4 border-t border-sillage-gold/20">
-                          <p className="text-xl font-bold text-sillage-gold-dark">
-                            ${product.price?.toLocaleString('es-CL') || '0'} CLP
-                          </p>
-                          <div className="flex items-center space-x-2">
-                            <Link to={`/productos/${product.sku}`} className="flex-1">
-                              <Button variant="outline" className="w-full border-sillage-gold/30 text-sillage-gold-dark hover:bg-sillage-gold hover:text-white transition-all duration-300">Ver Detalles</Button>
-                            </Link>
-                            <Button size="icon" className="bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white" onClick={() => openQuantityDialog(product)}>
-                              <ShoppingCart className="h-5 w-5" />
-                            </Button>
+                    <motion.div
+                      key={product.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                    >
+                      <Card className="glass-effect border-sillage-gold/20 group hover:border-sillage-gold/40 transition-all duration-300 h-full flex flex-col">
+                        <div className="relative overflow-hidden rounded-t-lg">
+                          <div className="aspect-square bg-sillage-gold/10 flex items-center justify-center">
+                            {product.image_url ? (
+                              <img
+                                src={product.image_url}
+                                alt={product.name}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              />
+                            ) : (
+                              <div className="text-muted-foreground/50 text-center p-8">
+                                <p>Sin imagen</p>
+                              </div>
+                            )}
                           </div>
+
+                          <button
+                            className={`absolute top-3 right-3 p-2 rounded-full transition-all duration-200 ${isInFavorites(product.id)
+                              ? 'bg-sillage-gold/90 opacity-100 shadow-lg'
+                              : 'favorite-button-mobile hover:bg-sillage-gold/20 shadow-md'
+                              }`}
+                            onClick={() => toggleFavorite(product)}
+                          >
+                            <Heart className={`h-5 w-5 transition-colors ${isInFavorites(product.id)
+                              ? 'text-gold fill-current'
+                              : 'text-black hover:text-yellow-100 drop-shadow-sm'
+                              }`} />
+                          </button>
                         </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
+
+                        <CardContent className="p-4 flex flex-col flex-grow">
+                          <div className="flex-grow">
+                            <h3 className="text-lg font-semibold text-foreground mb-2">
+                              {product.name}
+                            </h3>
+                            <p className="text-muted-foreground text-sm mb-2">
+                              {product.brand || 'Marca Premium'}
+                            </p>
+                            <p className="text-muted-foreground/80 text-xs mb-4 line-clamp-2">
+                              {product.description || 'Fragancia exclusiva de alta calidad'}
+                            </p>
+                          </div>
+
+                          <div className="mt-4 pt-4 border-t border-sillage-gold/20">
+                            <p className="text-xl font-bold text-sillage-gold-dark">
+                              ${product.price?.toLocaleString('es-CL') || '0'} CLP
+                            </p>
+                            <div className="flex items-center space-x-2">
+                              <Link to={`/productos/${product.sku}`} className="flex-1">
+                                <Button variant="outline" className="w-full border-sillage-gold/30 text-sillage-gold-dark hover:bg-sillage-gold hover:text-white transition-all duration-300">Ver Detalles</Button>
+                              </Link>
+                              <Button size="icon" className="bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white" onClick={() => openQuantityDialog(product)}>
+                                <ShoppingCart className="h-5 w-5" />
+                              </Button>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
                   ));
                 })()}
               </div>
@@ -322,7 +318,7 @@ const Products = () => {
           </div>
         </div>
       </div>
-      <QuantityDialog 
+      <QuantityDialog
         open={isQuantityDialogOpen}
         onOpenChange={setIsQuantityDialogOpen}
         product={selectedProduct}
