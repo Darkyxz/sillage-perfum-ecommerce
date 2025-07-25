@@ -217,8 +217,8 @@ const Cart = () => {
             Continuar comprando
           </Link>
           
-          <div className="flex items-center justify-between">
-            <h1 className="text-4xl font-display font-bold text-foreground">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <h1 className="text-2xl sm:text-4xl font-display font-bold text-foreground">
               Carrito de Compras
             </h1>
             
@@ -228,7 +228,7 @@ const Cart = () => {
                 clearCart();
                 setPreferenceId(null); 
               }}
-              className="glass-effect border-border/30 text-foreground hover:bg-accent/15"
+              className="glass-effect border-border/30 text-foreground hover:bg-accent/15 w-full sm:w-auto"
             >
               Vaciar carrito
             </Button>
@@ -246,8 +246,85 @@ const Cart = () => {
                 transition={{ delay: index * 0.1 }}
               >
                 <Card className="glass-effect border-border/20">
-                  <CardContent className="p-6">
-                    <div className="flex items-center space-x-4">
+                  <CardContent className="p-4 sm:p-6">
+                    {/* Layout móvil */}
+                    <div className="block sm:hidden">
+                      <div className="flex items-start space-x-3 mb-3">
+                        <div className="w-16 h-16 rounded-lg overflow-hidden glass-effect flex-shrink-0">
+                          {item.image_url ? (
+                            <img
+                              src={item.image_url}
+                              alt={item.name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <ShoppingCart className="h-6 w-6 text-muted-foreground/60" />
+                            </div>
+                          )}
+                        </div>
+                        
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-base font-semibold text-foreground truncate">{item.name}</h3>
+                          <p className="text-muted-foreground text-sm">{item.brand}</p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-muted-foreground/80 text-xs truncate">SKU: {item.sku}</span>
+                            {item.size && (
+                              <span className="bg-sillage-gold/20 text-sillage-gold-dark px-2 py-0.5 rounded text-xs font-medium flex-shrink-0">
+                                {item.size}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => removeFromCart(item.id)}
+                          className="glass-effect border-border/30 text-foreground hover:bg-destructive/20 hover:border-destructive/50 flex-shrink-0 w-8 h-8"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      </div>
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                            className="glass-effect border-border/30 text-foreground hover:bg-accent/15 w-8 h-8"
+                          >
+                            <Minus className="h-3 w-3" />
+                          </Button>
+                          
+                          <span className="text-foreground font-semibold min-w-[2rem] text-center">
+                            {item.quantity}
+                          </span>
+                          
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                            className="glass-effect border-border/30 text-foreground hover:bg-accent/15 w-8 h-8"
+                          >
+                            <Plus className="h-3 w-3" />
+                          </Button>
+                        </div>
+                        
+                        <div className="text-right">
+                          <p className="text-primary font-semibold text-sm">
+                            ${(parseFloat(item.price) * item.quantity).toLocaleString('es-CL')}
+                          </p>
+                          <p className="text-muted-foreground text-xs">
+                            ${parseFloat(item.price).toLocaleString('es-CL')} c/u
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Layout desktop */}
+                    <div className="hidden sm:flex items-center space-x-4">
                       <div className="w-20 h-20 rounded-lg overflow-hidden glass-effect">
                         {item.image_url ? (
                           <img
