@@ -50,7 +50,7 @@ const SearchModal = ({ isOpen, onClose }) => {
 
       setIsLoading(true);
       try {
-        const products = await productService.getAllProducts();
+        const products = await productService.getAllProductsNoPagination();
         const filtered = products.filter(product => 
           product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           product.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||

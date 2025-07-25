@@ -13,7 +13,7 @@ const AdminDashboard = ({ stats, products, onProductAdded, onOpenAddForm }) => {
   console.log('🔧 AdminDashboard received onOpenAddForm:', typeof onOpenAddForm, onOpenAddForm);
 
   const handleLoadZacharProducts = async () => {
-    if (!window.confirm('¿Estás seguro? Esto eliminará todos los productos actuales y los reemplazará con los productos de Zachary Perfumes.')) {
+    if (!window.confirm('¿Estás seguro? Esto agregará SOLO los productos nuevos de Zachary Perfumes sin eliminar los existentes.')) {
       return;
     }
 
@@ -21,12 +21,12 @@ const AdminDashboard = ({ stats, products, onProductAdded, onOpenAddForm }) => {
       setLoadingZacharProducts(true);
       
       // Importación dinámica para evitar errores de SSR
-      const { loadZacharProducts } = await import('@/scripts/loadZacharProducts');
-      const newProducts = await loadZacharProducts();
+      const { loadNewZacharProducts } = await import('@/scripts/loadZacharProducts');
+      const newProducts = await loadNewZacharProducts();
       
       toast({
-        title: "¡Productos cargados exitosamente!",
-        description: `Se han cargado ${newProducts?.length || 0} productos de Zachary Perfumes.`,
+        title: "¡Productos nuevos agregados exitosamente!",
+        description: `Se han agregado ${newProducts?.length || 0} nuevas variantes de productos Zachary Perfumes.`,
       });
       
       // Recargar la página para refrescar todos los datos
@@ -34,8 +34,8 @@ const AdminDashboard = ({ stats, products, onProductAdded, onOpenAddForm }) => {
     } catch (error) {
       console.error('Error loading Zachary products:', error);
       toast({
-        title: "Error al cargar productos",
-        description: "No se pudieron cargar los productos de Zachary. Intenta de nuevo.",
+        title: "Error al agregar productos nuevos",
+        description: "No se pudieron agregar los productos nuevos de Zachary. Intenta de nuevo.",
         variant: "destructive",
       });
     } finally {
@@ -122,7 +122,7 @@ const AdminDashboard = ({ stats, products, onProductAdded, onOpenAddForm }) => {
               variant="secondary"
             >
               <Database className="mr-2 h-4 w-4" />
-              {loadingZacharProducts ? 'Cargando...' : 'Cargar Productos Zachary'}
+              {loadingZacharProducts ? 'Agregando...' : 'Agregar Productos Nuevos Zachary'}
             </Button>
             
             <Button

@@ -38,13 +38,7 @@ const About = () => {
                 Proviene del francés y significa "estela" o "rastro". En perfumes, describe la huella olfativa que deja una fragancia en el ambiente.
               </p>
 
-              <p className="text-sillage-gold-dark leading-relaxed">
-                Trabajamos con las mejores casas perfumeras del mundo para ofrecerte fragancias que van más allá de lo ordinario. Desde notas florales delicadas hasta composiciones orientales intensas, tenemos la fragancia perfecta para cada momento y personalidad.
-              </p>
-
-              <p className="text-sillage-gold-dark leading-relaxed">
-                Nuestro compromiso es brindarte no solo un perfume, sino una experiencia sensorial completa que despierte emociones y cree recuerdos inolvidables.
-              </p>
+              
             </motion.div>
           </div>
 

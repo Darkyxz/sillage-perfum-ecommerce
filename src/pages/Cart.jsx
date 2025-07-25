@@ -418,16 +418,18 @@ const Cart = () => {
                       <span>Subtotal ({items.length} productos)</span>
                       <span>${getTotalPrice().toLocaleString('es-CL')}</span>
                     </div>
-                    
+
                     <div className="flex justify-between text-muted-foreground">
                       <span>Envío</span>
-                      <span className="text-primary">Gratis</span>
+                      <span>$5.000</span>
                     </div>
-                    
+
                     <div className="border-t border-border/30 pt-4">
                       <div className="flex justify-between text-foreground font-semibold text-lg">
                         <span>Total</span>
-                        <span className="text-primary">${getTotalPrice().toLocaleString('es-CL')}</span>
+                        <span className="text-primary">
+                          ${(getTotalPrice() + 5000).toLocaleString('es-CL')}
+                        </span>
                       </div>
                     </div>
                   </div>

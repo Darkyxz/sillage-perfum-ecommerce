@@ -20,7 +20,9 @@ import PaymentSuccessPage from '@/pages/PaymentSuccessPage';
 import PaymentFailurePage from '@/pages/PaymentFailurePage';
 import PaymentPendingPage from '@/pages/PaymentPendingPage';
 import ContactForm from '@/pages/ContactForm';
+import CategoryPage from '@/pages/CategoryPage';
 import AdminDebug from '@/components/AdminDebug';
+import TrackingPage from '@/pages/TrackingPage';
 
 function App() {
   useEffect(() => {
@@ -34,7 +36,7 @@ function App() {
           <CartProvider>
             <FavoritesProvider>
               <Router>
-              <div className="min-h-screen transition-colors duration-300 bg-background text-foreground">
+                <div className="min-h-screen transition-colors duration-300 bg-background text-foreground">
                   <Helmet>
                     <title>Sillage-Perfum - Perfumes Premium</title>
                     <meta name="description" content="Descubre nuestra exclusiva colección de perfumes de lujo. Fragancias únicas para cada ocasión especial." />
@@ -42,33 +44,42 @@ function App() {
                   </Helmet>
                   
                   <Layout>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/productos" element={<Products />} />
-                  <Route path="/productos/:sku" element={<ProductDetail />} />
-                  <Route path="/carrito" element={<Cart />} />
-                  <Route path="/favoritos" element={<Favorites />} />
-                  <Route path="/admin" element={<Admin />} />
-                  <Route path="/perfil" element={<Profile />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
-                  <Route path="/contacto" element={<ContactForm />} /> {/* Nueva ruta */}
-                  <Route path="/pago-exitoso" element={<PaymentSuccessPage />} />
-                  <Route path="/pago-fallido" element={<PaymentFailurePage />} />
-                  <Route path="/pago-pendiente" element={<PaymentPendingPage />} />
-                </Routes>
+                    <Routes>
+                      <Route path="/" element={<Home />} />
+                      <Route path="/productos" element={<Products />} />
+                      <Route path="/productos/:sku" element={<ProductDetail />} />
+                      <Route path="/carrito" element={<Cart />} />
+                      <Route path="/favoritos" element={<Favorites />} />
+                      <Route path="/admin" element={<Admin />} />
+                      <Route path="/perfil" element={<Profile />} />
+                      <Route path="/login" element={<Login />} />
+                      <Route path="/register" element={<Register />} />
+                      <Route path="/contacto" element={<ContactForm />} />
+                      <Route path="/categoria/:categorySlug" element={<CategoryPage />} />
+                      <Route path="/pago-exitoso" element={<PaymentSuccessPage />} />
+                      <Route path="/pago-fallido" element={<PaymentFailurePage />} />
+                      <Route path="/pago-pendiente" element={<PaymentPendingPage />} />
+                      <Route 
+                        path="/seguimiento" 
+                        element={
+                          <ContentProtection requiredAuthLevel="user">
+                            <TrackingPage />
+                          </ContentProtection>
+                        } 
+                      />
+                    </Routes>
                   </Layout>
                   
                   <Toaster />
                   <AdminDebug />
                 </div>
-                </Router>
-              </FavoritesProvider>
-            </CartProvider>
-          </AuthProvider>
-        </HelmetProvider>
+              </Router>
+            </FavoritesProvider>
+          </CartProvider>
+        </AuthProvider>
+      </HelmetProvider>
     </ContentProtection>
   );
 }
 
-export default App;
+export default App; 

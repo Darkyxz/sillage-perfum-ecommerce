@@ -2,13 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ShoppingCart, User, Menu, X, Search, Heart } from 'lucide-react';
+import { ShoppingCart, User, Menu, X, Search, Heart, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
 import { useFavorites } from '@/contexts/FavoritesContext';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import SearchModal from '@/components/SearchModal';
+import CatalogDropdown from '@/components/CatalogDropdown';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -59,9 +60,11 @@ const Header = () => {
         <div className="flex items-center justify-between w-full" style={{ margin: 0, padding: 0 }}>
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3 flex-shrink-0">
-            <span className="text-xl sm:text-2xl font-display font-bold text-sillage-gold whitespace-nowrap">
-              Sillage Perfum
-            </span>
+            <img
+              src="/images/Logos.svg"
+              alt="Logo de la marca"
+              className="h-8 sm:h-10" // Ajusta la altura según necesites
+            />
           </Link>
 
           {/* Desktop Navigation */}
@@ -72,12 +75,7 @@ const Header = () => {
             >
               Inicio
             </Link>
-            <Link
-              to="/productos"
-              className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium text-sm uppercase tracking-wide px-3 py-2 rounded-md"
-            >
-              Catalogo
-            </Link>
+            <CatalogDropdown />
             <button
               onClick={() => {
                 const aboutSection = document.getElementById('about-section');
@@ -99,7 +97,7 @@ const Header = () => {
               Como Comprar
             </Link>
             <Link
-              to="/#"
+              to="/seguimiento"
               className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium text-sm uppercase tracking-wide px-3 py-2 rounded-md"
             >
               Seguimiento
@@ -231,13 +229,66 @@ const Header = () => {
               >
                 Inicio
               </Link>
-              <Link
-                to="/productos"
-                className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium px-3 py-2 rounded-md w-full text-left"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Catalogo
-              </Link>
+              {/* Catálogo en móvil - expandible */}
+              <div className="w-full">
+                <details className="group">
+                  <summary className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium px-3 py-2 rounded-md w-full text-left cursor-pointer list-none flex items-center justify-between">
+                    <span>Catálogo</span>
+                    <ChevronDown className="h-4 w-4 group-open:rotate-180 transition-transform" />
+                  </summary>
+                  <div className="mt-2 ml-4 space-y-2">
+                    <Link
+                      to="/categoria/perfume-dama"
+                      className="block text-sillage-gold-dark/80 hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors text-sm px-3 py-2 rounded-md"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Perfume Diseñador Dama
+                    </Link>
+                    <Link
+                      to="/categoria/perfume-varon"
+                      className="block text-sillage-gold-dark/80 hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors text-sm px-3 py-2 rounded-md"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Perfume Diseñador Varón
+                    </Link>
+                    <Link
+                      to="/categoria/inspirado-nicho"
+                      className="block text-sillage-gold-dark/80 hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors text-sm px-3 py-2 rounded-md"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Inspirado Nicho
+                    </Link>
+                    <Link
+                      to="/categoria/body-mist"
+                      className="block text-sillage-gold-dark/80 hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors text-sm px-3 py-2 rounded-md"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Body Mist
+                    </Link>
+                    <Link
+                      to="/categoria/by-zachary"
+                      className="block text-sillage-gold-dark/80 hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors text-sm px-3 py-2 rounded-md"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      By Zachary
+                    </Link>
+                    <Link
+                      to="/categoria/home-spray"
+                      className="block text-sillage-gold-dark/80 hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors text-sm px-3 py-2 rounded-md"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Home Spray
+                    </Link>
+                    <Link
+                      to="/productos"
+                      className="block text-sillage-gold hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors text-sm px-3 py-2 rounded-md font-medium"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Ver Todos
+                    </Link>
+                  </div>
+                </details>
+              </div>
               <button
                 onClick={() => {
                   const aboutSection = document.getElementById('about-section');
