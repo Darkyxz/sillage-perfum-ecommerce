@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
-import { Plus, Edit, Trash2, Package, Loader2, Star } from 'lucide-react';
+import { Plus, Edit, Trash2, Package, Loader2, Star, Filter } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import ProductForm from '@/components/admin/ProductForm';
 import { productService } from '@/lib/productService';
 
 const ProductManagement = () => {
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -22,6 +24,7 @@ const ProductManagement = () => {
       setLoading(true);
       const data = await productService.getAllProducts();
       setProducts(data);
+      setFilteredProducts(data);
     } catch (error) {
       console.error('Error loading products:', error);
       toast({
@@ -33,6 +36,15 @@ const ProductManagement = () => {
       setLoading(false);
     }
   };
+
+  // Filtrar productos por categoría
+  useEffect(() => {
+    if (selectedCategory === 'all') {
+      setFilteredProducts(products);
+    } else {
+      setFilteredProducts(products.filter(product => product.category === selectedCategory));
+    }
+  }, [products, selectedCategory]);
 
   const handleAddProduct = async (newProductData) => {
     try {
@@ -153,11 +165,12 @@ const ProductManagement = () => {
 
   return (
     <>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="admin-title text-2xl font-bold">Gestión de Productos</h2>
+      {/* Header con título y botón agregar */}
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+        <h2 className="admin-title text-xl sm:text-2xl font-bold">Gestión de Productos</h2>
         <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
           <DialogTrigger asChild>
-            <Button className="admin-button" onClick={openAddForm}>
+            <Button className="admin-button w-full sm:w-auto" onClick={openAddForm}>
               <Plus className="mr-2 h-4 w-4" />
               Agregar Producto
             </Button>
@@ -178,80 +191,151 @@ const ProductManagement = () => {
         </Dialog>
       </div>
 
+      {/* Filtros por categoría */}
+      <div className="mb-6">
+        <div className="flex items-center gap-2 mb-3">
+          <Filter className="h-4 w-4 text-muted-foreground" />
+          <span className="admin-text text-sm font-medium">Filtrar por categoría:</span>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {[
+            { value: 'all', label: 'Todos', count: products.length },
+            { value: 'women', label: 'Mujeres', count: products.filter(p => p.category === 'women').length },
+            { value: 'men', label: 'Hombres', count: products.filter(p => p.category === 'men').length },
+            { value: 'unisex', label: 'Unisex', count: products.filter(p => p.category === 'unisex').length }
+          ].map((category) => (
+            <button
+              key={category.value}
+              onClick={() => setSelectedCategory(category.value)}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                selectedCategory === category.value
+                  ? 'bg-sillage-gold text-black'
+                  : 'bg-muted text-muted-foreground hover:bg-muted/80'
+              }`}
+            >
+              {category.label} ({category.count})
+            </button>
+          ))}
+        </div>
+      </div>
+
       {products.length === 0 ? (
         <div className="text-center py-12">
           <Package className="admin-icon h-16 w-16 opacity-50 mx-auto mb-4" />
           <p className="admin-text text-lg mb-2">No hay productos en el catálogo</p>
           <p className="admin-text-muted">Agrega tu primer producto para comenzar</p>
         </div>
+      ) : filteredProducts.length === 0 ? (
+        <div className="text-center py-12">
+          <Package className="admin-icon h-16 w-16 opacity-50 mx-auto mb-4" />
+          <p className="admin-text text-lg mb-2">No hay productos en esta categoría</p>
+          <p className="admin-text-muted">Selecciona otra categoría o agrega productos</p>
+        </div>
       ) : (
-        <div className="grid gap-4">
-          {products.map((product) => (
-            <Card key={product.id} className="admin-panel">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-16 h-16 rounded-lg admin-panel flex items-center justify-center">
-                      {product.image_url ? (
-                        <img 
-                          src={product.image_url} 
-                          alt={product.name} 
-                          className="w-full h-full object-cover rounded-lg"
-                        />
-                      ) : (
-                        <Package className="admin-icon h-8 w-8" />
-                      )}
-                    </div>
+        <>
+          {/* Contador de productos */}
+          <div className="mb-4">
+            <p className="admin-text-muted text-sm">
+              Mostrando {filteredProducts.length} de {products.length} productos
+            </p>
+          </div>
+
+          {/* Grid responsive de productos */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {filteredProducts.map((product) => (
+              <Card key={product.id} className="admin-panel group hover:shadow-md transition-shadow">
+                <CardContent className="p-4">
+                  {/* Imagen del producto */}
+                  <div className="aspect-square mb-3 rounded-lg overflow-hidden bg-muted flex items-center justify-center">
+                    {product.image_url ? (
+                      <img 
+                        src={product.image_url} 
+                        alt={product.name} 
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                      />
+                    ) : (
+                      <Package className="admin-icon h-12 w-12 opacity-50" />
+                    )}
+                  </div>
+
+                  {/* Información del producto */}
+                  <div className="space-y-2">
                     <div>
-                      <h3 className="admin-text font-semibold text-lg">{product.name}</h3>
-                      <p className="admin-text-muted">{product.brand} • {product.category}</p>
-                      <p className="admin-text-muted text-sm">
-                        SKU: {product.sku} • Stock: {product.stock_quantity} • 
-                        {product.in_stock ? ' En Stock' : ' Agotado'}
+                      <h3 className="admin-text font-semibold text-sm leading-tight line-clamp-2" title={product.name}>
+                        {product.name}
+                      </h3>
+                      <p className="admin-text-muted text-xs">
+                        {product.brand}
                       </p>
                     </div>
-                  </div>
-                  <div className="flex items-center space-x-4">
-                    <span className="admin-text font-bold text-xl">${product.price}</span>
-                    <div className="flex space-x-2">
+
+                    <div className="flex items-center justify-between">
+                      <span className="admin-text font-bold text-lg">
+                        ${product.price?.toLocaleString('es-CL')}
+                      </span>
+                      <span className={`text-xs px-2 py-1 rounded-full ${
+                        product.category === 'women' ? 'bg-pink-100 text-pink-700' :
+                        product.category === 'men' ? 'bg-blue-100 text-blue-700' :
+                        'bg-purple-100 text-purple-700'
+                      }`}>
+                        {product.category === 'women' ? 'Mujer' : 
+                         product.category === 'men' ? 'Hombre' : 'Unisex'}
+                      </span>
+                    </div>
+
+                    <div className="text-xs admin-text-muted">
+                      <div>SKU: {product.sku}</div>
+                      <div className="flex items-center justify-between">
+                        <span>Stock: {product.stock_quantity}</span>
+                        <span className={`${product.in_stock ? 'text-green-600' : 'text-red-600'}`}>
+                          {product.in_stock ? 'En Stock' : 'Agotado'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Botones de acción */}
+                    <div className="flex items-center justify-between pt-2 border-t border-border">
                       <Button
                         variant="ghost"
-                        size="icon"
+                        size="sm"
                         onClick={() => handleToggleFeatured(product)}
-                        className={`${product.is_featured ? 'text-yellow-400' : 'text-muted-foreground'} hover:bg-yellow-500/10 h-10 w-10`}
+                        className={`${product.is_featured ? 'text-yellow-500' : 'text-muted-foreground'} hover:bg-yellow-500/10 h-8 w-8 p-0`}
                         title={product.is_featured ? 'Quitar de destacados' : 'Destacar producto'}
                       >
-                        <Star className={`h-5 w-5 ${product.is_featured ? 'fill-current' : ''}`} />
+                        <Star className={`h-4 w-4 ${product.is_featured ? 'fill-current' : ''}`} />
                       </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => openEditForm(product)}
-                        className="text-blue-400 hover:bg-blue-500/10 h-10 w-10"
-                        title="Editar producto"
-                      >
-                        <Edit className="h-5 w-5" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          if (window.confirm(`¿Estás seguro de eliminar ${product.name}?`)) {
-                            handleDeleteProduct(product.id);
-                          }
-                        }}
-                        className="text-destructive hover:bg-destructive/10 h-10 w-10"
-                        title="Eliminar producto"
-                      >
-                        <Trash2 className="h-5 w-5" />
-                      </Button>
+                      
+                      <div className="flex space-x-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => openEditForm(product)}
+                          className="text-blue-500 hover:bg-blue-500/10 h-8 w-8 p-0"
+                          title="Editar producto"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            if (window.confirm(`¿Estás seguro de eliminar ${product.name}?`)) {
+                              handleDeleteProduct(product.id);
+                            }
+                          }}
+                          className="text-destructive hover:bg-destructive/10 h-8 w-8 p-0"
+                          title="Eliminar producto"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </>
       )}
     </>
   );

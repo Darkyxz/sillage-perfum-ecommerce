@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { Star, Heart, ShoppingCart, ArrowLeft, Plus, Minus, Loader2, ChevronDown, ChevronUp, Clock, Truck, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -43,12 +43,26 @@ const ProductDetail = () => {
     const fetchProduct = async () => {
       try {
         setLoading(true);
+        
+        // Validar que el SKU existe y tiene el formato correcto
+        if (!sku || sku.trim() === '') {
+          console.error('SKU inválido:', sku);
+          toast({
+            title: "Error",
+            description: "SKU de producto inválido",
+            variant: "destructive",
+          });
+          navigate('/productos');
+          return;
+        }
+
         const productData = await productService.getProductBySku(sku);
         
         if (!productData) {
+          console.error('Producto no encontrado para SKU:', sku);
           toast({
             title: "Producto no encontrado",
-            description: "El producto que buscas no existe",
+            description: `No se encontró el producto con SKU: ${sku}`,
             variant: "destructive",
           });
           navigate('/productos');

@@ -109,11 +109,22 @@ const Favorites = () => {
               <Card className="perfume-card overflow-hidden hover:shadow-lg transition-shadow duration-300">
                 <CardHeader className="p-0">
                   <div className="relative">
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="w-full h-48 object-cover"
-                    />
+                    <div className="w-full h-48 bg-sillage-gold/10 flex items-center justify-center">
+                      {product.image_url || product.image ? (
+                        <img
+                          src={product.image_url || product.image}
+                          alt={product.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.target.src = "/hero.jpg"; // Imagen fallback
+                          }}
+                        />
+                      ) : (
+                        <div className="text-muted-foreground/50 text-center p-8">
+                          <p>Sin imagen</p>
+                        </div>
+                      )}
+                    </div>
                     <Button
                       variant="ghost"
                       size="icon"
@@ -153,7 +164,7 @@ const Favorites = () => {
                     <ShoppingCart className="w-4 h-4 mr-2" />
                     Agregar al carrito
                   </Button>
-                  <Link to={`/productos/${product.id}`}>
+                  <Link to={`/productos/${product.sku}`}>
                     <Button variant="outline" className="glass-effect border-border text-foreground hover:bg-accent">
                       Ver detalles
                     </Button>

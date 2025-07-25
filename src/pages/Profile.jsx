@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { User, Package, Calendar, DollarSign, Loader2, ShoppingBag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
