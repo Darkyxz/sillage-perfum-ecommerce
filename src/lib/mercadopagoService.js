@@ -1,4 +1,5 @@
-// Servicio simplificado de MercadoPago para desarrollo
+// Servicio de MercadoPago para Sillage Perfum
+// Configurado para aplicación Marketplace (ID: 3028328609712365)
 // NOTA: En producción, esto debe ir en una Edge Function por seguridad
 
 export const createMercadoPagoPreference = async (items, payer, backUrls, externalReference) => {
@@ -27,10 +28,27 @@ export const createMercadoPagoPreference = async (items, payer, backUrls, extern
         payer,
         back_urls: backUrls,
         external_reference: externalReference,
-        // auto_return: 'approved', // DESACTIVADO TEMPORALMENTE para desarrollo en localhost
+        notification_url: `${import.meta.env.VITE_BASE_URL}/api/webhooks/mercadopago`,
+        auto_return: 'approved',
         statement_descriptor: "SILLAGE-PERFUM",
         expires: true,
-        expiration_date_to: new Date(Date.now() + 30 * 60 * 1000).toISOString() // 30 minutos
+        expiration_date_to: new Date(Date.now() + 30 * 60 * 1000).toISOString(), // 30 minutos
+        payment_methods: {
+          excluded_payment_methods: [],
+          excluded_payment_types: [],
+          installments: 12, // Hasta 12 cuotas
+          default_installments: 1
+        },
+        shipments: {
+          mode: "not_specified"
+        },
+        metadata: {
+          order_id: externalReference,
+          store: "sillage-perfum",
+          environment: import.meta.env.VITE_NODE_ENV || 'development',
+          app_id: import.meta.env.VITE_MERCADOPAGO_APP_ID,
+          integration_type: import.meta.env.VITE_MERCADOPAGO_INTEGRATION_TYPE || 'marketplace'
+        }
       })
     });
 

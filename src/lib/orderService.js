@@ -192,7 +192,8 @@ export const orderService = {
         .from('orders')
         .update({ 
           payment_id: paymentId,
-          status: 'paid'
+          status: 'paid',
+          updated_at: new Date().toISOString()
         })
         .eq('id', orderId)
         .select();
@@ -201,6 +202,110 @@ export const orderService = {
       return data?.[0];
     } catch (error) {
       console.error('Error updating payment ID:', error);
+      throw error;
+    }
+  },
+
+  // Buscar pedido por external_reference (para webhooks)
+  async getOrderByExternalReference(externalReference) {
+    try {
+      // Convertir a integer si viene como string
+      const orderId = parseInt(externalReference);
+      
+      if (isNaN(orderId)) {
+        throw new Error(`External reference inválido: ${externalReference}`);
+      }
+
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .eq('id', orderId)
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error fetching order by external reference:', error);
+      throw error;
+    }
+  },
+
+  // Actualizar pedido con información de MercadoPago
+  async updateOrderWithPaymentInfo(orderId, paymentInfo) {
+    try {
+      const updateData = {
+        payment_id: paymentInfo.payment_id,
+        payment_method: paymentInfo.payment_method,
+        payment_status: paymentInfo.status,
+        updated_at: new Date().toISOString()
+      };
+
+      // Determinar el estado del pedido basado en el estado del pago
+      switch (paymentInfo.status) {
+        case 'approved':
+          updateData.status = 'paid';
+          break;
+        case 'rejected':
+          updateData.status = 'failed';
+          break;
+        case 'cancelled':
+          updateData.status = 'cancelled';
+          break;
+        case 'refunded':
+          updateData.status = 'refunded';
+          break;
+        case 'pending':
+        case 'in_process':
+          updateData.status = 'pending';
+          break;
+        default:
+          updateData.status = 'failed';
+      }
+
+      const { data, error } = await supabase
+        .from('orders')
+        .update(updateData)
+        .eq('id', orderId)
+        .select();
+
+      if (error) throw error;
+      
+      console.log(`✅ Pedido ${orderId} actualizado con info de pago:`, updateData);
+      return data?.[0];
+    } catch (error) {
+      console.error('Error updating order with payment info:', error);
+      throw error;
+    }
+  },
+
+  // Obtener estadísticas de pedidos (para admin)
+  async getOrderStats() {
+    try {
+      const { data, error } = await supabase
+        .from('orders')
+        .select('status, total_amount, created_at');
+
+      if (error) throw error;
+
+      const stats = {
+        total: data.length,
+        pending: data.filter(o => o.status === 'pending').length,
+        paid: data.filter(o => o.status === 'paid').length,
+        failed: data.filter(o => o.status === 'failed').length,
+        cancelled: data.filter(o => o.status === 'cancelled').length,
+        totalRevenue: data
+          .filter(o => o.status === 'paid')
+          .reduce((sum, o) => sum + (o.total_amount || 0), 0),
+        averageOrderValue: 0
+      };
+
+      if (stats.paid > 0) {
+        stats.averageOrderValue = stats.totalRevenue / stats.paid;
+      }
+
+      return stats;
+    } catch (error) {
+      console.error('Error getting order stats:', error);
       throw error;
     }
   }
