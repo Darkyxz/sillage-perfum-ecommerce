@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { productService } from '@/lib/productService';
+import safeStorage from '@/utils/storage';
 
 const SearchModal = ({ isOpen, onClose }) => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -13,10 +14,10 @@ const SearchModal = ({ isOpen, onClose }) => {
   const [recentSearches, setRecentSearches] = useState([]);
   const inputRef = useRef(null);
 
-  // Cargar búsquedas recientes del localStorage
+  // Cargar búsquedas recientes del storage
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('recent-searches');
+      const saved = safeStorage.getItem('recent-searches');
       if (saved) {
         try {
           setRecentSearches(JSON.parse(saved));
@@ -83,7 +84,7 @@ const SearchModal = ({ isOpen, onClose }) => {
     ].slice(0, 5); // Mantener solo las últimas 5
 
     setRecentSearches(newRecentSearches);
-    localStorage.setItem('recent-searches', JSON.stringify(newRecentSearches));
+    safeStorage.setItem('recent-searches', JSON.stringify(newRecentSearches));
   };
 
   // Manejar selección de producto
@@ -100,7 +101,7 @@ const SearchModal = ({ isOpen, onClose }) => {
   // Limpiar búsquedas recientes
   const clearRecentSearches = () => {
     setRecentSearches([]);
-    localStorage.removeItem('recent-searches');
+    safeStorage.removeItem('recent-searches');
   };
 
   return (

@@ -160,7 +160,7 @@ const ProductsPage = () => {
                   <img  
                     alt={product.imageAlt} 
                     className="w-full h-64 object-cover"
-                    src="https://images.unsplash.com/photo-1670538528394-18075d01726a" />
+                    src="/images/sillapH.jpg" />
                 </div>
                 
                 <div className="p-5 flex flex-col flex-grow">

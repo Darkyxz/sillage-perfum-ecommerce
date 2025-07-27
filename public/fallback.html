@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sillage-Perfum - Modo Compatibilidad</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #FFC107, #FFD54F);
+            color: #000;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+        
+        .content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .alert {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .alert h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .alert ul {
+            color: #856404;
+            padding-left: 20px;
+        }
+        
+        .alert li {
+            margin-bottom: 5px;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            background: #FFC107;
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #FFB300;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .info-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #FFC107;
+        }
+        
+        .info-card h4 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .status.ok {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🌟 Sillage-Perfum</h1>
+            <p>Modo de Compatibilidad Activado</p>
+        </header>
+        
+        <main class="content">
+            <div class="alert">
+                <h3>⚠️ Configuración de Navegador Detectada</h3>
+                <p>Tu navegador tiene configuraciones de privacidad que están interfiriendo con la carga normal de nuestra aplicación web.</p>
+                
+                <h4 style="margin-top: 15px;">Soluciones recomendadas:</h4>
+                <ul>
+                    <li><strong>Para Brave:</strong> Desactiva "Shields" para este sitio</li>
+                    <li><strong>General:</strong> Habilita las cookies en la configuración</li>
+                    <li><strong>Alternativa:</strong> Prueba con Chrome, Firefox o Edge</li>
+                    <li><strong>Temporal:</strong> Desactiva el modo de navegación privada</li>
+                </ul>
+            </div>
+            
+            <div class="info-grid">
+                <div class="info-card">
+                    <h4>🛡️ Navegador</h4>
+                    <p id="browser-info">Detectando...</p>
+                </div>
+                
+                <div class="info-card">
+                    <h4>🍪 Cookies</h4>
+                    <p>
+                        <span id="cookies-status" class="status">Verificando...</span>
+                    </p>
+                </div>
+                
+                <div class="info-card">
+                    <h4>💾 Almacenamiento</h4>
+                    <p>
+                        <span id="storage-status" class="status">Verificando...</span>
+                    </p>
+                </div>
+                
+                <div class="info-card">
+                    <h4>📱 JavaScript</h4>
+                    <p>
+                        <span class="status ok">✅ Funcionando</span>
+                    </p>
+                </div>
+            </div>
+            
+            <div class="buttons">
+                <button class="btn" onclick="window.location.reload()">
+                    🔄 Reintentar
+                </button>
+                
+                <button class="btn btn-secondary" onclick="showInstructions()">
+                    📋 Ver Instrucciones Detalladas
+                </button>
+                
+                <a href="mailto:contacto@sillage-perfum.com" class="btn btn-secondary">
+                    📧 Contactar Soporte
+                </a>
+            </div>
+        </main>
+        
+        <footer class="footer">
+            <p>Sillage-Perfum © 2024 - Perfumes Premium</p>
+            <p>Si continúas teniendo problemas, contáctanos para asistencia personalizada.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Detectar información del navegador
+        function detectBrowser() {
+            const ua = navigator.userAgent;
+            let browser = 'Desconocido';
+            
+            if (ua.includes('Brave') || (navigator.brave && navigator.brave.isBrave)) {
+                browser = '🛡️ Brave Browser';
+            } else if (ua.includes('Chrome')) {
+                browser = '🌐 Google Chrome';
+            } else if (ua.includes('Firefox')) {
+                browser = '🦊 Mozilla Firefox';
+            } else if (ua.includes('Safari') && !ua.includes('Chrome')) {
+                browser = '🧭 Safari';
+            } else if (ua.includes('Edge')) {
+                browser = '🌊 Microsoft Edge';
+            }
+            
+            document.getElementById('browser-info').textContent = browser;
+        }
+        
+        // Verificar cookies
+        function checkCookies() {
+            const cookiesEnabled = navigator.cookieEnabled;
+            const statusEl = document.getElementById('cookies-status');
+            
+            if (cookiesEnabled) {
+                statusEl.textContent = '✅ Habilitadas';
+                statusEl.className = 'status ok';
+            } else {
+                statusEl.textContent = '❌ Deshabilitadas';
+                statusEl.className = 'status error';
+            }
+        }
+        
+        // Verificar almacenamiento
+        function checkStorage() {
+            const statusEl = document.getElementById('storage-status');
+            
+            try {
+                localStorage.setItem('test', '1');
+                localStorage.removeItem('test');
+                statusEl.textContent = '✅ Disponible';
+                statusEl.className = 'status ok';
+            } catch (e) {
+                statusEl.textContent = '❌ Bloqueado';
+                statusEl.className = 'status error';
+            }
+        }
+        
+        // Mostrar instrucciones detalladas
+        function showInstructions() {
+            alert(`📋 INSTRUCCIONES DETALLADAS:
+
+🛡️ Para Brave Browser:
+1. Haz clic en el icono del escudo (Shields) en la barra de direcciones
+2. Desactiva "Bloquear scripts"
+3. Desactiva "Bloquear cookies"
+4. Recarga la página
+
+🌐 Para otros navegadores:
+1. Ve a Configuración > Privacidad
+2. Habilita las cookies
+3. Permite JavaScript
+4. Recarga la página
+
+📧 Si el problema persiste:
+Contáctanos en contacto@sillage-perfum.com con la información de tu navegador.`);
+        }
+        
+        // Ejecutar verificaciones al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            detectBrowser();
+            checkCookies();
+            checkStorage();
+        });
+        
+        // Verificar continuamente si el problema se solucionó
+        let checkInterval;
+        let checkCount = 0;
+        
+        function checkIfFixed() {
+            checkCount++;
+            
+            // Verificar si las condiciones mejoraron
+            const cookiesEnabled = navigator.cookieEnabled;
+            let storageAvailable = false;
+            
+            try {
+                localStorage.setItem('test_fix', '1');
+                localStorage.removeItem('test_fix');
+                storageAvailable = true;
+            } catch (e) {
+                storageAvailable = false;
+            }
+            
+            // Si ambos están disponibles, intentar volver a la app
+            if (cookiesEnabled && storageAvailable) {
+                clearInterval(checkInterval);
+                
+                // Mostrar mensaje de éxito
+                const successMsg = document.createElement('div');
+                successMsg.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #d4edda;
+                    color: #155724;
+                    padding: 15px;
+                    border-radius: 8px;
+                    border: 1px solid #c3e6cb;
+                    z-index: 1000;
+                    font-weight: bold;
+                `;
+                successMsg.textContent = '✅ Problema solucionado! Redirigiendo...';
+                document.body.appendChild(successMsg);
+                
+                // Redireccionar después de 2 segundos
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
+                
+                return;
+            }
+            
+            // Después de 10 intentos (5 minutos), preguntar al usuario
+            if (checkCount >= 10) {
+                clearInterval(checkInterval);
+                if (confirm('¿Quieres intentar cargar la aplicación nuevamente?')) {
+                    window.location.href = '/';
+                }
+            }
+        }
+        
+        // Verificar cada 30 segundos
+        checkInterval = setInterval(checkIfFixed, 30000);
+        
+        // También verificar cuando la ventana recupera el foco
+        window.addEventListener('focus', () => {
+            setTimeout(checkIfFixed, 1000);
+        });
+    </script>
+</body>
+</html>

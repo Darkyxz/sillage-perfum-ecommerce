@@ -46,31 +46,31 @@ const ContactForm = () => {
   };
 
   return (
-    <section id="contact-section" className="py-20 bg-background">
-      <div className="container mx-auto px-4">
+    <section id="contact-section" className="py-12 md:py-16 lg:py-20 bg-background">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-16"
+          className="text-center mb-12 md:mb-14 lg:mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-display font-bold text-sillage-gold mb-6">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-sillage-gold mb-4 md:mb-6">
             Contáctenos
           </h2>
-          <p className="text-xl text-sillage-gold-dark max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg md:text-xl text-sillage-gold-dark max-w-2xl mx-auto leading-relaxed">
             ¿Tienes preguntas sobre nuestros productos? Déjanos tus datos y nos comunicaremos contigo a la brevedad.
           </p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Imagen circular */}
+        <div className="grid lg:grid-cols-2 gap-8 xl:gap-12 items-center">
+          {/* Imagen circular - tamaño aumentado */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="relative flex justify-center"
+            className="relative flex justify-center order-last lg:order-first"
           >
-            <div className="relative w-108 h-108 rounded-full border-4 border-sillage-gold overflow-hidden shadow-2xl">
+            <div className="relative w-72 h-72 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-full border-4 border-sillage-gold overflow-hidden shadow-xl">
               <img 
                 src="./sillageround.jpg"
                 alt="Sillage Perfum Spa"
@@ -80,26 +80,26 @@ const ContactForm = () => {
             </div>
           </motion.div>
 
-          {/* Formulario de contacto */}
+          {/* Formulario de contacto (se mantiene igual que antes) */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="bg-card border border-border rounded-lg p-8 shadow-lg"
+            className="bg-card border border-border rounded-lg p-6 sm:p-8 shadow-lg"
           >
-            <div className="mb-8">
-              <h3 className="text-2xl font-display font-semibold text-sillage-gold mb-4">
+            <div className="mb-6">
+              <h3 className="text-xl sm:text-2xl font-display font-semibold text-sillage-gold mb-3">
                 Completa el formulario
               </h3>
-              <p className="text-sillage-gold-dark mb-4">
+              <p className="text-sillage-gold-dark text-sm sm:text-base">
                 Describe tu consulta con detalle para que podamos ayudarte de la mejor manera posible.
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid md:grid-cols-2 gap-4">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
+              <div className="grid md:grid-cols-2 gap-3 sm:gap-4">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-sillage-gold-dark mb-1">
+                  <label htmlFor="name" className="block text-xs sm:text-sm font-medium text-sillage-gold-dark mb-1">
                     Nombre
                   </label>
                   <input
@@ -108,12 +108,12 @@ const ContactForm = () => {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-sillage-gold focus:border-transparent"
+                    className="w-full px-3 py-2 text-sm sm:text-base border border-border rounded-lg focus:ring-2 focus:ring-sillage-gold focus:border-transparent"
                     required
                   />
                 </div>
                 <div>
-                  <label htmlFor="lastName" className="block text-sm font-medium text-sillage-gold-dark mb-1">
+                  <label htmlFor="lastName" className="block text-xs sm:text-sm font-medium text-sillage-gold-dark mb-1">
                     Apellido
                   </label>
                   <input
@@ -122,14 +122,14 @@ const ContactForm = () => {
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-sillage-gold focus:border-transparent"
+                    className="w-full px-3 py-2 text-sm sm:text-base border border-border rounded-lg focus:ring-2 focus:ring-sillage-gold focus:border-transparent"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-sillage-gold-dark mb-1">
+                <label htmlFor="email" className="block text-xs sm:text-sm font-medium text-sillage-gold-dark mb-1">
                   Correo electrónico
                 </label>
                 <input
@@ -138,51 +138,50 @@ const ContactForm = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-sillage-gold focus:border-transparent"
+                  className="w-full px-3 py-2 text-sm sm:text-base border border-border rounded-lg focus:ring-2 focus:ring-sillage-gold focus:border-transparent"
                   required
                 />
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-sm font-medium text-sillage-gold-dark mb-1">
+                <label htmlFor="message" className="block text-xs sm:text-sm font-medium text-sillage-gold-dark mb-1">
                   Mensaje
                 </label>
                 <textarea
                   id="message"
                   name="message"
-                  rows="4"
+                  rows="3"
                   value={formData.message}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-border rounded-lg focus:ring-2 focus:ring-sillage-gold focus:border-transparent"
+                  className="w-full px-3 py-2 text-sm sm:text-base border border-border rounded-lg focus:ring-2 focus:ring-sillage-gold focus:border-transparent"
                   required
                 ></textarea>
               </div>
 
               <button
                 type="submit"
-                className="bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white font-semibold px-8 py-3 rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 w-full"
+                className="bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white font-medium text-sm sm:text-base px-6 py-2 sm:px-8 sm:py-3 rounded-lg shadow hover:shadow-md transform hover:scale-[1.02] transition-all duration-300 w-full"
               >
                 Enviar Mensaje
               </button>
             </form>
 
-            {/* Información de contacto al final */}
-            <div className="mt-8 pt-6 border-t border-border">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-primary/10 rounded-full">
-                  <Mail className="h-4 w-4 text-primary" />
+            <div className="mt-6 pt-4 border-t border-border">
+              <div className="flex items-center gap-2 sm:gap-3 mb-3">
+                <div className="p-1.5 sm:p-2 bg-primary/10 rounded-full">
+                  <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm text-sillage-gold-dark">contacto@sillageperfum.cl</p>
+                  <p className="text-xs sm:text-sm text-sillage-gold-dark">contacto@sillageperfum.cl</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-primary/10 rounded-full">
-                  <Phone className="h-4 w-4 text-primary" />
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="p-1.5 sm:p-2 bg-primary/10 rounded-full">
+                  <Phone className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm text-sillage-gold-dark">(583) 555-5555</p>
+                  <p className="text-xs sm:text-sm text-sillage-gold-dark">(583) 555-5555</p>
                 </div>
               </div>
             </div>

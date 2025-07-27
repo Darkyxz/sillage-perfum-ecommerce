@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Camera, Scan } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
+import safeStorage from '@/utils/storage';
 
 // Definir las notas olfativas disponibles con sus categorías y emojis
 const FRAGRANCE_NOTES = {
@@ -56,10 +57,10 @@ const getInitialState = (data = null) => ({
 });
 
 const ProductForm = ({ onSubmit, initialData, onCancel }) => {
-  // Estado persistente que se recupera del localStorage
+  // Estado persistente que se recupera del storage
   const [productData, setProductData] = useState(() => {
     if (typeof window !== 'undefined' && !initialData) {
-      const savedData = localStorage.getItem('admin-form-data');
+      const savedData = safeStorage.getItem('admin-form-data');
       if (savedData) {
         try {
           return JSON.parse(savedData);
@@ -74,23 +75,23 @@ const ProductForm = ({ onSubmit, initialData, onCancel }) => {
   const [imageFile, setImageFile] = useState(null); // Para el archivo de imagen real
   const [imagePreview, setImagePreview] = useState(() => {
     if (typeof window !== 'undefined' && !initialData) {
-      return localStorage.getItem('admin-form-image-preview') || '';
+      return safeStorage.getItem('admin-form-image-preview') || '';
     }
     return initialData?.image_url || '';
   });
   const [barcodeScanning, setBarcodeScanning] = useState(false);
 
-  // Efecto para guardar datos del formulario en localStorage
+  // Efecto para guardar datos del formulario en storage
   useEffect(() => {
     if (!initialData) { // Solo guardar si no estamos editando un producto existente
-      localStorage.setItem('admin-form-data', JSON.stringify(productData));
+      safeStorage.setItem('admin-form-data', JSON.stringify(productData));
     }
   }, [productData, initialData]);
 
-  // Efecto para guardar preview de imagen en localStorage
+  // Efecto para guardar preview de imagen en storage
   useEffect(() => {
     if (!initialData && imagePreview) {
-      localStorage.setItem('admin-form-image-preview', imagePreview);
+      safeStorage.setItem('admin-form-image-preview', imagePreview);
     }
   }, [imagePreview, initialData]);
 
@@ -192,20 +193,20 @@ const ProductForm = ({ onSubmit, initialData, onCancel }) => {
       return;
     }
     
-    // Limpiar localStorage al guardar exitosamente
+    // Limpiar storage al guardar exitosamente
     if (!initialData) {
-      localStorage.removeItem('admin-form-data');
-      localStorage.removeItem('admin-form-image-preview');
+      safeStorage.removeItem('admin-form-data');
+      safeStorage.removeItem('admin-form-image-preview');
     }
     
     onSubmit(productData, imageFile);
   };
 
   const handleCancel = () => {
-    // Limpiar localStorage al cancelar
+    // Limpiar storage al cancelar
     if (!initialData) {
-      localStorage.removeItem('admin-form-data');
-      localStorage.removeItem('admin-form-image-preview');
+      safeStorage.removeItem('admin-form-data');
+      safeStorage.removeItem('admin-form-image-preview');
     }
     onCancel();
   };

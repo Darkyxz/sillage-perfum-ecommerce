@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { Toaster } from '@/components/ui/toaster';
@@ -23,20 +23,131 @@ import ContactForm from '@/pages/ContactForm';
 import CategoryPage from '@/pages/CategoryPage';
 import AdminDebug from '@/components/AdminDebug';
 import TrackingPage from '@/pages/TrackingPage';
-
-function App() {
-  useEffect(() => {
-    document.documentElement.classList.add('light');
-  }, []);
+import ComoComprar from './components/ComoComprar';
+import CookiesPolicy from './components/CookiesPolicy';
+import TerminosCondiciones from './components/TerminosCondiciones';
+import PoliticaPrivacidad from './components/PoliticaPrivacidad';
+import CookieNotification from './components/CookieNotification';
+import StorageDebug from './components/StorageDebug';
+import SimpleTest from './components/SimpleTest';
+import MinimalApp from './components/MinimalApp';
+import SafeContextWrapper from './components/SafeContextWrapper';
+import AppLoader from './components/AppLoader';
+import EmergencyFallback from './components/EmergencyFallback';
+import CookieConsent from './components/CookieConsent';
+import safeStorage from './utils/storage';
+import { ErrorBoundary } from 'react-error-boundary';
+  
+function ErrorFallback({ error, resetErrorBoundary }) {
+  const isStorageError = error.message.includes('localStorage') || 
+                        error.message.includes('sessionStorage') ||
+                        error.message.includes('storage');
 
   return (
-    <ContentProtection>
-      <HelmetProvider>
-        <AuthProvider>
-          <CartProvider>
-            <FavoritesProvider>
-              <Router>
-                <div className="min-h-screen transition-colors duration-300 bg-background text-foreground">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
+      <div className="bg-card border border-border rounded-lg p-8 max-w-2xl text-center shadow-lg">
+        <h2 className="text-2xl font-bold text-sillage-gold mb-4">
+          {isStorageError ? 'Problema de Compatibilidad' : 'Error en la aplicación'}
+        </h2>
+        
+        {isStorageError ? (
+          <div className="mb-6">
+            <p className="text-muted-foreground mb-4">
+              Tu navegador tiene configuraciones de privacidad que limitan algunas funciones.
+            </p>
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4">
+              <p className="text-amber-800 text-sm">
+                <strong>Sugerencias:</strong>
+              </p>
+              <ul className="text-amber-700 text-sm mt-2 space-y-1">
+                <li>• Habilita las cookies en la configuración del navegador</li>
+                <li>• Desactiva el modo de navegación privada</li>
+                <li>• Prueba con otro navegador</li>
+              </ul>
+            </div>
+          </div>
+        ) : (
+          <p className="mb-6 text-muted-foreground">{error.message}</p>
+        )}
+        
+        <div className="space-x-4">
+          <button
+            onClick={resetErrorBoundary}
+            className="bg-sillage-gold text-white px-6 py-2 rounded-lg hover:bg-sillage-gold-dark transition"
+          >
+            Intentar nuevamente
+          </button>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600 transition"
+          >
+            Recargar página
+          </button>
+        </div>
+        
+        {process.env.NODE_ENV === 'development' && (
+          <details className="mt-4 text-left">
+            <summary className="cursor-pointer text-sm text-muted-foreground">
+              Detalles técnicos
+            </summary>
+            <pre className="mt-2 text-xs bg-gray-100 p-2 rounded overflow-auto">
+              {error.stack}
+            </pre>
+          </details>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function App() {
+  const [storageAvailable, setStorageAvailable] = useState(true);
+  const [showSimpleTest, setShowSimpleTest] = useState(false);
+
+  useEffect(() => {
+    document.documentElement.classList.add('light');
+    
+    // Verificar storage y mostrar test simple si hay problemas críticos
+    const checkStorage = () => {
+      const available = safeStorage.isStorageAvailable();
+      setStorageAvailable(available);
+      
+      // Si no hay storage disponible Y estamos en desarrollo, mostrar test simple
+      if (!available && process.env.NODE_ENV === 'development') {
+        console.warn('🚨 Storage no disponible - Mostrando test simple');
+        // Comentar la siguiente línea para deshabilitar el test simple
+        // setShowSimpleTest(true);
+      }
+    };
+    
+    checkStorage();
+  }, []);
+
+  // Test simple para verificar que React funciona
+  if (showSimpleTest) {
+    return <SimpleTest />;
+  }
+
+  // Si no hay storage disponible, usar aplicación mínima
+  if (!storageAvailable) {
+    console.warn('🚨 Storage no disponible - Usando aplicación mínima');
+    return <MinimalApp />;
+  }
+
+  return (
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <ContentProtection>
+        <EmergencyFallback>
+          <AppLoader>
+            <HelmetProvider>
+          <SafeContextWrapper contextName="AuthContext">
+            <AuthProvider>
+              <SafeContextWrapper contextName="CartContext">
+                <CartProvider>
+                  <SafeContextWrapper contextName="FavoritesContext">
+                    <FavoritesProvider>
+                <Router>
+                  <div className="min-h-screen transition-colors duration-300 bg-background text-foreground">
                   <Helmet>
                     <title>Sillage-Perfum - Perfumes Premium</title>
                     <meta name="description" content="Descubre nuestra exclusiva colección de perfumes de lujo. Fragancias únicas para cada ocasión especial." />
@@ -44,42 +155,57 @@ function App() {
                   </Helmet>
                   
                   <Layout>
-                    <Routes>
-                      <Route path="/" element={<Home />} />
-                      <Route path="/productos" element={<Products />} />
-                      <Route path="/productos/:sku" element={<ProductDetail />} />
-                      <Route path="/carrito" element={<Cart />} />
-                      <Route path="/favoritos" element={<Favorites />} />
-                      <Route path="/admin" element={<Admin />} />
-                      <Route path="/perfil" element={<Profile />} />
-                      <Route path="/login" element={<Login />} />
-                      <Route path="/register" element={<Register />} />
-                      <Route path="/contacto" element={<ContactForm />} />
-                      <Route path="/categoria/:categorySlug" element={<CategoryPage />} />
-                      <Route path="/pago-exitoso" element={<PaymentSuccessPage />} />
-                      <Route path="/pago-fallido" element={<PaymentFailurePage />} />
-                      <Route path="/pago-pendiente" element={<PaymentPendingPage />} />
-                      <Route 
-                        path="/seguimiento" 
-                        element={
-                          <ContentProtection requiredAuthLevel="user">
-                            <TrackingPage />
-                          </ContentProtection>
-                        } 
-                      />
-                    </Routes>
+                    <ErrorBoundary FallbackComponent={ErrorFallback}>
+                      <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/productos" element={<Products />} />
+                        <Route path="/productos/:sku" element={<ProductDetail />} />
+                        <Route path="/carrito" element={<Cart />} />
+                        <Route path="/favoritos" element={<Favorites />} />
+                        <Route path="/admin" element={<Admin />} />
+                        <Route path="/perfil" element={<Profile />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/register" element={<Register />} />
+                        <Route path="/contacto" element={<ContactForm />} />
+                        <Route path="/categoria/:categorySlug" element={<CategoryPage />} />
+                        <Route path="/pago-exitoso" element={<PaymentSuccessPage />} />
+                        <Route path="/pago-fallido" element={<PaymentFailurePage />} />
+                        <Route path="/pago-pendiente" element={<PaymentPendingPage />} />
+                        <Route path="/como-comprar" element={<ComoComprar />} />
+                        <Route path="/cookies" element={<CookiesPolicy />} />
+                        <Route path="/terminos" element={<TerminosCondiciones />} />
+                        <Route path="/privacidad" element={<PoliticaPrivacidad />} />
+                        <Route 
+                          path="/seguimiento" 
+                          element={
+                            <ContentProtection requiredAuthLevel="user">
+                              <TrackingPage />
+                            </ContentProtection>
+                          } 
+                        />
+                      </Routes>
+                    </ErrorBoundary>
                   </Layout>
                   
                   <Toaster />
                   <AdminDebug />
+                  <CookieNotification />
+                  <StorageDebug />
+                  <CookieConsent />
                 </div>
-              </Router>
-            </FavoritesProvider>
-          </CartProvider>
-        </AuthProvider>
-      </HelmetProvider>
-    </ContentProtection>
+                </Router>
+                    </FavoritesProvider>
+                  </SafeContextWrapper>
+                </CartProvider>
+              </SafeContextWrapper>
+            </AuthProvider>
+          </SafeContextWrapper>
+            </HelmetProvider>
+          </AppLoader>
+        </EmergencyFallback>
+      </ContentProtection>
+    </ErrorBoundary>
   );
 }
 
-export default App; 
+export default App;

@@ -1,6 +1,7 @@
 import { CheckCircle } from 'lucide-react';
 import { useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import safeStorage from '@/utils/storage';
 
 export default function PaymentSuccessPage() {
   const [searchParams] = useSearchParams();
@@ -10,7 +11,7 @@ export default function PaymentSuccessPage() {
   useEffect(() => {
     // Limpiar el carrito después de un pago exitoso
     if (orderId) {
-      localStorage.removeItem('cart');
+      safeStorage.removeItem('cart');
       // Disparar evento para actualizar el contexto del carrito
       window.dispatchEvent(new Event('cartCleared'));
     }

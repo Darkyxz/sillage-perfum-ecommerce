@@ -3,6 +3,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { cartService } from '@/lib/cartService';
+import safeStorage from '@/utils/storage';
 
 const CartContext = createContext();
 
@@ -25,16 +26,16 @@ export const CartProvider = ({ children }) => {
       setLoading(true);
       if (user) {
         // Usuario logueado
-        const localCart = JSON.parse(localStorage.getItem('cart') || '[]');
+        const localCart = JSON.parse(safeStorage.getItem('cart') || '[]');
         if (localCart.length > 0) {
           await syncLocalCartToSupabase(localCart);
-          localStorage.removeItem('cart');
+          safeStorage.removeItem('cart');
         } else {
           await loadSupabaseCart();
         }
       } else {
         // Usuario invitado
-        const localCart = JSON.parse(localStorage.getItem('cart') || '[]');
+        const localCart = JSON.parse(safeStorage.getItem('cart') || '[]');
         setItems(localCart);
         setLoading(false);
       }
@@ -42,10 +43,10 @@ export const CartProvider = ({ children }) => {
     loadCart();
   }, [user]);
 
-  // Guardar en localStorage solo si es invitado
+  // Guardar en storage solo si es invitado
   useEffect(() => {
     if (!user && !loading) {
-      localStorage.setItem('cart', JSON.stringify(items));
+      safeStorage.setItem('cart', JSON.stringify(items));
     }
   }, [items, user, loading]);
 

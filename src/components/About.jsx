@@ -15,7 +15,7 @@ const About = () => {
               transition={{ duration: 0.8 }}
               className="text-left mb-8"
             >
-              <h2 className="text-3xl md:text-4xl font-display font-bold text-sillage-gold mb-6">
+              <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-6">
                 Sillage Perfum Spa
               </h2>
             </motion.div>
@@ -26,15 +26,15 @@ const About = () => {
               transition={{ duration: 0.8 }}
               className="space-y-6 text-justify"
             >
-              <p className="text-sillage-gold-dark leading-relaxed">
+              <p className="text-sillage-gold-deep leading-relaxed">
                 Fue creada con la misión de promover perfumes de alta calidad. La idea surge en tiempos de reinversión y crecimiento, permitiéndonos llegar a nuestros clientes ofreciendo una línea completa de nuestras mejores interpretaciones, inspiradas en fragancias de alta gama para quienes gustan dejar una huella.
               </p>
 
-              <h3 className="text-xl md:text-2xl font-display font-semibold text-sillage-gold mb-2">
+              <h3 className="text-xl md:text-4xl font-display font-semibold text-foreground mb-2">
                 "Sillage"
               </h3>
 
-              <p className="text-sillage-gold-dark leading-relaxed">
+              <p className="text-sillage-gold-deep leading-relaxed">
                 Proviene del francés y significa "estela" o "rastro". En perfumes, describe la huella olfativa que deja una fragancia en el ambiente.
               </p>
 
@@ -49,21 +49,13 @@ const About = () => {
             transition={{ duration: 0.8 }}
             className="lg:w-1/2 flex justify-center"
           >
-            <div className="relative w-80 h-80 md:w-96 md:h-96 rounded-full border-4 border-sillage-gold overflow-hidden shadow-2xl">
+            <div className="relative w-80 h-80 md:w-96 md:h-96 rounded-lg border-4 border-sillage-gold-dark overflow-hidden shadow-2xl">
               <img
                 src="./sillagerounabout.png"
                 alt="Colección de perfumes premium"
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-sillage-dark/30 to-transparent"></div>
-
-              <motion.div
-                className="absolute -top-4 -right-4 w-12 h-12 bg-primary rounded-full flex items-center justify-center shadow-lg"
-                animate={{ rotate: 360 }}
-                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              >
-                <Sparkles className="h-6 w-6 text-primary-foreground" />
-              </motion.div>
             </div>
           </motion.div>
         </div>

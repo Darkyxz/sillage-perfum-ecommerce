@@ -1,5 +1,6 @@
 
 import { createClient } from '@supabase/supabase-js';
+import safeStorage from '@/utils/storage';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -8,7 +9,27 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Faltan las variables de entorno de Supabase');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Configurar Supabase para que funcione sin localStorage usando nuestro safeStorage
+const supabaseOptions = {
+  auth: {
+    storage: {
+      getItem: (key) => {
+        return safeStorage.getItem(key);
+      },
+      setItem: (key, value) => {
+        safeStorage.setItem(key, value);
+      },
+      removeItem: (key) => {
+        safeStorage.removeItem(key);
+      }
+    },
+    autoRefreshToken: true,
+    persistSession: safeStorage.isStorageAvailable(), // Solo persistir si hay storage disponible
+    detectSessionInUrl: true
+  }
+};
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, supabaseOptions);
 
 // Función para verificar y crear la tabla profiles si no existe
 export const initializeDatabase = async () => {

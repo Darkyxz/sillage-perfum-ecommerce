@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from '@/components/ui/use-toast';
+import safeStorage from '@/utils/storage';
 
 const FavoritesContext = createContext();
 
@@ -14,21 +15,36 @@ export const useFavorites = () => {
 export const FavoritesProvider = ({ children }) => {
   const [favorites, setFavorites] = useState([]);
 
-  // Cargar favoritos del localStorage al inicializar
+  // Cargar favoritos del storage al inicializar
   useEffect(() => {
-    const storedFavorites = localStorage.getItem('sillage-favorites');
+    const storedFavorites = safeStorage.getItem('sillage-favorites');
     if (storedFavorites) {
       try {
         setFavorites(JSON.parse(storedFavorites));
       } catch (error) {
-        console.error('Error parsing favorites from localStorage:', error);
+        console.error('Error parsing favorites from storage:', error);
       }
     }
   }, []);
 
-  // Guardar favoritos en localStorage cuando cambien
+  // Guardar favoritos en storage cuando cambien
   useEffect(() => {
-    localStorage.setItem('sillage-favorites', JSON.stringify(favorites));
+    // Siempre guardar en storage seguro
+    safeStorage.setItem('sillage-favorites', JSON.stringify(favorites));
+
+    // Intentar usar cookies funcionales si están disponibles
+    try {
+      const consent = safeStorage.getItem('cookie-consent');
+      if (consent) {
+        const parsed = JSON.parse(consent);
+        if (parsed.functional) {
+          // Guardar contador de favoritos como cookie funcional
+          document.cookie = `favorites_count=${favorites.length}; path=/; SameSite=Lax; max-age=${365 * 24 * 60 * 60}`;
+        }
+      }
+    } catch (e) {
+      // Ignorar errores de cookies
+    }
   }, [favorites]);
 
   // Agregar producto a favoritos
