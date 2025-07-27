@@ -11,6 +11,7 @@ import OrderManagement from '@/components/admin/OrderManagement';
 import ProductForm from '@/components/admin/ProductForm';
 import { productService } from '@/lib/productService';
 import { toast } from '@/components/ui/use-toast';
+import safeStorage from '@/utils/storage';
 
 const Admin = () => {
   const { user, isAdmin, isAuthLoading } = useAuth();
@@ -20,7 +21,7 @@ const Admin = () => {
   // Estado persistente que se mantiene al cambiar pestañas del navegador
   const [isAddFormOpen, setIsAddFormOpen] = useState(() => {
     if (typeof window !== 'undefined') {
-      const savedState = localStorage.getItem('admin-form-open') === 'true';
+      const savedState = safeStorage.getItem('admin-form-open') === 'true';
       console.log('🔄 Admin component initializing, form should be open:', savedState);
       return savedState;
     }
@@ -30,13 +31,13 @@ const Admin = () => {
   // Función personalizada para cambiar el estado del formulario
   const setFormOpen = (open) => {
     console.log('🎯 setFormOpen called with:', open, 'previous state:', isAddFormOpen);
-    console.log('💾 Saving to localStorage immediately:', open);
-    localStorage.setItem('admin-form-open', open.toString());
+    console.log('💾 Saving to storage immediately:', open);
+    safeStorage.setItem('admin-form-open', open.toString());
     setIsAddFormOpen(open);
     
     // Verificar que se guardó correctamente
-    const saved = localStorage.getItem('admin-form-open');
-    console.log('✅ Verified localStorage value:', saved);
+    const saved = safeStorage.getItem('admin-form-open');
+    console.log('✅ Verified storage value:', saved);
   };
   const [stats, setStats] = useState([
     {
@@ -75,8 +76,8 @@ const Admin = () => {
   // Efecto para restaurar el formulario cuando el componente se monta o se restaura
   useEffect(() => {
     if (isAdmin && !isAuthLoading) {
-      const shouldKeepFormOpen = localStorage.getItem('admin-form-open') === 'true';
-      console.log('🔍 Checking form state - localStorage:', shouldKeepFormOpen, 'current state:', isAddFormOpen);
+      const shouldKeepFormOpen = safeStorage.getItem('admin-form-open') === 'true';
+      console.log('🔍 Checking form state - storage:', shouldKeepFormOpen, 'current state:', isAddFormOpen);
       
       if (shouldKeepFormOpen && !isAddFormOpen && !hasRestoredFormState.current) {
         console.log('🔄 Restoring form state to OPEN');
@@ -94,8 +95,8 @@ const Admin = () => {
     const handleVisibilityChange = () => {
       if (!document.hidden) {
         // Cuando la página vuelve a ser visible, verificar el estado
-        const shouldKeepFormOpen = localStorage.getItem('admin-form-open') === 'true';
-        console.log('👁️ Page became visible - localStorage:', shouldKeepFormOpen, 'current state:', isAddFormOpen);
+        const shouldKeepFormOpen = safeStorage.getItem('admin-form-open') === 'true';
+        console.log('👁️ Page became visible - storage:', shouldKeepFormOpen, 'current state:', isAddFormOpen);
         
         if (shouldKeepFormOpen && !isAddFormOpen) {
           console.log('🔄 Restoring form after visibility change');

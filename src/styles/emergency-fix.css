@@ -1,0 +1,19 @@
+/* Estilos de emergencia para problemas de visibilidad */
+
+/* Solo aplicar en casos extremos - usar clases específicas */
+.emergency-visible {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.emergency-text {
+  color: #333 !important;
+}
+
+/* Deshabilitar la regla de print problemática */
+@media print {
+  body::after {
+    display: none !important;
+  }
+}

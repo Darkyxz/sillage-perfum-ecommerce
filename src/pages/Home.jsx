@@ -60,20 +60,20 @@ const Home = () => {
         <title>Sillage-Perfum - Perfumes Premium de Lujo</title>
         <meta name="description" content="Descubre nuestra exclusiva colección de perfumes de lujo. Fragancias únicas que definen tu personalidad y estilo." />
       </Helmet>
-
+       
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Background layer */}
         <div className="absolute inset-0" style={{ zIndex: 1 }}>
           <div className="absolute inset-0 bg-background" />
         </div>
-
+        
         {/* Background image behind text - Desktop */}
         <div className="absolute inset-0 hidden md:flex items-center justify-center" style={{ zIndex: 1 }}>
           <img
             src="/hero.png"
             alt="Background perfume desktop"
-            className="w-auto h-[400px] lg:h-[600px] xl:h-[980px] object-contain opacity-60"
+            className="w-auto h-[400px] lg:h-[600px] xl:h-[800px] object-contain opacity-60"
             style={{ filter: 'none', backdropFilter: 'none' }}
           />
         </div>
@@ -87,14 +87,13 @@ const Home = () => {
             style={{ filter: 'none', backdropFilter: 'none' }}
           />
         </div>
-
-        {/* Video */}
-        <motion.div
-          className="absolute left-1 top-1"
+         {/* Video */}
+         <motion.div
+          className="absolute left-10 top-5"
           style={{
             zIndex: 2,
-            width: '400px',
-            height: '400px',
+            width: '150px',
+            height: '150px',
             filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.2))'
           }}
           initial={{ opacity: 0 }}
@@ -113,6 +112,7 @@ const Home = () => {
             Tu navegador no soporta videos HTML5.
           </video>
         </motion.div>
+
 
         {/* Botones posicionados al final de la imagen */}
         <div className="absolute bottom-20 left-4 right-4 sm:left-14 sm:right-auto" style={{ zIndex: 10 }}>
@@ -189,7 +189,7 @@ const Home = () => {
             transition={{ duration: 0.8 }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl md:text-5xl font-display font-bold text-sillage-gold mb-4">
+            <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-4">
               Productos Destacados
             </h2>
             <p className="text-xl text-sillage-gold-dark max-w-2xl mx-auto">

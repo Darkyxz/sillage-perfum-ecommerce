@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -19,16 +18,13 @@ const Header = () => {
   const { getFavoritesCount } = useFavorites();
   const navigate = useNavigate();
 
-  // Solo verificar el avatar si existe
   useEffect(() => {
     if (user?.avatar_url) {
-      // Verificar si la URL del avatar es accesible
       fetch(user.avatar_url, { method: 'HEAD' })
         .catch(err => console.warn('Avatar no accesible:', err));
     }
   }, [user]);
 
-  // Atajo de teclado para abrir búsqueda (Ctrl+K o Cmd+K)
   useEffect(() => {
     const handleKeyDown = (e) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
@@ -58,17 +54,17 @@ const Header = () => {
     >
       <div className="w-full px-3 sm:px-4 py-3 sm:py-4" style={{ margin: 0, boxSizing: 'border-box' }}>
         <div className="flex items-center justify-between w-full" style={{ margin: 0, padding: 0 }}>
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-3 flex-shrink-0">
+          {/* Logo - Separado del menú de navegación */}
+          <Link to="/" className="flex-shrink-0">
             <img
               src="/images/Logos.svg"
               alt="Logo de la marca"
-              className="h-8 sm:h-10" // Ajusta la altura según necesites
+              className="h-8 sm:h-10 mr-10"
             />
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8">
+          {/* Desktop Navigation - Con margen izquierdo de 96px (ml-24) */}
+          <nav className="hidden md:flex items-center ml-32 ">
             <Link
               to="/"
               className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium text-sm uppercase tracking-wide px-3 py-2 rounded-md"
@@ -82,16 +78,15 @@ const Header = () => {
                 if (aboutSection) {
                   aboutSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 } else {
-                  // Si no estamos en home, navegar a home
                   window.location.href = '/#about';
                 }
               }}
               className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium text-sm uppercase tracking-wide px-3 py-2 rounded-md"
             >
-              Quienes Somos?
+              Quienes Somos
             </button>
             <Link
-              to="/#"
+              to="/como-comprar"
               className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium text-sm uppercase tracking-wide px-3 py-2 rounded-md"
             >
               Como Comprar
@@ -120,7 +115,7 @@ const Header = () => {
 
           {/* Actions */}
           <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
-            {/* Search - Hidden on very small screens */}
+            {/* Search */}
             <Button
               variant="ghost"
               size="icon"
@@ -130,7 +125,7 @@ const Header = () => {
               <Search className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
 
-            {/* Wishlist - Hidden on very small screens */}
+            {/* Wishlist */}
             <Link to="/favoritos" className="hidden sm:block">
               <Button
                 variant="ghost"
@@ -146,7 +141,7 @@ const Header = () => {
               </Button>
             </Link>
 
-            {/* Cart - Always visible */}
+            {/* Cart */}
             <Link to="/carrito">
               <Button
                 variant="ghost"
@@ -162,7 +157,7 @@ const Header = () => {
               </Button>
             </Link>
 
-            {/* User Menu - Simplified for mobile */}
+            {/* User Menu */}
             <div className="flex items-center">
               {user ? (
                 <div className="flex items-center space-x-1 sm:space-x-2">
@@ -229,7 +224,6 @@ const Header = () => {
               >
                 Inicio
               </Link>
-              {/* Catálogo en móvil - expandible */}
               <div className="w-full">
                 <details className="group">
                   <summary className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium px-3 py-2 rounded-md w-full text-left cursor-pointer list-none flex items-center justify-between">
@@ -374,7 +368,6 @@ const Header = () => {
         )}
       </div>
 
-      {/* Search Modal */}
       <SearchModal
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
@@ -384,4 +377,3 @@ const Header = () => {
 };
 
 export default Header;
-
