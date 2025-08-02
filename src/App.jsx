@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
+import { setDocumentLanguage, LANGUAGE_CONFIG } from '@/utils/languageConfig';
 import { Toaster } from '@/components/ui/toaster';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { CartProvider } from '@/contexts/CartContext';
@@ -11,6 +12,8 @@ import Home from '@/pages/Home';
 import Products from '@/pages/Products';
 import ProductDetail from '@/pages/ProductDetail';
 import Cart from '@/pages/Cart';
+import Checkout from '@/pages/Checkout';
+import OrderConfirmation from '@/pages/OrderConfirmation';
 import Favorites from '@/pages/Favorites';
 import Admin from '@/pages/Admin';
 import Profile from '@/pages/Profile';
@@ -21,27 +24,29 @@ import PaymentFailurePage from '@/pages/PaymentFailurePage';
 import PaymentPendingPage from '@/pages/PaymentPendingPage';
 import ContactForm from '@/pages/ContactForm';
 import CategoryPage from '@/pages/CategoryPage';
-import AdminDebug from '@/components/AdminDebug';
+
 import TrackingPage from '@/pages/TrackingPage';
+import MakeAdmin from '@/pages/MakeAdmin';
 import ComoComprar from './components/ComoComprar';
 import CookiesPolicy from './components/CookiesPolicy';
 import TerminosCondiciones from './components/TerminosCondiciones';
 import PoliticaPrivacidad from './components/PoliticaPrivacidad';
 import CookieNotification from './components/CookieNotification';
-import StorageDebug from './components/StorageDebug';
+
 import SimpleTest from './components/SimpleTest';
 import MinimalApp from './components/MinimalApp';
 import SafeContextWrapper from './components/SafeContextWrapper';
 import AppLoader from './components/AppLoader';
 import EmergencyFallback from './components/EmergencyFallback';
 import CookieConsent from './components/CookieConsent';
+import SEOStatus from './components/SEOStatus';
 import safeStorage from './utils/storage';
 import { ErrorBoundary } from 'react-error-boundary';
-  
+
 function ErrorFallback({ error, resetErrorBoundary }) {
-  const isStorageError = error.message.includes('localStorage') || 
-                        error.message.includes('sessionStorage') ||
-                        error.message.includes('storage');
+  const isStorageError = error.message.includes('localStorage') ||
+    error.message.includes('sessionStorage') ||
+    error.message.includes('storage');
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-background">
@@ -49,7 +54,7 @@ function ErrorFallback({ error, resetErrorBoundary }) {
         <h2 className="text-2xl font-bold text-sillage-gold mb-4">
           {isStorageError ? 'Problema de Compatibilidad' : 'Error en la aplicación'}
         </h2>
-        
+
         {isStorageError ? (
           <div className="mb-6">
             <p className="text-muted-foreground mb-4">
@@ -69,7 +74,7 @@ function ErrorFallback({ error, resetErrorBoundary }) {
         ) : (
           <p className="mb-6 text-muted-foreground">{error.message}</p>
         )}
-        
+
         <div className="space-x-4">
           <button
             onClick={resetErrorBoundary}
@@ -84,7 +89,7 @@ function ErrorFallback({ error, resetErrorBoundary }) {
             Recargar página
           </button>
         </div>
-        
+
         {process.env.NODE_ENV === 'development' && (
           <details className="mt-4 text-left">
             <summary className="cursor-pointer text-sm text-muted-foreground">
@@ -106,12 +111,15 @@ function App() {
 
   useEffect(() => {
     document.documentElement.classList.add('light');
-    
+
+    // Configurar idioma del documento
+    setDocumentLanguage();
+
     // Verificar storage y mostrar test simple si hay problemas críticos
     const checkStorage = () => {
       const available = safeStorage.isStorageAvailable();
       setStorageAvailable(available);
-      
+
       // Si no hay storage disponible Y estamos en desarrollo, mostrar test simple
       if (!available && process.env.NODE_ENV === 'development') {
         console.warn('🚨 Storage no disponible - Mostrando test simple');
@@ -119,7 +127,7 @@ function App() {
         // setShowSimpleTest(true);
       }
     };
-    
+
     checkStorage();
   }, []);
 
@@ -128,7 +136,7 @@ function App() {
     return <SimpleTest />;
   }
 
-  // Si no hay storage disponible, usar aplicación mínima
+  // Si no hay storage disponible,   <SEOStatus />  usar aplicación mínima
   if (!storageAvailable) {
     console.warn('🚨 Storage no disponible - Usando aplicación mínima');
     return <MinimalApp />;
@@ -140,66 +148,74 @@ function App() {
         <EmergencyFallback>
           <AppLoader>
             <HelmetProvider>
-          <SafeContextWrapper contextName="AuthContext">
-            <AuthProvider>
-              <SafeContextWrapper contextName="CartContext">
-                <CartProvider>
-                  <SafeContextWrapper contextName="FavoritesContext">
-                    <FavoritesProvider>
-                <Router>
-                  <div className="min-h-screen transition-colors duration-300 bg-background text-foreground">
-                  <Helmet>
-                    <title>Sillage-Perfum - Perfumes Premium</title>
-                    <meta name="description" content="Descubre nuestra exclusiva colección de perfumes de lujo. Fragancias únicas para cada ocasión especial." />
-                    <meta name="theme-color" content="#FFC107" />
-                  </Helmet>
-                  
-                  <Layout>
-                    <ErrorBoundary FallbackComponent={ErrorFallback}>
-                      <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/productos" element={<Products />} />
-                        <Route path="/productos/:sku" element={<ProductDetail />} />
-                        <Route path="/carrito" element={<Cart />} />
-                        <Route path="/favoritos" element={<Favorites />} />
-                        <Route path="/admin" element={<Admin />} />
-                        <Route path="/perfil" element={<Profile />} />
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/register" element={<Register />} />
-                        <Route path="/contacto" element={<ContactForm />} />
-                        <Route path="/categoria/:categorySlug" element={<CategoryPage />} />
-                        <Route path="/pago-exitoso" element={<PaymentSuccessPage />} />
-                        <Route path="/pago-fallido" element={<PaymentFailurePage />} />
-                        <Route path="/pago-pendiente" element={<PaymentPendingPage />} />
-                        <Route path="/como-comprar" element={<ComoComprar />} />
-                        <Route path="/cookies" element={<CookiesPolicy />} />
-                        <Route path="/terminos" element={<TerminosCondiciones />} />
-                        <Route path="/privacidad" element={<PoliticaPrivacidad />} />
-                        <Route 
-                          path="/seguimiento" 
-                          element={
-                            <ContentProtection requiredAuthLevel="user">
-                              <TrackingPage />
-                            </ContentProtection>
-                          } 
-                        />
-                      </Routes>
-                    </ErrorBoundary>
-                  </Layout>
-                  
-                  <Toaster />
-                  <AdminDebug />
-                  <CookieNotification />
-                  <StorageDebug />
-                  <CookieConsent />
-                </div>
-                </Router>
-                    </FavoritesProvider>
+              <SafeContextWrapper contextName="AuthContext">
+                <AuthProvider>
+                  <SafeContextWrapper contextName="CartContext">
+                    <CartProvider>
+                      <SafeContextWrapper contextName="FavoritesContext">
+                        <FavoritesProvider>
+                          <Router>
+                            <div className="min-h-screen transition-colors duration-300 bg-background text-foreground">
+                              <Helmet>
+                                <html lang={LANGUAGE_CONFIG.htmlLang} dir="ltr" />
+                                <title>{LANGUAGE_CONFIG.defaultTitle}</title>
+                                <meta name="description" content={LANGUAGE_CONFIG.defaultDescription} />
+                                <meta name="theme-color" content="#FFC107" />
+                                <meta http-equiv="content-language" content={LANGUAGE_CONFIG.contentLanguage} />
+                                <meta name="language" content={LANGUAGE_CONFIG.languageName} />
+                                <meta property="og:locale" content={LANGUAGE_CONFIG.ogLocale} />
+                                <meta name="geo.region" content={LANGUAGE_CONFIG.region} />
+                                <meta name="geo.country" content={LANGUAGE_CONFIG.country} />
+                              </Helmet>
+
+                              <Layout>
+                                <ErrorBoundary FallbackComponent={ErrorFallback}>
+                                  <Routes>
+                                    <Route path="/" element={<Home />} />
+                                    <Route path="/productos" element={<Products />} />
+                                    <Route path="/productos/:sku" element={<ProductDetail />} />
+                                    <Route path="/carrito" element={<Cart />} />
+                                    <Route path="/checkout" element={<Checkout />} />
+                                    <Route path="/pedido-confirmado" element={<OrderConfirmation />} />
+                                    <Route path="/favoritos" element={<Favorites />} />
+                                    <Route path="/admin" element={<Admin />} />
+                                    <Route path="/make-admin" element={<MakeAdmin />} />
+                                    <Route path="/perfil" element={<Profile />} />
+                                    <Route path="/login" element={<Login />} />
+                                    <Route path="/register" element={<Register />} />
+                                    <Route path="/contacto" element={<ContactForm />} />
+                                    <Route path="/categoria/:categorySlug" element={<CategoryPage />} />
+                                    <Route path="/pago-exitoso" element={<PaymentSuccessPage />} />
+                                    <Route path="/pago-fallido" element={<PaymentFailurePage />} />
+                                    <Route path="/pago-pendiente" element={<PaymentPendingPage />} />
+                                    <Route path="/como-comprar" element={<ComoComprar />} />
+                                    <Route path="/cookies" element={<CookiesPolicy />} />
+                                    <Route path="/terminos" element={<TerminosCondiciones />} />
+                                    <Route path="/privacidad" element={<PoliticaPrivacidad />} />
+                                    <Route
+                                      path="/seguimiento"
+                                      element={
+                                        <ContentProtection requiredAuthLevel="user">
+                                          <TrackingPage />
+                                        </ContentProtection>
+                                      }
+                                    />
+                                  </Routes>
+                                </ErrorBoundary>
+                              </Layout>
+
+                              <Toaster />
+                              <CookieNotification />
+                              <CookieConsent />
+
+                            </div>
+                          </Router>
+                        </FavoritesProvider>
+                      </SafeContextWrapper>
+                    </CartProvider>
                   </SafeContextWrapper>
-                </CartProvider>
+                </AuthProvider>
               </SafeContextWrapper>
-            </AuthProvider>
-          </SafeContextWrapper>
             </HelmetProvider>
           </AppLoader>
         </EmergencyFallback>

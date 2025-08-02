@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "name": "sillage-backend",
+  "builds": [
+    {
+      "src": "backend/server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/backend/server.js"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production",
+    "DB_HOST": "srv1918.hstgr.io",
+    "DB_USER": "u172702780_AdminSillage",
+    "DB_PASS": "M0nkey12345!",
+    "DB_NAME": "u172702780_Sillagep",
+    "DB_PORT": "3306",
+    "JWT_SECRET": "sillage-perfum-jwt-secret-super-seguro-2025-chile"
+  }
+}

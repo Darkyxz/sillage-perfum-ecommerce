@@ -1,72 +1,34 @@
-import { supabase } from './supabase';
-
+// Servicio de carrito simplificado para localStorage
+// Ya no necesitamos persistencia en servidor para el carrito
 export const cartService = {
-  // Obtener el carrito del usuario actual
+  // Obtener el carrito (solo localStorage)
   async getCart(userId) {
-    const { data, error } = await supabase
-      .from('cart_items')
-      .select('*, product:product_id(*)')
-      .eq('user_id', userId);
-    if (error) throw error;
-    return data;
+    // Para compatibilidad, devolvemos array vacío
+    // El carrito ahora se maneja completamente en localStorage
+    return [];
   },
 
-  // Agregar un producto al carrito
+  // Agregar un producto al carrito (no hace nada, se maneja en CartContext)
   async addToCart(userId, productId, quantity = 1) {
-    // Si ya existe, actualizar cantidad
-    const { data: existing, error: fetchError } = await supabase
-      .from('cart_items')
-      .select('*')
-      .eq('user_id', userId)
-      .eq('product_id', productId)
-      .single();
-    if (fetchError && fetchError.code !== 'PGRST116') throw fetchError;
-    if (existing) {
-      return await cartService.updateQuantity(userId, productId, existing.quantity + quantity);
-    }
-    const { data, error } = await supabase
-      .from('cart_items')
-      .insert([{ user_id: userId, product_id: productId, quantity }])
-      .select()
-      .single();
-    if (error) throw error;
-    return data;
+    // No hace nada, el carrito se maneja en localStorage
+    return { success: true };
   },
 
-  // Actualizar cantidad de un producto
+  // Actualizar cantidad (no hace nada, se maneja en CartContext)
   async updateQuantity(userId, productId, quantity) {
-    if (quantity <= 0) {
-      return await cartService.removeFromCart(userId, productId);
-    }
-    const { data, error } = await supabase
-      .from('cart_items')
-      .update({ quantity })
-      .eq('user_id', userId)
-      .eq('product_id', productId)
-      .select()
-      .single();
-    if (error) throw error;
-    return data;
+    // No hace nada, el carrito se maneja en localStorage
+    return { success: true };
   },
 
-  // Eliminar un producto del carrito
+  // Eliminar del carrito (no hace nada, se maneja en CartContext)
   async removeFromCart(userId, productId) {
-    const { error } = await supabase
-      .from('cart_items')
-      .delete()
-      .eq('user_id', userId)
-      .eq('product_id', productId);
-    if (error) throw error;
+    // No hace nada, el carrito se maneja en localStorage
     return true;
   },
 
-  // Vaciar el carrito
+  // Vaciar el carrito (no hace nada, se maneja en CartContext)
   async clearCart(userId) {
-    const { error } = await supabase
-      .from('cart_items')
-      .delete()
-      .eq('user_id', userId);
-    if (error) throw error;
+    // No hace nada, el carrito se maneja en localStorage
     return true;
   }
 }; 

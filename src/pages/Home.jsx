@@ -9,6 +9,7 @@ import { toast } from '@/components/ui/use-toast';
 import { productService } from '@/lib/productService';
 import Testimonials from '@/components/Testimonials';
 import About from '@/components/About';
+import TrustSignals from '@/components/TrustSignals';
 
 const Home = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
@@ -57,43 +58,96 @@ const Home = () => {
   return (
     <div className="min-h-screen">
       <Helmet>
-        <title>Sillage-Perfum - Perfumes Premium de Lujo</title>
-        <meta name="description" content="Descubre nuestra exclusiva colección de perfumes de lujo. Fragancias únicas que definen tu personalidad y estilo." />
+        <html lang="es-CL" />
+        <title>Sillage Perfum Chile - Perfumes Premium de Lujo | Compra Online </title>
+        <meta name="description" content="🌟 Perfumes premium de lujo en Chile. Fragancias originales para hombre y mujer.  🚚 Entrega rápida. ⭐ +2,500 clientes satisfechos." />
+        <meta name="keywords" content="perfumes chile, perfumes de lujo chile, fragancias premium, comprar perfumes online chile, perfumes originales, sillage perfum" />
+        <link rel="canonical" href="https://sillageperfum.cl/" />
+
+        <meta http-equiv="content-language" content="es-CL" />
+        <meta name="language" content="Spanish" />
+
+        {/* Open Graph optimizado */}
+        <meta property="og:locale" content="es_CL" />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Sillage Perfum" />
+        <meta property="og:title" content="Sillage Perfum Chile - Perfumes Premium de Lujo" />
+        <meta property="og:description" content="🌟 Perfumes premium de lujo en Chile. Fragancias originales. ✅ +2,500 clientes satisfechos." />
+        <meta property="og:url" content="https://sillageperfum.cl/" />
+        <meta property="og:image" content="https://sillageperfum.cl/hero.png" />
+
+        {/* Schema.org para la página principal */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "Sillage Perfum",
+            "url": "https://sillageperfum.cl",
+            "description": "Tienda online de perfumes premium de lujo en Chile",
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": "https://sillageperfum.cl/productos?search={search_term_string}",
+              "query-input": "required name=search_term_string"
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "Sillage Perfum",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://sillageperfum.cl/images/icon.svg"
+              }
+            }
+          })}
+        </script>
+
+        {/* Breadcrumb Schema */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Inicio",
+                "item": "https://sillageperfum.cl/"
+              }
+            ]
+          })}
+        </script>
       </Helmet>
-       
+
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative h-[70vh] md:min-h-screen flex items-center justify-center overflow-hidden mb-0">
         {/* Background layer */}
         <div className="absolute inset-0" style={{ zIndex: 1 }}>
           <div className="absolute inset-0 bg-background" />
         </div>
-        
+
         {/* Background image behind text - Desktop */}
         <div className="absolute inset-0 hidden md:flex items-center justify-center" style={{ zIndex: 1 }}>
           <img
             src="/hero.png"
             alt="Background perfume desktop"
-            className="w-auto h-[400px] lg:h-[600px] xl:h-[800px] object-contain opacity-60"
+            className="w-auto h-[400px] lg:h-[600px] xl:h-[800px] object-contain opacity-100"
             style={{ filter: 'none', backdropFilter: 'none' }}
           />
         </div>
 
         {/* Background image behind text - Mobile */}
-        <div className="absolute inset-0 flex items-center justify-center md:hidden" style={{ zIndex: 1 }}>
+        <div className="absolute inset-0 flex items-start justify-center md:hidden" style={{ zIndex: 1 }}>
           <img
             src="/hero.png"
             alt="Background perfume mobile"
-            className="w-auto h-64 xs:h-72 sm:h-80 object-contain opacity-60"
+            className="w-auto h-48 xs:h-64 sm:h-72 object-contain opacity-60 mt-0"
             style={{ filter: 'none', backdropFilter: 'none' }}
           />
         </div>
-         {/* Video */}
-         <motion.div
-          className="absolute left-10 top-5"
+        {/* Video */}
+        <motion.div
+          className="absolute right-2 md:right-10 top-2 md:top-5 w-16 h-16 md:w-[150px] md:h-[150px]"
           style={{
             zIndex: 2,
-            width: '150px',
-            height: '150px',
             filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.2))'
           }}
           initial={{ opacity: 0 }}
@@ -115,7 +169,7 @@ const Home = () => {
 
 
         {/* Botones posicionados al final de la imagen */}
-        <div className="absolute bottom-20 left-4 right-4 sm:left-14 sm:right-auto" style={{ zIndex: 10 }}>
+        <div className="absolute bottom-4 md:bottom-20 left-4 right-4 sm:left-14 sm:right-auto" style={{ zIndex: 10 }}>
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -157,18 +211,9 @@ const Home = () => {
           </motion.div>
         </div>
 
-        {/* Floating Elements */}
+        {/* Floating Elements - Solo dejamos el Gift */}
         <motion.div
-          className="absolute top-20 left-10 text-sillage-gold/60"
-          style={{ zIndex: 15 }}
-          animate={{ y: [-10, 10, -10] }}
-          transition={{ duration: 4, repeat: Infinity }}
-        >
-          <Sparkles size={40} />
-        </motion.div>
-
-        <motion.div
-          className="absolute bottom-20 right-10 text-sillage-gold/60"
+          className="absolute bottom-4 md:bottom-20 right-4 md:right-10 text-sillage-gold/60"
           style={{ zIndex: 15 }}
           animate={{ y: [10, -10, 10] }}
           transition={{ duration: 3, repeat: Infinity }}
@@ -180,14 +225,16 @@ const Home = () => {
       {/* About Section */}
       <About />
 
+
+
       {/* Featured Products */}
-      <section className="py-20 px-4">
+      <section className="py-12 md:py-20 px-4">
         <div className="container mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-center mb-16"
+            className="text-center mb-8 md:mb-16"
           >
             <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-4">
               Productos Destacados
@@ -313,64 +360,9 @@ const Home = () => {
 
       {/* Testimonials Section */}
       <Testimonials />
+      {/* Trust Signals <TrustSignals variant="compact" />*/}
 
-      {/* Features Section */}
-      <section className="py-20 px-4">
-        <div className="container mx-auto">
-          <div className="grid md:grid-cols-3 gap-8">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              className="text-center"
-            >
-              <div className="bg-sillage-gold/10 border border-sillage-gold/30 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Sparkles className="h-8 w-8 text-sillage-gold" />
-              </div>
-              <h3 className="text-xl font-semibold text-sillage-gold mb-2">
-                Fragancias Exclusivas
-              </h3>
-              <p className="text-sillage-gold-dark">
-                Perfumes únicos creados por los mejores perfumistas del mundo
-              </p>
-            </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-center"
-            >
-              <div className="bg-sillage-gold/10 border border-sillage-gold/30 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Gift className="h-8 w-8 text-sillage-gold" />
-              </div>
-              <h3 className="text-xl font-semibold text-sillage-gold mb-2">
-                Envío Gratuito
-              </h3>
-              <p className="text-sillage-gold-dark">
-                Entrega gratuita en compras superiores a $50
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="text-center"
-            >
-              <div className="bg-sillage-gold/10 border border-sillage-gold/30 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Star className="h-8 w-8 text-sillage-gold" />
-              </div>
-              <h3 className="text-xl font-semibold text-sillage-gold mb-2">
-                Calidad Premium
-              </h3>
-              <p className="text-sillage-gold-dark">
-                Solo los mejores ingredientes y procesos de fabricación
-              </p>
-            </motion.div>
-          </div>
-        </div>
-      </section>
     </div>
   );
 };

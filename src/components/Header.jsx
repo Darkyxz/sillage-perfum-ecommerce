@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ShoppingCart, User, Menu, X, Search, Heart, ChevronDown } from 'lucide-react';
+import { ShoppingCart, User, Menu, X, Search, Heart, ChevronDown, LogOut } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
 import { useFavorites } from '@/contexts/FavoritesContext';
@@ -10,12 +10,14 @@ import { toast } from '@/components/ui/use-toast';
 import SearchModal from '@/components/SearchModal';
 import CatalogDropdown from '@/components/CatalogDropdown';
 
+
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+
   const { user, logout } = useAuth();
   const { getTotalItems } = useCart();
-  const { getFavoritesCount } = useFavorites();
+  const { favoritesCount } = useFavorites();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,6 +45,14 @@ const Header = () => {
     } else {
       navigate('/login');
     }
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    toast({
+      title: "Sesión cerrada",
+      description: "Has cerrado sesión exitosamente"
+    });
   };
 
   return (
@@ -74,11 +84,15 @@ const Header = () => {
             <CatalogDropdown />
             <button
               onClick={() => {
-                const aboutSection = document.getElementById('about-section');
-                if (aboutSection) {
-                  aboutSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                // Si estamos en la página de inicio, hacer scroll
+                if (window.location.pathname === '/') {
+                  const aboutSection = document.getElementById('about-section');
+                  if (aboutSection) {
+                    aboutSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
                 } else {
-                  window.location.href = '/#about';
+                  // Si estamos en otra página, navegar a inicio y luego hacer scroll
+                  window.location.href = '/#about-section';
                 }
               }}
               className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium text-sm uppercase tracking-wide px-3 py-2 rounded-md"
@@ -133,9 +147,9 @@ const Header = () => {
                 className="text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors relative"
               >
                 <Heart className="h-4 w-4 sm:h-5 sm:w-5" />
-                {getFavoritesCount() > 0 && (
+                {favoritesCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center font-bold border-2 border-background shadow-lg text-[10px] sm:text-xs">
-                    {getFavoritesCount()}
+                    {favoritesCount}
                   </span>
                 )}
               </Button>
@@ -285,11 +299,15 @@ const Header = () => {
               </div>
               <button
                 onClick={() => {
-                  const aboutSection = document.getElementById('about-section');
-                  if (aboutSection) {
-                    aboutSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  // Si estamos en la página de inicio, hacer scroll
+                  if (window.location.pathname === '/') {
+                    const aboutSection = document.getElementById('about-section');
+                    if (aboutSection) {
+                      aboutSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
                   } else {
-                    window.location.href = '/#about';
+                    // Si estamos en otra página, navegar a inicio y luego hacer scroll
+                    window.location.href = '/#about-section';
                   }
                   setIsMenuOpen(false);
                 }}
@@ -327,9 +345,9 @@ const Header = () => {
                   <Heart className="h-4 w-4 mr-2" />
                   Favoritos
                 </div>
-                {getFavoritesCount() > 0 && (
+                {favoritesCount > 0 && (
                   <span className="bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold border-2 border-background shadow-lg">
-                    {getFavoritesCount()}
+                    {favoritesCount}
                   </span>
                 )}
               </Link>
@@ -372,6 +390,8 @@ const Header = () => {
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
       />
+
+
     </motion.header>
   );
 };

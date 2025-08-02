@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { useAuth } from '@/contexts/AuthContext';
 import AdminDashboard from '@/components/admin/AdminDashboard';
 import ProductManagement from '@/components/admin/ProductManagement';
-import OrderManagement from '@/components/admin/OrderManagement';
+import OrderManagementAdmin from '@/components/admin/OrderManagementAdmin';
 import ProductForm from '@/components/admin/ProductForm';
 import { productService } from '@/lib/productService';
 import { toast } from '@/components/ui/use-toast';
@@ -254,7 +254,7 @@ const Admin = () => {
           </TabsContent>
 
           <TabsContent value="orders">
-            <OrderManagement />
+            <OrderManagementAdmin />
           </TabsContent>
         </Tabs>
 

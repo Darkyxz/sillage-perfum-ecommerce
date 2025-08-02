@@ -1,21 +1,36 @@
 import { CheckCircle } from 'lucide-react';
 import { useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import safeStorage from '@/utils/storage';
+import safeStorage from '@/lib/utils';
+import { checkoutService } from '@/lib/checkoutService';
+import { useToast } from '@/components/ui/use-toast';
 
 export default function PaymentSuccessPage() {
   const [searchParams] = useSearchParams();
-  const orderId = searchParams.get('external_reference');
-  const paymentId = searchParams.get('payment_id');
+  const token = searchParams.get('token_ws');
+  const { toast } = useToast();
 
   useEffect(() => {
-    // Limpiar el carrito después de un pago exitoso
-    if (orderId) {
-      safeStorage.removeItem('cart');
-      // Disparar evento para actualizar el contexto del carrito
-      window.dispatchEvent(new Event('cartCleared'));
-    }
-  }, [orderId]);
+    const confirmPayment = async () => {
+      if (token) {
+        try {
+          await checkoutService.confirmWebpayPayment(token);
+          // Limpiar el carrito después de confirmar el pago
+          safeStorage.removeItem('cart');
+          window.dispatchEvent(new Event('cartCleared'));
+        } catch (error) {
+          console.error('Error confirmando pago:', error);
+          toast({
+            title: "Error confirmando pago",
+            description: "El pago fue exitoso pero hubo un problema registrándolo en nuestro sistema. Por favor contacta a soporte.",
+            variant: "destructive"
+          });
+        }
+      }
+    };
+
+    confirmPayment();
+  }, [token, toast]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100">
@@ -31,20 +46,11 @@ export default function PaymentSuccessPage() {
             </p>
           </div>
 
-          {orderId && (
+          {token && (
             <div className="bg-gray-50 rounded-lg p-4 mb-6">
-              <p className="text-sm text-gray-600 mb-1">Número de Pedido</p>
-              <p className="font-mono text-lg font-semibold text-gray-900">
-                #{orderId}
-              </p>
-            </div>
-          )}
-
-          {paymentId && (
-            <div className="bg-gray-50 rounded-lg p-4 mb-6">
-              <p className="text-sm text-gray-600 mb-1">ID de Pago</p>
-              <p className="font-mono text-sm text-gray-700">
-                {paymentId}
+              <p className="text-sm text-gray-600 mb-1">Token de Transacción</p>
+              <p className="font-mono text-sm text-gray-700 break-all">
+                {token}
               </p>
             </div>
           )}

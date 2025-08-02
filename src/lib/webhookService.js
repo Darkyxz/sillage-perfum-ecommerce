@@ -1,5 +1,5 @@
 // Servicio para manejar webhooks de MercadoPago
-import { supabase } from './supabase.js';
+import { apiClient } from './apiClient.js';
 import { orderService } from './orderService.js';
 
 export const webhookService = {
@@ -198,16 +198,11 @@ export const webhookService = {
         processed_at: new Date().toISOString()
       };
       
-      const { error } = await supabase
-        .from('payments')
-        .upsert(paymentData, { 
-          onConflict: 'payment_id',
-          ignoreDuplicates: false 
-        });
+      const response = await apiClient.post('/payments', paymentData);
       
-      if (error) {
-        console.error('Error guardando pago:', error);
-        throw error;
+      if (!response.success) {
+        console.error('Error guardando pago:', response.error);
+        throw new Error(response.error || 'Error al guardar el pago');
       }
       
       console.log(`💾 Información de pago guardada: ${paymentId}`);

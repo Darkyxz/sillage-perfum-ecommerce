@@ -4,9 +4,9 @@ import { Sparkles, Heart, Award, Users } from 'lucide-react';
 
 const About = () => {
   return (
-    <section id="about-section" className="py-20 bg-background">
+    <section id="about-section" className="-mt-8 pt-4 pb-8 md:mt-0 md:py-20 bg-background">
       <div className="container mx-auto px-4">
-        <div className="flex flex-col lg:flex-row gap-12 items-center mb-16">
+        <div className="flex flex-col lg:flex-row gap-8 md:gap-12 items-center mb-8 md:mb-16 mt-4 md:mt-0">
           {/* Todo el contenido de texto a la izquierda */}
           <div className="lg:w-1/2">
             <motion.div
@@ -24,7 +24,7 @@ const About = () => {
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8 }}
-              className="space-y-6 text-justify"
+              className="space-y-4 md:space-y-6 text-justify"
             >
               <p className="text-sillage-gold-deep leading-relaxed">
                 Fue creada con la misión de promover perfumes de alta calidad. La idea surge en tiempos de reinversión y crecimiento, permitiéndonos llegar a nuestros clientes ofreciendo una línea completa de nuestras mejores interpretaciones, inspiradas en fragancias de alta gama para quienes gustan dejar una huella.

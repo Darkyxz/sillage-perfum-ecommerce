@@ -21,14 +21,14 @@ const ContactForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('https://formspree.io/f/contacto@sillageperfum.cl', {
+      const response = await fetch('https://formspree.io/f/ventas@sillageperfum.cl', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
       });
-      
+
       if (response.ok) {
         alert('Mensaje enviado con éxito');
         setFormData({
@@ -71,7 +71,7 @@ const ContactForm = () => {
             className="relative flex justify-center order-last lg:order-first"
           >
             <div className="relative w-72 h-72 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-full border-4 border-sillage-gold overflow-hidden shadow-xl">
-              <img 
+              <img
                 src="./sillageround.jpg"
                 alt="Sillage Perfum Spa"
                 className="w-full h-full object-cover"
@@ -172,7 +172,7 @@ const ContactForm = () => {
                   <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
                 </div>
                 <div>
-                  <p className="text-xs sm:text-sm text-sillage-gold-dark">contacto@sillageperfum.cl</p>
+                  <p className="text-xs sm:text-sm text-sillage-gold-dark">ventas@sillageperfum.cl</p>
                 </div>
               </div>
 
@@ -181,7 +181,7 @@ const ContactForm = () => {
                   <Phone className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
                 </div>
                 <div>
-                  <p className="text-xs sm:text-sm text-sillage-gold-dark">(583) 555-5555</p>
+                  <p className="text-xs sm:text-sm text-sillage-gold-dark">+56 973749375</p>
                 </div>
               </div>
             </div>

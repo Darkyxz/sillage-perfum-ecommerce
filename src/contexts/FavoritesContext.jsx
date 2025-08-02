@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { toast } from '@/components/ui/use-toast';
-import safeStorage from '@/utils/storage';
+import { useAuth } from './AuthContext';
+import { favoritesService } from '@/lib/favoritesService';
 
 const FavoritesContext = createContext();
 
@@ -14,98 +14,150 @@ export const useFavorites = () => {
 
 export const FavoritesProvider = ({ children }) => {
   const [favorites, setFavorites] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const { user, isAuthenticated } = useAuth();
 
-  // Cargar favoritos del storage al inicializar
+  // Cargar favoritos cuando el usuario se autentica
   useEffect(() => {
-    const storedFavorites = safeStorage.getItem('sillage-favorites');
-    if (storedFavorites) {
-      try {
-        setFavorites(JSON.parse(storedFavorites));
-      } catch (error) {
-        console.error('Error parsing favorites from storage:', error);
-      }
-    }
-  }, []);
-
-  // Guardar favoritos en storage cuando cambien
-  useEffect(() => {
-    // Siempre guardar en storage seguro
-    safeStorage.setItem('sillage-favorites', JSON.stringify(favorites));
-
-    // Intentar usar cookies funcionales si están disponibles
-    try {
-      const consent = safeStorage.getItem('cookie-consent');
-      if (consent) {
-        const parsed = JSON.parse(consent);
-        if (parsed.functional) {
-          // Guardar contador de favoritos como cookie funcional
-          document.cookie = `favorites_count=${favorites.length}; path=/; SameSite=Lax; max-age=${365 * 24 * 60 * 60}`;
-        }
-      }
-    } catch (e) {
-      // Ignorar errores de cookies
-    }
-  }, [favorites]);
-
-  // Agregar producto a favoritos
-  const addToFavorites = (product) => {
-    if (!isInFavorites(product.id)) {
-      setFavorites(prev => [...prev, product]);
-      toast({
-        title: "Agregado a favoritos",
-        description: `${product.name} se ha agregado a tus favoritos`,
-      });
-    }
-  };
-
-  // Eliminar producto de favoritos
-  const removeFromFavorites = (productId) => {
-    const product = favorites.find(item => item.id === productId);
-    setFavorites(prev => prev.filter(item => item.id !== productId));
-    if (product) {
-      toast({
-        title: "Eliminado de favoritos",
-        description: `${product.name} se ha eliminado de tus favoritos`,
-      });
-    }
-  };
-
-  // Verificar si un producto está en favoritos
-  const isInFavorites = (productId) => {
-    return favorites.some(item => item.id === productId);
-  };
-
-  // Alternar favorito (agregar si no está, eliminar si está)
-  const toggleFavorite = (product) => {
-    if (isInFavorites(product.id)) {
-      removeFromFavorites(product.id);
+    if (isAuthenticated && user) {
+      loadFavorites();
     } else {
-      addToFavorites(product);
+      setFavorites([]);
+      setError(null);
+    }
+  }, [user, isAuthenticated]);
+
+  const loadFavorites = async () => {
+    if (!isAuthenticated) return;
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await favoritesService.getFavorites();
+      setFavorites(response.data || []);
+    } catch (error) {
+      console.error('Error loading favorites:', error);
+      setError('Error cargando favoritos');
+      setFavorites([]);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Obtener número total de favoritos
-  const getFavoritesCount = () => {
-    return favorites.length;
+  const addToFavorites = async (product) => {
+    if (!isAuthenticated) {
+      setError('Debes iniciar sesión para agregar favoritos');
+      return false;
+    }
+
+    try {
+      // Verificar si ya está en favoritos
+      const isAlreadyFavorite = favorites.some(fav => fav.id === product.id);
+      if (isAlreadyFavorite) {
+        setError('El producto ya está en favoritos');
+        return false;
+      }
+
+      const response = await favoritesService.addFavorite(product.id);
+
+      // Actualizar estado local
+      setFavorites(prev => [...prev, product]);
+      setError(null);
+
+      return true;
+    } catch (error) {
+      console.error('Error adding to favorites:', error);
+      setError(error.message || 'Error agregando a favoritos');
+      return false;
+    }
   };
 
-  // Limpiar todos los favoritos
-  const clearFavorites = () => {
-    setFavorites([]);
-    toast({
-      title: "Favoritos eliminados",
-      description: "Se han eliminado todos los productos de tus favoritos",
-    });
+  const removeFromFavorites = async (productId) => {
+    if (!isAuthenticated) {
+      setError('Debes iniciar sesión');
+      return false;
+    }
+
+    try {
+      await favoritesService.removeFavorite(productId);
+
+      // Actualizar estado local
+      setFavorites(prev => prev.filter(fav => fav.id !== productId));
+      setError(null);
+
+      return true;
+    } catch (error) {
+      console.error('Error removing from favorites:', error);
+      setError(error.message || 'Error removiendo de favoritos');
+      return false;
+    }
+  };
+
+  const toggleFavorite = async (product) => {
+    if (!isAuthenticated) {
+      setError('Debes iniciar sesión para gestionar favoritos');
+      return { success: false, action: null };
+    }
+
+    try {
+      const response = await favoritesService.toggleFavorite(product.id);
+
+      if (response.action === 'added') {
+        // Agregar al estado local
+        setFavorites(prev => [...prev, product]);
+      } else if (response.action === 'removed') {
+        // Remover del estado local
+        setFavorites(prev => prev.filter(fav => fav.id !== product.id));
+      }
+
+      setError(null);
+      return {
+        success: true,
+        action: response.action,
+        message: response.message,
+        isFavorite: response.isFavorite
+      };
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+      setError(error.message || 'Error procesando favorito');
+      return { success: false, action: null };
+    }
+  };
+
+  const isFavorite = (productId) => {
+    return favorites.some(fav => fav.id === productId);
+  };
+
+  const checkFavorite = async (productId) => {
+    if (!isAuthenticated) return false;
+
+    try {
+      const response = await favoritesService.checkFavorite(productId);
+      return response.isFavorite;
+    } catch (error) {
+      console.error('Error checking favorite:', error);
+      return false;
+    }
+  };
+
+  const clearError = () => {
+    setError(null);
   };
 
   const value = {
     favorites,
+    loading,
+    error,
     addToFavorites,
     removeFromFavorites,
-    isInFavorites,
+    isFavorite,
     toggleFavorite,
-    getFavoritesCount,
-    clearFavorites,
+    checkFavorite,
+    loadFavorites,
+    clearError,
+    favoritesCount: favorites.length
   };
 
   return (

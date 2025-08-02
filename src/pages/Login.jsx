@@ -17,7 +17,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const { login, loginWithGoogle } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -25,7 +25,7 @@ const Login = () => {
     setIsLoading(true);
     const { error } = await login(email, password);
     if (!error) {
-      navigate('/');
+      navigate('/perfil');
       toast({
         title: "¡Bienvenido de vuelta!",
         description: "Has iniciado sesión correctamente.",
@@ -36,7 +36,12 @@ const Login = () => {
 
   const handleGoogleLogin = async () => {
     setIsGoogleLoading(true);
-    await loginWithGoogle();
+    toast({
+      title: "Función no disponible",
+      description: "El login con Google no está disponible en este momento",
+      variant: "destructive"
+    });
+    setIsGoogleLoading(false);
   };
 
   return (

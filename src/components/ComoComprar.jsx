@@ -1,19 +1,17 @@
-import React from 'react';
 import { motion } from 'framer-motion';
-import { 
-  CreditCard,
+import {
   Banknote,
-  Smartphone,
   QrCode
 } from 'lucide-react';
+import { useState } from 'react';
 
 // Importar logos de bancos (necesitarás tener estos archivos en tu proyecto)
-import BancoEstadoLogo from '/images/bancoestado.jpg';
-import BciLogo from '/images/bci.png';
-import MachLogo from '/images/mach.png';
-import BancoChileLogo from '/images/banco-chile.png';
+import BancoItau from '/images/Itau.png';
+import WpayLogo from '/images/webpay-logo.png';
 
 const ComoComprar = () => {
+  const [activeTab, setActiveTab] = useState('transferencia');
+
   return (
     <section id="como-comprar" className="py-12 md:py-16 bg-background">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-6xl">
@@ -31,116 +29,86 @@ const ComoComprar = () => {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <button className="flex flex-col items-center justify-center p-4 border border-sillage-gold rounded-lg hover:bg-card transition-all">
-            <CreditCard className="h-8 w-8 text-sillage-gold-dark mb-2" />
-            <span className="font-medium">Tarjeta de Crédito</span>
-          </button>
-          <button className="flex flex-col items-center justify-center p-4 border border-sillage-gold rounded-lg hover:bg-card transition-all">
+        <div className="flex justify-center gap-6 mb-12">
+          <button
+            onClick={() => setActiveTab('transferencia')}
+            className={`flex flex-col items-center justify-center p-4 border rounded-lg hover:bg-card transition-all w-48 ${activeTab === 'transferencia'
+              ? 'border-sillage-gold bg-card'
+              : 'border-border'
+              }`}
+          >
             <Banknote className="h-8 w-8 text-sillage-gold-dark mb-2" />
-            <span className="font-medium">Transfere	ncia Bancaria</span>
+            <span className="font-medium">Transferencia Bancaria</span>
           </button>
-          <button className="flex flex-col items-center justify-center p-4 border border-sillage-gold rounded-lg hover:bg-card transition-all">
-            <Smartphone className="h-8 w-8 text-sillage-gold-dark mb-2" />
-            <span className="font-medium">Pago Móvil</span>
-          </button>
-          <button className="flex flex-col items-center justify-center p-4 border border-sillage-gold rounded-lg hover:bg-card transition-all">
+          <button
+            onClick={() => setActiveTab('webpay')}
+            className={`flex flex-col items-center justify-center p-4 border rounded-lg hover:bg-card transition-all w-48 ${activeTab === 'webpay'
+              ? 'border-sillage-gold bg-card'
+              : 'border-border'
+              }`}
+          >
             <QrCode className="h-8 w-8 text-sillage-gold-dark mb-2" />
             <span className="font-medium">Webpay</span>
           </button>
         </div>
 
-        {/* Sección de Transferencias Bancarias */}
+        {/* Sección de contenido según pestaña seleccionada */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
           className="bg-card border border-border rounded-lg p-6 shadow-lg"
         >
-          <h3 className="text-xl font-display font-semibold text-sillage-gold-dark mb-6">
-            Transferencias Bancarias
-          </h3>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Banco 1 */}
-            <div className="border border-border rounded-lg p-4">
-              <div className="flex items-center mb-4">
-                <img src={BancoEstadoLogo} alt="Banco Estado" className="h-8 mr-3" />
-                <h4 className="font-medium">Banco Estado</h4>
+          {activeTab === 'transferencia' ? (
+            <>
+              <h3 className="text-xl font-display font-semibold text-sillage-gold-dark mb-6">
+                Transferencias Bancarias
+              </h3>
+              <div className="border border-border rounded-lg p-4 max-w-md mx-auto">
+                <div className="flex items-center mb-4">
+                  <img src={BancoItau} alt="Banco Itau" className="h-8 mr-3" />
+                  <h4 className="font-medium">Banco Itau</h4>
+                </div>
+                <div className="space-y-2 text-sm">
+                  <p><span className="font-medium">Nombre:</span> SILLAGE PERFUM SPA</p>
+                  <p><span className="font-medium">RUT:</span> 78.194.472-6</p>
+                  <p><span className="font-medium">Tipo de Cuenta:</span> Cuenta Corriente</p>
+                  <p><span className="font-medium">N° Cuenta:</span> 230395749</p>
+                  <p><span className="font-medium">Email:</span> ventas@sillageperfum.cl</p>
+                </div>
               </div>
-              <div className="space-y-2 text-sm">
-                <p><span className="font-medium">Nombre:</span> SILLAGE PERFUM SPA</p>
-                <p><span className="font-medium">RUT:</span> 77.762.884-4</p>
-                <p><span className="font-medium">Tipo de Cuenta:</span> Cuenta Vista</p>
-                <p><span className="font-medium">N° Cuenta:</span> 90271739264</p>
-                <p><span className="font-medium">Email:</span> ventas@sillageperfum.cl</p>
+            </>
+          ) : (
+            <>
+              <h3 className="text-xl font-display font-semibold text-sillage-gold-dark mb-6">
+                Webpay
+              </h3>
+              <div className="border border-border rounded-lg p-4 max-w-md mx-auto">
+                <div className="flex flex-col items-center">
+                  <h4 className="font-medium mb-4">Pagar con Transkbank</h4>
+                 <a href="https://www.webpay.cl/company/165159?utm_source=transbank&utm_medium=portal3.0&utm_campaign=link_portal"><img src={WpayLogo} alt="Webpay" className="h-8 mb-4" /></a>
+                  <form
+                    name='rec20108_btn1'
+                    method='post'
+                    action='https://www.webpay.cl/backpub/external/form-pay'
+                  >
+                    <input type='hidden' name='idFormulario' value='299617' />
+                    <input type='hidden' name='monto' value='100' />
+                    <input
+                      type='image'
+                      title='Imagen'
+                      name='button1'
+                      src='https://www.webpay.cl/assets/img/boton_webpaycl.svg'
+                      value='Boton 1'
+                      alt="Pagar con Webpay"
+                      className="cursor-pointer"
+                    />
+                  </form>
+                </div>
               </div>
-            </div>
-
-            {/* Banco 2 */}
-            <div className="border border-border rounded-lg p-4">
-              <div className="flex items-center mb-4">
-                <img src={BciLogo} alt="Banco BCI" className="h-8 mr-3" />
-                <h4 className="font-medium">Banco BCI</h4>
-              </div>
-              <div className="space-y-2 text-sm">
-                <p><span className="font-medium">Nombre:</span> SILLAGE PERFUM SPA</p>
-                <p><span className="font-medium">RUT:</span> 77.762.884-4</p>
-                <p><span className="font-medium">Tipo de Cuenta:</span> Cuenta Corriente</p>
-                <p><span className="font-medium">N° Cuenta:</span> 86120921</p>
-                <p><span className="font-medium">Email:</span> ventas@sillageperfum.cl</p>
-              </div>
-            </div>
-
-            {/* Banco 3 */}
-            <div className="border border-border rounded-lg p-4">
-              <div className="flex items-center mb-4">
-                <img src={MachLogo} alt="Banco Mach" className="h-8 mr-3" />
-                <h4 className="font-medium">Mach</h4>
-              </div>
-              <div className="space-y-2 text-sm">
-                <p><span className="font-medium">Nombre:</span> CRISTIAN MEDINA LORCA</p>
-                <p><span className="font-medium">RUT:</span> 12.080.021-3</p>
-                <p><span className="font-medium">Tipo de Cuenta:</span> Cuenta Vista</p>
-                <p><span className="font-medium">N° Cuenta:</span> 777012080021</p>
-                <p><span className="font-medium">Email:</span> ventas@sillageperfum.cl</p>
-              </div>
-            </div>
-
-            {/* Banco 4 */}
-            <div className="border border-border rounded-lg p-4">
-              <div className="flex items-center mb-4">
-                <img src={BancoChileLogo} alt="Banco de Chile" className="h-8 mr-3" />
-                <h4 className="font-medium">Banco de Chile</h4>
-              </div>
-              <div className="space-y-2 text-sm">
-                <p><span className="font-medium">Nombre:</span> SILLAGE PERFUM SPA</p>
-                <p><span className="font-medium">RUT:</span> 77.762.884-4</p>
-                <p><span className="font-medium">Tipo de Cuenta:</span> Cuenta Corriente</p>
-                <p><span className="font-medium">N° Cuenta:</span> 123456789</p>
-                <p><span className="font-medium">Email:</span> ventas@sillageperfum.cl</p>
-              </div>
-            </div>
-          </div>
+            </>
+          )}
         </motion.div>
-
-        {/* Sección de otros métodos de pago */}
-        <div className="mt-8 grid md:grid-cols-2 gap-6">
-          <div className="border border-border rounded-lg p-6">
-            <h4 className="font-display font-semibold text-sillage-gold-dark mb-4">Pago con Aplicaciones</h4>
-            <p className="text-sm mb-4">Puedes realizar pagos mediante:</p>
-            <ul className="space-y-2 text-sm">
-              <li>- Mercado Pago</li>
-              <li>- Tenpo</li>
-              <li>- Mach</li>
-            </ul>
-          </div>
-
-          <div className="border border-border rounded-lg p-6">
-            <h4 className="font-display font-semibold text-sillage-gold-dark mb-4">Webpay</h4>
-            <p className="text-sm">Pago seguro con tarjetas de crédito, débito y transferencias bancarias a través de Webpay Plus.</p>
-          </div>
-        </div>
       </div>
     </section>
   );

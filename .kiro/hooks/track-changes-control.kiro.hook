@@ -1,0 +1,28 @@
+{
+  "enabled": true,
+  "name": "Development Change Tracker",
+  "description": "Monitors file changes across the project to maintain development control and track modifications for proper development workflow",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "src/**/*.jsx",
+      "src/**/*.js",
+      "src/**/*.ts",
+      "src/**/*.tsx",
+      "src/**/*.css",
+      "backend/**/*.js",
+      "*.js",
+      "*.jsx",
+      "*.ts",
+      "*.tsx",
+      "*.json",
+      "*.md",
+      "*.sql"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "A file has been modified in the project. Please analyze the change and provide a brief summary of what was modified, why it might have been changed, and any potential impacts on the development workflow. Help maintain proper development control by noting if this change affects: 1) Core functionality, 2) Database structure, 3) API endpoints, 4) UI components, or 5) Configuration. Provide guidance on what should be tested or verified after this change."
+  }
+}
