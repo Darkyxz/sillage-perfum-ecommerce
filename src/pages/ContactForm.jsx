@@ -20,8 +20,15 @@ const ContactForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Mostrar estado de carga
+    const submitButton = e.target.querySelector('button[type="submit"]');
+    const originalText = submitButton.textContent;
+    submitButton.textContent = 'Enviando...';
+    submitButton.disabled = true;
+
     try {
-      const response = await fetch('https://formspree.io/f/ventas@sillageperfum.cl', {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -29,8 +36,10 @@ const ContactForm = () => {
         body: JSON.stringify(formData),
       });
 
-      if (response.ok) {
-        alert('Mensaje enviado con éxito');
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        alert('¡Mensaje enviado con éxito! Nos pondremos en contacto contigo pronto.');
         setFormData({
           name: '',
           lastName: '',
@@ -38,10 +47,15 @@ const ContactForm = () => {
           message: ''
         });
       } else {
-        throw new Error('Error al enviar el mensaje');
+        throw new Error(data.error || 'Error al enviar el mensaje');
       }
     } catch (error) {
+      console.error('Error enviando mensaje:', error);
       alert('Error al enviar el mensaje: ' + error.message);
+    } finally {
+      // Restaurar botón
+      submitButton.textContent = originalText;
+      submitButton.disabled = false;
     }
   };
 
