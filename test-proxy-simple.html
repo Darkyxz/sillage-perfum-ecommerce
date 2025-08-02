@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Proxy Simple</title>
+</head>
+<body>
+    <h1>Test del Proxy API - Diagnóstico</h1>
+    <button onclick="testProxyExists()">¿Existe api-proxy.php?</button>
+    <button onclick="testProxyHealth()">Test Health via Proxy</button>
+    <button onclick="testDirectProxy()">Test Proxy Directo</button>
+    
+    <div id="results"></div>
+
+    <script>
+        function log(message) {
+            document.getElementById('results').innerHTML += '<p><strong>' + new Date().toLocaleTimeString() + '</strong>: ' + message + '</p>';
+        }
+
+        async function testProxyExists() {
+            log('Verificando si api-proxy.php existe...');
+            try {
+                const response = await fetch('https://sillageperfum.cl/api-proxy.php');
+                log('Respuesta del proxy: ' + response.status + ' - ' + response.statusText);
+                const text = await response.text();
+                log('Contenido: ' + text.substring(0, 200) + '...');
+            } catch (error) {
+                log('Error accediendo al proxy: ' + error.message);
+            }
+        }
+
+        async function testProxyHealth() {
+            log('Testing health via proxy...');
+            try {
+                const response = await fetch('https://sillageperfum.cl/api-proxy.php?path=api/health');
+                log('Health proxy status: ' + response.status);
+                const data = await response.json();
+                log('Health proxy result: ' + JSON.stringify(data));
+            } catch (error) {
+                log('Health proxy error: ' + error.message);
+            }
+        }
+
+        async function testDirectProxy() {
+            log('Testing proxy sin parámetros...');
+            try {
+                const response = await fetch('https://sillageperfum.cl/api-proxy.php');
+                log('Direct proxy status: ' + response.status);
+                const text = await response.text();
+                log('Direct proxy response: ' + text.substring(0, 300));
+            } catch (error) {
+                log('Direct proxy error: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

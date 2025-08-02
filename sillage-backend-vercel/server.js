@@ -35,6 +35,7 @@ const paymentRoutes = require('./routes/payments');
 const webpayRoutes = require('./routes/webpay');
 const favoritesRoutes = require('./routes/favorites');
 const uploadRoutes = require('./routes/upload');
+const contactRoutes = require('./routes/contact');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -58,45 +59,52 @@ if (helmet) {
   }));
 }
 
-// CORS más simple y directo
-app.use(cors());
-
-// Headers CORS explícitos
+// CORS - Configuración permisiva para resolver problemas
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
-  res.header('Access-Control-Max-Age', '86400');
+  const origin = req.headers.origin;
   
+  console.log('🌐 CORS Request - Origin:', origin);
+  console.log('🌐 CORS Request - Method:', req.method);
+  console.log('🌐 CORS Request - Path:', req.path);
+  
+  // Permitir todos los orígenes temporalmente
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', 'false'); // Cambiar a false cuando usamos *
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control');
+  res.setHeader('Access-Control-Max-Age', '86400');
+  
+  // Handle preflight requests
   if (req.method === 'OPTIONS') {
-    res.sendStatus(204);
+    console.log('✅ CORS Preflight handled for:', origin);
+    res.status(200).end();
     return;
   }
   
   next();
 });
 
-// Rate limiting
-if (rateLimit) {
-  const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutos
-    max: 100, // máximo 100 requests por IP
-    message: {
-      error: 'Demasiadas solicitudes desde esta IP, intenta de nuevo en 15 minutos.'
-    }
-  });
-  app.use('/api/', limiter);
+// Rate limiting - DESHABILITADO TEMPORALMENTE
+// if (rateLimit) {
+//   const limiter = rateLimit({
+//     windowMs: 15 * 60 * 1000, // 15 minutos
+//     max: 100, // máximo 100 requests por IP
+//     message: {
+//       error: 'Demasiadas solicitudes desde esta IP, intenta de nuevo en 15 minutos.'
+//     }
+//   });
+//   app.use('/api/', limiter);
 
-  // Rate limiting más estricto para auth
-  const authLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutos
-    max: 5, // máximo 5 intentos de login por IP
-    message: {
-      error: 'Demasiados intentos de login, intenta de nuevo en 15 minutos.'
-    }
-  });
-  app.use('/api/auth/login', authLimiter);
-}
+//   // Rate limiting más estricto para auth
+//   const authLimiter = rateLimit({
+//     windowMs: 15 * 60 * 1000, // 15 minutos
+//     max: 5, // máximo 5 intentos de login por IP
+//     message: {
+//       error: 'Demasiados intentos de login, intenta de nuevo en 15 minutos.'
+//     }
+//   });
+//   app.use('/api/auth/login', authLimiter);
+// }
 
 // =====================================================
 // MIDDLEWARE GENERAL
@@ -131,6 +139,15 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Ruta de prueba pública
+app.get('/api/test', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Endpoint público funcionando',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Rutas principales
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
@@ -140,6 +157,7 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/webpay', webpayRoutes);
 app.use('/api/favorites', favoritesRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/contact', contactRoutes);
 
 // Ruta para servir archivos estáticos (imágenes)
 app.use('/images', express.static('public/images'));

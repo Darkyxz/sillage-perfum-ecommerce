@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
@@ -83,7 +83,7 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validar todos los campos
     const nameValidation = validateFullName(formData.fullName);
     const emailValidation = validateEmail(formData.email);
@@ -113,10 +113,10 @@ const Register = () => {
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
-      toast({ 
-        title: "Error de validación", 
-        description: "Por favor corrige los errores en el formulario", 
-        variant: "destructive" 
+      toast({
+        title: "Error de validación",
+        description: "Por favor corrige los errores en el formulario",
+        variant: "destructive"
       });
       return;
     }
@@ -187,9 +187,8 @@ const Register = () => {
                       type="text"
                       value={formData.fullName}
                       onChange={handleInputChange}
-                      className={`bg-background/50 border-border/50 text-foreground pl-10 placeholder:text-muted-foreground/50 ${
-                        formErrors.fullName ? 'border-red-500 focus:border-red-500' : ''
-                      }`}
+                      className={`bg-background/50 border-border/50 text-foreground pl-10 placeholder:text-muted-foreground/50 ${formErrors.fullName ? 'border-red-500 focus:border-red-500' : ''
+                        }`}
                       placeholder="Ej: María González Pérez"
                       required
                       autoComplete="name"
@@ -215,9 +214,8 @@ const Register = () => {
                       type="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className={`bg-background/50 border-border/50 text-foreground pl-10 placeholder:text-muted-foreground/50 ${
-                        formErrors.email ? 'border-red-500 focus:border-red-500' : ''
-                      }`}
+                      className={`bg-background/50 border-border/50 text-foreground pl-10 placeholder:text-muted-foreground/50 ${formErrors.email ? 'border-red-500 focus:border-red-500' : ''
+                        }`}
                       placeholder="maria.gonzalez@ejemplo.com"
                       required
                       autoComplete="email"
@@ -244,9 +242,8 @@ const Register = () => {
                       type={showPassword ? 'text' : 'password'}
                       value={formData.password}
                       onChange={handleInputChange}
-                      className={`bg-background/50 border-border/50 text-foreground pl-10 pr-10 placeholder:text-muted-foreground/50 ${
-                        formErrors.password ? 'border-red-500 focus:border-red-500' : ''
-                      }`}
+                      className={`bg-background/50 border-border/50 text-foreground pl-10 pr-10 placeholder:text-muted-foreground/50 ${formErrors.password ? 'border-red-500 focus:border-red-500' : ''
+                        }`}
                       placeholder="Ej: MiContra$eña123!"
                       required
                       autoComplete="new-password"
@@ -280,9 +277,8 @@ const Register = () => {
                       type={showConfirmPassword ? 'text' : 'password'}
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
-                      className={`bg-background/50 border-border/50 text-foreground pl-10 pr-10 placeholder:text-muted-foreground/50 ${
-                        formErrors.confirmPassword ? 'border-red-500 focus:border-red-500' : ''
-                      }`}
+                      className={`bg-background/50 border-border/50 text-foreground pl-10 pr-10 placeholder:text-muted-foreground/50 ${formErrors.confirmPassword ? 'border-red-500 focus:border-red-500' : ''
+                        }`}
                       placeholder="Repite la misma contraseña"
                       required
                       autoComplete="new-password"
@@ -313,22 +309,22 @@ const Register = () => {
                       className="mt-0.5"
                     />
                     <div className="space-y-1">
-                      <Label 
-                        htmlFor="acceptTerms" 
+                      <Label
+                        htmlFor="acceptTerms"
                         className="text-sm text-foreground cursor-pointer leading-relaxed"
                       >
                         Acepto los{' '}
-                        <Link to="/terminos" className="text-primary hover:underline font-medium">
+                        <Link to="/terminos" className="text-muted-foreground hover:underline font-medium">
                           Términos y Condiciones
                         </Link>{' '}
                         y la{' '}
-                        <Link to="/privacidad" className="text-primary hover:underline font-medium">
+                        <Link to="/privacidad" className="text-muted-foreground hover:underline font-medium">
                           Política de Privacidad
                         </Link>
                       </Label>
                       <p className="text-xs text-muted-foreground leading-relaxed">
-                        Al registrarte, aceptas que podemos usar tus datos para mejorar nuestros servicios, 
-                        personalizar tu experiencia de compra y enviarte comunicaciones de marketing relevantes. 
+                        Al registrarte, aceptas que podemos usar tus datos para mejorar nuestros servicios,
+                        personalizar tu experiencia de compra y enviarte comunicaciones de marketing relevantes.
                         Puedes cambiar tus preferencias en cualquier momento desde tu perfil.
                       </p>
                     </div>
@@ -394,7 +390,7 @@ const Register = () => {
                   ¿Ya tienes una cuenta?{' '}
                   <Link
                     to="/login"
-                    className="text-primary hover:text-primary/80 font-medium transition-colors"
+                    className="text-foreground hover:text-primary/80 font-medium transition-colors"
                   >
                     Inicia sesión
                   </Link>

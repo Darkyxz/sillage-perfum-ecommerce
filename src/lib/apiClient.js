@@ -35,13 +35,41 @@ class ApiClient {
     try {
       const response = await fetch(url, config);
       
-      // Si el token expiró, limpiar y redirigir
+      // Si el token expiró, limpiar y solo lanzar error si es una ruta que requiere auth
       if (response.status === 401) {
         this.setToken(null);
-        // Opcional: redirigir a login
-        // window.location.href = '/login';
-        throw new Error('Sesión expirada');
+        // Solo lanzar "Sesión expirada" si se requiere autenticación
+        if (options.requireAuth !== false) {
+          throw new Error('Sesión expirada');
+        }
       }
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+      }
+      
+      return response.json();
+    } catch (error) {
+      console.error('API Request Error:', error);
+      throw error;
+    }
+  }
+
+  // Método para hacer requests públicos (sin token)
+  async publicRequest(endpoint, options = {}) {
+    const url = `${this.baseURL}${endpoint}`;
+    
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+      ...options,
+    };
+
+    try {
+      const response = await fetch(url, config);
       
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
@@ -122,15 +150,18 @@ class ApiClient {
 
   // Métodos de productos
   async getProducts(params = {}) {
-    return this.get('/products', params);
+    const queryString = new URLSearchParams(params).toString();
+    const url = queryString ? `/products?${queryString}` : '/products';
+    return this.publicRequest(url);
   }
 
   async getFeaturedProducts(limit = 6) {
-    return this.get('/products/featured', { limit });
+    const queryString = new URLSearchParams({ limit }).toString();
+    return this.publicRequest(`/products/featured?${queryString}`);
   }
 
   async getProductBySku(sku) {
-    return this.get(`/products/${sku}`);
+    return this.publicRequest(`/products/${sku}`);
   }
 
   async createProduct(productData) {
