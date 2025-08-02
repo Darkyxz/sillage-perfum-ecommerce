@@ -35,6 +35,7 @@ const paymentRoutes = require('./routes/payments');
 const webpayRoutes = require('./routes/webpay');
 const favoritesRoutes = require('./routes/favorites');
 const uploadRoutes = require('./routes/upload');
+const contactRoutes = require('./routes/contact');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -60,17 +61,39 @@ if (helmet) {
 
 // CORS configurado para el frontend
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'http://localhost:3000',
-    'https://sillageperfum.cl',
-    'https://www.sillageperfum.cl',
-    'https://sillageperfum.store'
-  ],
+  origin: function (origin, callback) {
+    // Permitir requests sin origin (como mobile apps o curl)
+    if (!origin) return callback(null, true);
+
+    const allowedOrigins = [
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'https://sillageperfum.cl',
+      'https://www.sillageperfum.cl',
+      'https://sillageperfum.store'
+    ];
+
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log('CORS blocked origin:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  optionsSuccessStatus: 200 // Para legacy browsers
 }));
+
+// Middleware adicional para manejar preflight requests
+app.options('*', (req, res) => {
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.sendStatus(200);
+});
 
 // Rate limiting
 if (rateLimit) {
@@ -136,6 +159,7 @@ app.use('/api/payments', paymentRoutes);
 app.use('/api/webpay', webpayRoutes);
 app.use('/api/favorites', favoritesRoutes);
 app.use('/api/upload', uploadRoutes);
+app.use('/api/contact', contactRoutes);
 
 // Ruta para servir archivos estáticos (imágenes)
 app.use('/images', express.static('public/images'));
