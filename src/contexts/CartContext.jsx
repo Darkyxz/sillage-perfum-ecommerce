@@ -18,36 +18,42 @@ export const CartProvider = ({ children }) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Cargar carrito al iniciar - solo una vez
+  // Función para obtener la clave del carrito específica del usuario
+  const getCartKey = () => {
+    return user?.id ? `cart_${user.id}` : 'cart_guest';
+  };
+
+  // Cargar carrito cuando cambie el usuario
   useEffect(() => {
     const loadCart = () => {
       try {
-        const cartData = safeStorage.getItem('cart');
-        console.log('🛒 Cargando carrito desde storage:', cartData);
+        const cartKey = getCartKey();
+        const cartData = safeStorage.getItem(cartKey);
+        console.log(`🛒 Cargando carrito para ${user?.email || 'invitado'} con clave:`, cartKey);
+        console.log('🛒 Datos del carrito:', cartData);
+
         const localCart = JSON.parse(cartData || '[]');
-        console.log('🛒 Carrito parseado:', localCart);
-        if (localCart.length > 0) {
-          setItems(localCart);
-        }
+        setItems(localCart);
+        console.log('🛒 Carrito cargado:', localCart);
       } catch (error) {
         console.error('Error loading cart:', error);
         setItems([]);
       }
     };
-    
-    // Solo cargar si no hay items ya
-    if (items.length === 0) {
-      loadCart();
-    }
-  }, []); // Dependencias vacías para que solo se ejecute una vez
 
-  // Guardar en storage cuando cambie el carrito
+    // Cargar carrito cada vez que cambie el usuario (incluyendo logout)
+    loadCart();
+  }, [user?.id]); // Dependencia del ID del usuario
+
+  // Guardar en storage cuando cambie el carrito o el usuario
   useEffect(() => {
     if (!loading) {
-      console.log('🛒 Guardando carrito en storage:', items);
-      safeStorage.setItem('cart', JSON.stringify(items));
+      const cartKey = getCartKey();
+      console.log(`🛒 Guardando carrito para ${user?.email || 'invitado'} con clave:`, cartKey);
+      console.log('🛒 Items a guardar:', items);
+      safeStorage.setItem(cartKey, JSON.stringify(items));
     }
-  }, [items, loading]);
+  }, [items, loading, user?.id]);
 
   const addToCart = (product, quantity = 1) => {
     try {
@@ -69,10 +75,10 @@ export const CartProvider = ({ children }) => {
       });
     } catch (error) {
       console.error("Error adding to cart:", error);
-      toast({ 
-        title: 'Error', 
-        description: 'No se pudo agregar al carrito', 
-        variant: 'destructive' 
+      toast({
+        title: 'Error',
+        description: 'No se pudo agregar al carrito',
+        variant: 'destructive'
       });
     }
   };
@@ -86,10 +92,10 @@ export const CartProvider = ({ children }) => {
       });
     } catch (error) {
       console.error("Error removing from cart:", error);
-      toast({ 
-        title: 'Error', 
-        description: 'No se pudo eliminar del carrito', 
-        variant: 'destructive' 
+      toast({
+        title: 'Error',
+        description: 'No se pudo eliminar del carrito',
+        variant: 'destructive'
       });
     }
   };
@@ -108,35 +114,52 @@ export const CartProvider = ({ children }) => {
       );
     } catch (error) {
       console.error("Error updating cart quantity:", error);
-      toast({ 
-        title: 'Error', 
-        description: 'No se pudo actualizar la cantidad', 
-        variant: 'destructive' 
+      toast({
+        title: 'Error',
+        description: 'No se pudo actualizar la cantidad',
+        variant: 'destructive'
       });
     }
   };
-  
+
   const clearCart = () => {
     try {
       setItems([]);
+      // También limpiar del storage específico del usuario
+      const cartKey = getCartKey();
+      safeStorage.removeItem(cartKey);
+      console.log(`🛒 Carrito limpiado para ${user?.email || 'invitado'}`);
+
       toast({
         title: "Carrito vaciado",
         description: "Se eliminaron todos los productos del carrito",
       });
     } catch (error) {
       console.error("Error clearing cart:", error);
-      toast({ 
-        title: 'Error', 
-        description: 'No se pudo vaciar el carrito', 
-        variant: 'destructive' 
+      toast({
+        title: 'Error',
+        description: 'No se pudo vaciar el carrito',
+        variant: 'destructive'
       });
+    }
+  };
+
+  // Función para limpiar carrito silenciosamente (sin toast) - para después de compras exitosas
+  const clearCartSilently = () => {
+    try {
+      setItems([]);
+      const cartKey = getCartKey();
+      safeStorage.removeItem(cartKey);
+      console.log(`🛒 Carrito limpiado silenciosamente para ${user?.email || 'invitado'}`);
+    } catch (error) {
+      console.error("Error clearing cart silently:", error);
     }
   };
 
   const getTotalItems = () => {
     return items.reduce((total, item) => total + (item.quantity || 0), 0);
   };
-  
+
   const getTotalPrice = () => {
     return items.reduce((total, item) => {
       const price = parseFloat(item.price);
@@ -183,6 +206,7 @@ export const CartProvider = ({ children }) => {
     removeFromCart,
     updateQuantity,
     clearCart,
+    clearCartSilently,
     getTotalItems,
     getTotalPrice,
     getCartTotal,
