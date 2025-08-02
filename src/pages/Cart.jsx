@@ -18,7 +18,7 @@ import { Card, CardContent } from '../components/ui/card';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 import { orderService } from '../lib/orderService';
-import { createMercadoPagoPreference } from '../lib/mercadopagoService';
+
 import { useToast } from '../components/ui/use-toast';
 
 const Cart = () => {
@@ -85,7 +85,7 @@ const Cart = () => {
 
       // Paso 2: Proceso de pago temporal (hasta tener credenciales)
       console.log("� Rediriagiendo a checkout...");
-      
+
       navigate('/checkout', {
         state: {
           orderId: orderId
