@@ -7,15 +7,14 @@ Una elegante tienda de perfumes premium construida con React, Supabase y Mercado
 - **E-commerce Completo**: Catálogo de productos, carrito de compras, checkout integrado
 - **Autenticación de Usuarios**: Registro, login y gestión de perfiles
 - **Panel de Administración**: Gestión de productos, pedidos y usuarios
-- **Pagos Seguros**: Integración con MercadoPago (CLP)
+- **Backend PHP**: API REST con MySQL para gestión de datos
 - **Diseño Responsivo**: Interfaz moderna y elegante
-- **Base de Datos en Tiempo Real**: Supabase para datos y autenticación
+- **Base de Datos MySQL**: Almacenamiento seguro y eficiente
 
 ## 🚀 Tecnologías
 
 - **Frontend**: React 18, Vite, Tailwind CSS
-- **Backend**: Supabase (PostgreSQL, Auth, Functions)
-- **Pagos**: MercadoPago
+- **Backend**: PHP + MySQL (Hostinger)
 - **Runtime**: Bun
 - **UI**: Framer Motion, Lucide React
 
@@ -42,19 +41,18 @@ Esta aplicación está configurada para usar **Peso Chileno (CLP)** como moneda 
    Crea un archivo `.env.local` con:
 
    ```env
-   VITE_SUPABASE_URL=tu_url_de_supabase
-   VITE_SUPABASE_ANON_KEY=tu_clave_anonima_de_supabase
-   VITE_MERCADOPAGO_PUBLIC_KEY=tu_clave_publica_mercadopago
-   VITE_MERCADOPAGO_ACCESS_TOKEN=tu_token_acceso_mercadopago
+   VITE_API_BASE_URL=http://localhost:3001/api
    VITE_BASE_URL=http://localhost:5173
    VITE_NODE_ENV=development
+   VITE_APP_NAME=Sillage Perfume
+   VITE_APP_DESCRIPTION=Tienda de perfumes premium
    ```
 
-4. **Configura Supabase**
+4. **Configura la Base de Datos**
 
-   - Crea un proyecto en [Supabase](https://supabase.com)
-   - Ejecuta los scripts SQL en `database-setup.sql`
-   - Configura las políticas de seguridad
+   - Configura tu base de datos MySQL
+   - Ejecuta los scripts SQL necesarios
+   - Configura las credenciales en el backend
 
 5. **Inicia el servidor de desarrollo**
    ```bash
@@ -74,11 +72,11 @@ src/
 └── main.jsx           # Punto de entrada
 ```
 
-## 🔧 Configuración de MercadoPago
+## 🔧 Configuración del Backend
 
-1. Crea una cuenta en [MercadoPago](https://mercadopago.com)
-2. Configura las credenciales en Supabase Functions
-3. Asegúrate de que la moneda esté configurada como CLP
+1. Configura tu servidor PHP con MySQL
+2. Asegúrate de que las credenciales de base de datos sean correctas
+3. Verifica que el backend esté corriendo en el puerto 3001
 
 ## 📝 Scripts Disponibles
 

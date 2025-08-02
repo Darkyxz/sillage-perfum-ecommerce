@@ -37,7 +37,7 @@ const TrustSignals = ({ variant = 'default' }) => {
     {
       icon: CreditCard,
       title: "Pago Seguro",
-      description: "SSL + MercadoPago",
+      description: "SSL + Encriptación",
       color: "text-purple-600"
     }
   ];
@@ -130,7 +130,7 @@ const TrustSignals = ({ variant = 'default' }) => {
               "@type": "Country",
               "name": "Chile"
             },
-            "paymentAccepted": ["Credit Card", "Debit Card", "MercadoPago"],
+            "paymentAccepted": ["Credit Card", "Debit Card", "Bank Transfer"],
             "priceRange": "$$"
           })}
         </script>
