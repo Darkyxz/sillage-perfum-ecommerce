@@ -119,12 +119,17 @@ export const AuthProvider = ({ children }) => {
     console.log('🔐 Cerrando sesión');
 
     try {
+      const currentUserId = user?.id;
+
       await authService.logout();
       setUser(null);
 
-      // Limpiar localStorage al cerrar sesión
+      // NO limpiar el carrito específico del usuario - debe persistir para cuando regrese
+      // Solo limpiar storage genérico por compatibilidad
       localStorage.removeItem('cart');
       localStorage.removeItem('favorites');
+
+      console.log('🔐 Sesión cerrada - carrito del usuario preservado');
 
       toast({ title: "Has cerrado sesión" });
     } catch (error) {
