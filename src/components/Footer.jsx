@@ -95,26 +95,26 @@ const Footer = () => {
               <div className="flex items-start space-x-2 md:space-x-3 justify-center">
                 <MapPin className="w-3 h-3 md:w-4 md:h-4 text-sillage-gold-dark mt-0.5 flex-shrink-0" />
                 <div className="text-center">
-                  <p className="text-sillage-gold-dark text-sm">Av. Providencia 123</p>
+                  <p className="text-sillage-gold-dark text-sm">Av. Providencia 1100 Local 60</p>
                   <p className="text-sillage-gold-dark text-sm">Santiago, Chile</p>
                 </div>
               </div>
 
               <div className="flex items-center space-x-2 md:space-x-3 justify-center">
                 <Phone className="w-3 h-3 md:w-4 md:h-4 text-sillage-gold-dark flex-shrink-0" />
-                <p className="text-sillage-gold-dark text-sm">+56 9 1234 5678</p>
+                <p className="text-sillage-gold-dark text-sm">+56 9 9 73749375</p>
               </div>
 
               <div className="flex items-center space-x-2 md:space-x-3 justify-center">
                 <Mail className="w-3 h-3 md:w-4 md:h-4 text-sillage-gold-dark flex-shrink-0" />
-                <p className="text-sillage-gold-dark text-sm">info@sillageperfum.cl</p>
+                <p className="text-sillage-gold-dark text-sm">ventas@sillageperfum.cl</p>
               </div>
 
               <div className="flex items-start space-x-2 md:space-x-3 justify-center">
                 <Clock className="w-3 h-3 md:w-4 md:h-4 text-sillage-gold-dark mt-0.5 flex-shrink-0" />
                 <div className="text-center">
-                  <p className="text-sillage-gold-dark text-sm">Lun - Vie: 9:00 - 18:00</p>
-                  <p className="text-sillage-gold-dark text-sm">Sáb: 10:00 - 14:00</p>
+                  <p className="text-sillage-gold-dark text-sm">Lun - Vie: 11:00 - 18:00</p>
+                  <p className="text-sillage-gold-dark text-sm">Sáb: 11:00 - 14:00</p>
                 </div>
               </div>
             </div>
@@ -134,9 +134,12 @@ const Footer = () => {
                 className="flex-1 px-3 md:px-4 py-2 border border-border bg-background text-foreground rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent text-sm placeholder:text-muted-foreground"
               />
               <button className="bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white px-4 md:px-6 py-2 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
-                Suscribirse
+                Unirse
               </button>
             </div>
+          </div><br></br>
+          <div className="text-center max-w mx-auto">
+            <p className="text-sillage-gold-dark text-sm mb-3 md:mb-4">*Al completar el formulario te registras para recibir nuestros correos electornicos y puedes darte de baja en cualquier momento.</p>
           </div>
         </div>
 

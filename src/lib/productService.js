@@ -1,34 +1,28 @@
-import { supabase } from './supabase';
+import { apiClient } from './apiClient';
 
-// Servicio para manejar productos con Supabase
+// Servicio para manejar productos con API MySQL
 export const productService = {
   // Obtener todos los productos con paginación
   async getAllProducts(page = 1, limit = 24) {
     try {
-      const from = (page - 1) * limit;
-      const to = from + limit - 1;
-
-      const { data, error, count } = await supabase
-        .from('products')
-        .select('*', { count: 'exact' })
-        .order('created_at', { ascending: false })
-        .range(from, to);
-
-      if (error) throw error;
+      const offset = (page - 1) * limit;
       
-      // Convertir precios a CLP
-      const productsWithCLP = (data || []).map(product => ({
-        ...product,
-        price: product.price * 10
-      }));
-      
-      return {
-        products: productsWithCLP,
-        totalCount: count,
-        currentPage: page,
-        totalPages: Math.ceil(count / limit),
-        hasMore: to < count - 1
-      };
+      const response = await apiClient.getProducts({
+        limit,
+        offset
+      });
+
+      if (response.success) {
+        return {
+          products: response.data || [],
+          totalCount: response.total || 0,
+          currentPage: page,
+          totalPages: Math.ceil((response.total || 0) / limit),
+          hasMore: (response.data || []).length === limit
+        };
+      } else {
+        throw new Error(response.error || 'Error obteniendo productos');
+      }
     } catch (error) {
       console.error('Error fetching products:', error);
       throw error;
@@ -38,21 +32,25 @@ export const productService = {
   // Obtener todos los productos (sin paginación) - para casos específicos
   async getAllProductsNoPagination() {
     try {
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .order('created_at', { ascending: false });
+      // Primero intentar con la ruta pública con límite alto
+      const response = await apiClient.getProducts({ limit: 1000 });
 
-      if (error) throw error;
-      
-      const productsWithCLP = (data || []).map(product => ({
-        ...product,
-        price: product.price * 10
-      }));
-      
-      return productsWithCLP;
+      if (response.success) {
+        return response.data;
+      } else {
+        throw new Error(response.error || 'Error obteniendo productos');
+      }
     } catch (error) {
       console.error('Error fetching products:', error);
+      // Si falla, intentar con la ruta /all
+      try {
+        const fallbackResponse = await apiClient.get('/products/all');
+        if (fallbackResponse.success) {
+          return fallbackResponse.data;
+        }
+      } catch (fallbackError) {
+        console.error('Fallback also failed:', fallbackError);
+      }
       throw error;
     }
   },
@@ -60,21 +58,13 @@ export const productService = {
   // Obtener un producto por ID
   async getProductById(id) {
     try {
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .eq('id', id)
-        .single();
+      const response = await apiClient.get(`/products/${id}`);
 
-      if (error) throw error;
-      
-      // Convertir precio a CLP
-      const productWithCLP = data ? {
-        ...data,
-        price: data.price * 10 // Convertir a CLP
-      } : null;
-      
-      return productWithCLP;
+      if (response.success) {
+        return response.data;
+      } else {
+        throw new Error(response.error || 'Producto no encontrado');
+      }
     } catch (error) {
       console.error('Error fetching product:', error);
       throw error;
@@ -84,21 +74,13 @@ export const productService = {
   // Obtener un producto por SKU
   async getProductBySku(sku) {
     try {
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .eq('sku', sku)
-        .single();
+      const response = await apiClient.getProductBySku(sku);
 
-      if (error) throw error;
-      
-      // Convertir precio a CLP
-      const productWithCLP = data ? {
-        ...data,
-        price: data.price * 10 // Convertir a CLP
-      } : null;
-      
-      return productWithCLP;
+      if (response.success) {
+        return response.data;
+      } else {
+        throw new Error(response.error || 'Producto no encontrado');
+      }
     } catch (error) {
       console.error('Error fetching product by SKU:', error);
       throw error;
@@ -107,34 +89,14 @@ export const productService = {
 
   // Crear un nuevo producto
   async createProduct(productData) {
-    // Quitamos el ID nulo del objeto para que la DB genere uno nuevo.
-    const { id, ...newProductData } = productData;
-
-    // Preparar datos para la base de datos
-    const dataForDb = {
-      ...newProductData,
-      price: parseFloat(newProductData.price) / 10, // Convertir de CLP a unidad base
-      // Asegurar que las notas olfativas estén en el formato correcto
-      fragrance_profile: newProductData.fragrance_profile || [],
-      fragrance_notes: newProductData.fragrance_notes || { top: [], middle: [], base: [] }
-    };
-
     try {
-      const { data, error } = await supabase
-        .from('products')
-        .insert([dataForDb])
-        .select()
-        .single();
+      const response = await apiClient.post('/products', productData);
 
-      if (error) throw error;
-      
-      // La data de la DB viene con el precio base, lo convertimos para la UI.
-      const productWithCLP = {
-        ...data,
-        price: data.price * 10
-      };
-
-      return productWithCLP;
+      if (response.success) {
+        return response.data;
+      } else {
+        throw new Error(response.error || 'Error creando producto');
+      }
     } catch (error) {
       console.error('Error creating product:', error);
       throw error;
@@ -142,100 +104,46 @@ export const productService = {
   },
 
   // Actualizar un producto (REEMPLAZADO POR LAS SIGUIENTES DOS FUNCIONES)
-  /*
+
+
+  // Actualizar un producto
   async updateProduct(id, productData) {
     try {
-      const { data, error } = await supabase
-        .from('products')
-        .update(productData)
-        .eq('id', id)
-        .select()
-        .single();
+      const response = await apiClient.put(`/products/${id}`, productData);
 
-      if (error) throw error;
-      return data;
+      if (response.success) {
+        return response.data;
+      } else {
+        throw new Error(response.error || 'Error actualizando producto');
+      }
     } catch (error) {
       console.error('Error updating product:', error);
       throw error;
     }
   },
-  */
 
   // Actualiza solo los detalles de texto/numéricos de un producto
   async updateProductDetails(id, productDetails) {
-    // Excluimos SKU para evitar conflictos de llaves únicas.
-    // El SKU solo se debe asignar al crear un producto.
-    const { id: productId, sku, ...details } = productDetails;
-
-    // Revertir la conversión de CLP a la unidad base antes de guardar en la DB.
-    const detailsForDb = {
-      ...details,
-      price: parseFloat(details.price) / 10,
-      // Asegurar que las notas olfativas estén en el formato correcto
-      fragrance_profile: details.fragrance_profile || [],
-      fragrance_notes: details.fragrance_notes || { top: [], middle: [], base: [] }
-    };
-
-    try {
-      const { data, error } = await supabase
-        .from('products')
-        .update(detailsForDb)
-        .eq('id', id)
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      // Convertir el precio de la DB a CLP para la UI
-      const productWithCLP = {
-        ...data,
-        price: data.price * 10
-      };
-
-      return productWithCLP;
-    } catch (error) {
-      console.error('Error updating product details:', error);
-      throw error;
-    }
+    return this.updateProduct(id, productDetails);
   },
 
   // Actualiza solo la URL de la imagen de un producto
   async updateProductImage(id, imageUrl) {
-    try {
-      const { data, error } = await supabase
-        .from('products')
-        .update({ image_url: imageUrl })
-        .eq('id', id)
-        .select()
-        .single();
-      
-      if (error) throw error;
-      return data;
-    } catch (error) {
-      console.error('Error updating product image:', error);
-      throw error;
-    }
+    return this.updateProduct(id, { image_url: imageUrl });
   },
 
   // Marcar/desmarcar un producto como destacado
   async toggleFeaturedStatus(productId, currentStatus) {
     try {
-      const { data, error } = await supabase
-        .from('products')
-        .update({ is_featured: !currentStatus })
-        .eq('id', productId)
-        .select()
-        .single();
+      const response = await apiClient.put(`/products/${productId}`, {
+        is_featured: !currentStatus
+      });
 
-      if (error) throw error;
-      
-      // Devolvemos el producto con el precio convertido para mantener la consistencia en la UI
-      const productWithCLP = data ? {
-        ...data,
-        price: data.price * 10
-      } : null;
-
-      return productWithCLP;
+      if (response.success) {
+        return response.data;
+      } else {
+        throw new Error(response.error || 'Error actualizando estado destacado');
+      }
     } catch (error) {
       console.error('Error toggling featured status:', error);
       throw error;
@@ -245,38 +153,40 @@ export const productService = {
   // Eliminar un producto
   async deleteProduct(id) {
     try {
-      const { error } = await supabase
-        .from('products')
-        .delete()
-        .eq('id', id);
+      const response = await apiClient.delete(`/products/${id}`);
 
-      if (error) throw error;
-      return true;
+      if (response.success) {
+        return true;
+      } else {
+        throw new Error(response.error || 'Error eliminando producto');
+      }
     } catch (error) {
       console.error('Error deleting product:', error);
       throw error;
     }
   },
 
-  // Subir imagen a Supabase Storage
+  // Subir imagen al servidor
   async uploadProductImage(file, productId) {
     try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${productId}-${Date.now()}.${fileExt}`;
-      const filePath = `products/${fileName}`;
+      const formData = new FormData();
+      formData.append('image', file);
 
-      const { error: uploadError } = await supabase.storage
-        .from('product-images')
-        .upload(filePath, file);
+      const response = await fetch('/api/upload/product-image', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiClient.getToken()}`
+        },
+        body: formData
+      });
 
-      if (uploadError) throw uploadError;
+      const result = await response.json();
 
-      // Obtener URL pública
-      const { data: { publicUrl } } = supabase.storage
-        .from('product-images')
-        .getPublicUrl(filePath);
-
-      return publicUrl;
+      if (result.success) {
+        return result.data.url;
+      } else {
+        throw new Error(result.error || 'Error subiendo imagen');
+      }
     } catch (error) {
       console.error('Error uploading image:', error);
       throw error;
@@ -286,54 +196,48 @@ export const productService = {
   // Buscar productos
   async searchProducts(searchTerm, category = null, sortOption = null) {
     try {
-      let query = supabase
-        .from('products')
-        .select('*');
+      const params = {};
 
-      // Filtro de búsqueda
       if (searchTerm) {
-        query = query.or(`name.ilike.%${searchTerm}%,brand.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`);
+        params.search = searchTerm;
       }
 
-      // Filtro de categoría
       if (category && category !== 'all') {
-        query = query.eq('category', category);
+        params.category = category;
       }
 
-      // Aplicar ordenamiento
+      // Mapear opciones de ordenamiento
       if (sortOption && sortOption !== 'all') {
         switch (sortOption) {
           case 'price-low':
-            query = query.order('price', { ascending: true });
+            params.sort = 'price';
+            params.order = 'asc';
             break;
           case 'price-high':
-            query = query.order('price', { ascending: false });
+            params.sort = 'price';
+            params.order = 'desc';
             break;
           case 'newest':
-            query = query.order('created_at', { ascending: false });
+            params.sort = 'created_at';
+            params.order = 'desc';
             break;
           case 'popular':
-            // Asumir que productos con más stock o destacados son más populares
-            query = query.order('stock_quantity', { ascending: false });
+            params.sort = 'stock_quantity';
+            params.order = 'desc';
             break;
           default:
-            query = query.order('created_at', { ascending: false });
+            params.sort = 'created_at';
+            params.order = 'desc';
         }
-      } else {
-        query = query.order('created_at', { ascending: false });
       }
 
-      const { data, error } = await query;
+      const response = await apiClient.getProducts(params);
 
-      if (error) throw error;
-      
-      // Convertir precios a CLP (multiplicar por 10 para simular precios reales)
-      const productsWithCLP = (data || []).map(product => ({
-        ...product,
-        price: product.price * 10 // Convertir a CLP
-      }));
-      
-      return productsWithCLP;
+      if (response.success) {
+        return response.data;
+      } else {
+        throw new Error(response.error || 'Error buscando productos');
+      }
     } catch (error) {
       console.error('Error searching products:', error);
       throw error;
@@ -343,18 +247,16 @@ export const productService = {
   // Actualizar stock de producto
   async updateStock(productId, quantity) {
     try {
-      const { data, error } = await supabase
-        .from('products')
-        .update({ 
-          stock_quantity: quantity,
-          in_stock: quantity > 0 
-        })
-        .eq('id', productId)
-        .select()
-        .single();
+      const response = await apiClient.put(`/products/${productId}`, {
+        stock_quantity: quantity,
+        in_stock: quantity > 0
+      });
 
-      if (error) throw error;
-      return data;
+      if (response.success) {
+        return response.data;
+      } else {
+        throw new Error(response.error || 'Error actualizando stock');
+      }
     } catch (error) {
       console.error('Error updating stock:', error);
       throw error;
@@ -364,31 +266,13 @@ export const productService = {
   // Obtener productos destacados
   async getFeaturedProducts(limit = 3) {
     try {
-      let query = supabase
-        .from('products')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(limit);
+      const response = await apiClient.getFeaturedProducts(limit);
 
-      // Si la columna is_featured existe, usarla
-      try {
-        query = query.eq('is_featured', true);
-      } catch (error) {
-        // Si is_featured no existe, usar los primeros productos
-        console.log('Columna is_featured no encontrada, usando productos recientes');
+      if (response.success) {
+        return response.data;
+      } else {
+        throw new Error(response.error || 'Error obteniendo productos destacados');
       }
-
-      const { data, error } = await query;
-
-      if (error) throw error;
-      
-      // Convertir precios a CLP (multiplicar por 10 para simular precios reales)
-      const productsWithCLP = (data || []).map(product => ({
-        ...product,
-        price: product.price * 10 // Convertir a CLP
-      }));
-      
-      return productsWithCLP;
     } catch (error) {
       console.error('Error fetching featured products:', error);
       throw error;
@@ -398,32 +282,59 @@ export const productService = {
   // Obtener productos por categoría con paginación
   async getProductsByCategory(category, page = 1, limit = 24) {
     try {
-      const from = (page - 1) * limit;
-      const to = from + limit - 1;
+      const offset = (page - 1) * limit;
 
-      const { data, error, count } = await supabase
-        .from('products')
-        .select('*', { count: 'exact' })
-        .eq('category', category)
-        .order('created_at', { ascending: false })
-        .range(from, to);
+      const response = await apiClient.getProducts({
+        category,
+        limit,
+        offset
+      });
 
-      if (error) throw error;
-      
-      const productsWithCLP = (data || []).map(product => ({
-        ...product,
-        price: product.price * 10
-      }));
-      
-      return {
-        products: productsWithCLP,
-        totalCount: count,
-        currentPage: page,
-        totalPages: Math.ceil(count / limit),
-        hasMore: to < count - 1
-      };
+      if (response.success) {
+        return {
+          products: response.data,
+          totalCount: response.total || response.data.length,
+          currentPage: page,
+          totalPages: Math.ceil((response.total || response.data.length) / limit),
+          hasMore: response.data.length === limit
+        };
+      } else {
+        throw new Error(response.error || 'Error obteniendo productos por categoría');
+      }
     } catch (error) {
       console.error('Error fetching products by category:', error);
+      throw error;
+    }
+  },
+
+  // Limpiar todos los productos (soft delete)
+  async clearAllProducts() {
+    try {
+      const response = await apiClient.delete('/products/clear-all');
+
+      if (response.success) {
+        return response.data;
+      } else {
+        throw new Error(response.error || 'Error limpiando productos');
+      }
+    } catch (error) {
+      console.error('Error clearing products:', error);
+      throw error;
+    }
+  },
+
+  // Eliminar permanentemente todos los productos
+  async hardClearProducts() {
+    try {
+      const response = await apiClient.delete('/products/hard-clear');
+
+      if (response.success) {
+        return response.data;
+      } else {
+        throw new Error(response.error || 'Error eliminando productos permanentemente');
+      }
+    } catch (error) {
+      console.error('Error hard clearing products:', error);
       throw error;
     }
   },

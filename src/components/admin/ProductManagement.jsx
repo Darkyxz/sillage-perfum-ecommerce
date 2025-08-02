@@ -46,7 +46,7 @@ const ProductManagement = () => {
     }
   }, [products, selectedCategory]);
 
-  const handleAddProduct = async (newProductData) => {
+  const handleAddProduct = async (newProductData, imageFile) => {
     try {
       const product = await productService.createProduct({
         ...newProductData,
@@ -54,7 +54,7 @@ const ProductManagement = () => {
         stock_quantity: parseInt(newProductData.stock_quantity) || 0,
         in_stock: (parseInt(newProductData.stock_quantity) || 0) > 0
       });
-      
+
       setProducts(prev => [product, ...prev]);
       setIsFormOpen(false);
       toast({
@@ -73,7 +73,7 @@ const ProductManagement = () => {
 
   const handleEditProduct = async (updatedProductData, imageFile) => {
     try {
-      // 1. Actualizar los detalles del producto (sin la imagen)
+      // Preparar los datos para actualizar
       const detailsToUpdate = {
         ...updatedProductData,
         price: parseFloat(updatedProductData.price),
@@ -81,14 +81,14 @@ const ProductManagement = () => {
         in_stock: (parseInt(updatedProductData.stock_quantity) || 0) > 0,
       };
 
-      let updatedProduct = await productService.updateProductDetails(updatedProductData.id, detailsToUpdate);
-
-      // 2. Si hay un nuevo archivo de imagen, subirlo y actualizar la URL
-      if (imageFile) {
-        const imageUrl = await productService.uploadProductImage(imageFile, updatedProduct.id);
-        updatedProduct = await productService.updateProductImage(updatedProduct.id, imageUrl);
+      // Si hay una nueva URL de imagen en los datos, usarla
+      // (El ProductForm ahora maneja URLs directamente en lugar de archivos)
+      if (updatedProductData.image_url) {
+        detailsToUpdate.image_url = updatedProductData.image_url;
       }
-      
+
+      const updatedProduct = await productService.updateProduct(updatedProductData.id, detailsToUpdate);
+
       setProducts(prev => prev.map(p => p.id === updatedProduct.id ? updatedProduct : p));
       setIsFormOpen(false);
       setEditingProduct(null);
@@ -146,7 +146,7 @@ const ProductManagement = () => {
     setEditingProduct(product);
     setIsFormOpen(true);
   };
-  
+
   const openAddForm = () => {
     setEditingProduct(null);
     setIsFormOpen(true);
@@ -182,8 +182,8 @@ const ProductManagement = () => {
                 Completa los detalles del producto. Haz clic en guardar cuando termines.
               </DialogDescription>
             </DialogHeader>
-            <ProductForm 
-              onSubmit={editingProduct ? handleEditProduct : handleAddProduct} 
+            <ProductForm
+              onSubmit={editingProduct ? handleEditProduct : handleAddProduct}
               initialData={editingProduct}
               onCancel={() => { setIsFormOpen(false); setEditingProduct(null); }}
             />
@@ -200,20 +200,19 @@ const ProductManagement = () => {
         <div className="flex flex-wrap gap-2">
           {[
             { value: 'all', label: 'Todos', count: products.length },
-            { value: 'women', label: 'Mujeres', count: products.filter(p => p.category === 'women').length },
-            { value: 'men', label: 'Hombres', count: products.filter(p => p.category === 'men').length },
-            { value: 'unisex', label: 'Unisex', count: products.filter(p => p.category === 'unisex').length },
-            { value: 'home', label: 'Hogar', count: products.filter(p => p.category === 'home').length },
-            { value: 'body', label: 'Body Mist', count: products.filter(p => p.category === 'body').length }
+            { value: 'Mujer', label: 'Mujeres', count: products.filter(p => p.category === 'Mujer').length },
+            { value: 'Hombre', label: 'Hombres', count: products.filter(p => p.category === 'Hombre').length },
+            { value: 'Unisex', label: 'Unisex', count: products.filter(p => p.category === 'Unisex').length },
+            { value: 'Hogar', label: 'Hogar', count: products.filter(p => p.category === 'Hogar').length },
+            { value: 'Body Mist', label: 'Body Mist', count: products.filter(p => p.category === 'Body Mist').length }
           ].map((category) => (
             <button
               key={category.value}
               onClick={() => setSelectedCategory(category.value)}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                selectedCategory === category.value
-                  ? 'bg-sillage-gold text-black'
-                  : 'bg-muted text-muted-foreground hover:bg-muted/80'
-              }`}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${selectedCategory === category.value
+                ? 'bg-sillage-gold text-black'
+                : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                }`}
             >
               {category.label} ({category.count})
             </button>
@@ -250,9 +249,9 @@ const ProductManagement = () => {
                   {/* Imagen del producto */}
                   <div className="aspect-square mb-3 rounded-lg overflow-hidden bg-muted flex items-center justify-center">
                     {product.image_url ? (
-                      <img 
-                        src={product.image_url} 
-                        alt={product.name} 
+                      <img
+                        src={product.image_url}
+                        alt={product.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                       />
                     ) : (
@@ -275,17 +274,13 @@ const ProductManagement = () => {
                       <span className="admin-text font-bold text-lg">
                         ${product.price?.toLocaleString('es-CL')}
                       </span>
-                      <span className={`text-xs px-2 py-1 rounded-full ${
-                        product.category === 'women' ? 'bg-pink-100 text-pink-700' :
-                        product.category === 'men' ? 'bg-blue-100 text-blue-700' :
-                        product.category === 'home' ? 'bg-green-100 text-green-700' :
-                        product.category === 'body' ? 'bg-orange-100 text-orange-700' :
-                        'bg-purple-100 text-purple-700'
-                      }`}>
-                        {product.category === 'women' ? 'Mujer' : 
-                         product.category === 'men' ? 'Hombre' : 
-                         product.category === 'home' ? 'Hogar' :
-                         product.category === 'body' ? 'Body Mist' : 'Unisex'}
+                      <span className={`text-xs px-2 py-1 rounded-full ${product.category === 'Mujer' ? 'bg-pink-100 text-pink-700' :
+                        product.category === 'Hombre' ? 'bg-blue-100 text-blue-700' :
+                          product.category === 'Hogar' ? 'bg-green-100 text-green-700' :
+                            product.category === 'Body Mist' ? 'bg-orange-100 text-orange-700' :
+                              'bg-purple-100 text-purple-700'
+                        }`}>
+                        {product.category}
                       </span>
                     </div>
 
@@ -310,7 +305,7 @@ const ProductManagement = () => {
                       >
                         <Star className={`h-4 w-4 ${product.is_featured ? 'fill-current' : ''}`} />
                       </Button>
-                      
+
                       <div className="flex space-x-1">
                         <Button
                           variant="ghost"

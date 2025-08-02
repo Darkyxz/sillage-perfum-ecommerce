@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, createContext, useContext } from 'react';
-import { supabase } from '../lib/supabase';
+import { authService } from '../lib/authService';
 import { toast } from '@/components/ui/use-toast';
 
 const AuthContext = createContext();
@@ -11,114 +11,143 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [profileLoading, setProfileLoading] = useState(false);
 
   useEffect(() => {
-    const getSessionAndProfile = async () => {
+    const initializeAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          setProfileLoading(true);
-          await getProfile(session.user.id);
-          setProfileLoading(false);
+        // Verificar si hay una sesión activa
+        if (authService.hasActiveSession()) {
+          const { user: currentUser, error } = await authService.getCurrentUser();
+
+          if (currentUser && !error) {
+            setUser(currentUser.user || currentUser); // Ajustar estructura de respuesta
+            console.log('🔐 Sesión restaurada:', currentUser.user?.email || currentUser.email);
+          } else {
+            // Si hay error, limpiar sesión
+            authService.clearSession();
+            setUser(null);
+          }
         }
       } catch (error) {
-        console.error('Error getting session:', error);
+        console.error('Error inicializando autenticación:', error);
+        authService.clearSession();
+        setUser(null);
       } finally {
         setLoading(false);
       }
     };
 
-    getSessionAndProfile();
-
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('🔐 Auth state changed:', event, session?.user?.email);
-      
-      // Solo procesar cambios reales de autenticación, no eventos repetitivos
-      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {
-        setUser(session?.user ?? null);
-        
-        if (session?.user) {
-          setProfileLoading(true);
-          await getProfile(session.user.id);
-          setProfileLoading(false);
-        } else {
-          setProfile(null);
-          setProfileLoading(false);
-        }
-      }
-    });
-
-    return () => {
-      authListener?.subscription?.unsubscribe();
-    };
+    initializeAuth();
   }, []);
 
-  const getProfile = async (userId) => {
+  const login = async (email, password) => {
+    console.log('🔐 Iniciando sesión:', email);
+    setLoading(true);
+
     try {
-      const { data, error, status } = await supabase
-        .from('profiles')
-        .select(`full_name, avatar_url, role`)
-        .eq('id', userId)
-        .single();
+      const { user: loggedUser, error } = await authService.login(email, password);
 
-      if (error && status !== 406) {
-        throw error;
-      }
-
-      if (data) {
-        setProfile(data);
+      if (loggedUser && !error) {
+        setUser(loggedUser);
+        console.log('✅ Usuario logueado:', loggedUser); // Debug
+        toast({
+          title: "¡Bienvenido!",
+          description: `Has iniciado sesión como ${loggedUser.full_name || loggedUser.email}`
+        });
+        return { error: null };
+      } else {
+        console.error('❌ Error en login:', error); // Debug
+        toast({
+          title: "Error al iniciar sesión",
+          description: error?.message || 'Error desconocido',
+          variant: "destructive"
+        });
+        return { error };
       }
     } catch (error) {
-      console.error('Error cargando perfil:', error.message);
-    }
-  };
-  
-  const login = async (email, password) => {
-    console.log('Logging in with:', email);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
       console.error('Login error:', error);
-      toast({ title: "Error al iniciar sesión", description: error.message, variant: "destructive" });
+      toast({
+        title: "Error al iniciar sesión",
+        description: error.message,
+        variant: "destructive"
+      });
+      return { error: { message: error.message } };
+    } finally {
+      setLoading(false);
     }
-    return { error };
   };
 
   const signup = async (email, password, fullName) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { full_name: fullName } }
-    });
-     if (error) {
-      toast({ title: "Error en el registro", description: error.message, variant: "destructive" });
+    console.log('🔐 Registrando usuario:', email);
+    setLoading(true);
+
+    try {
+      const { user: newUser, error } = await authService.register(email, password, fullName);
+
+      if (newUser && !error) {
+        setUser(newUser);
+        console.log('✅ Usuario registrado:', newUser); // Debug
+        toast({
+          title: "¡Registro exitoso!",
+          description: `Bienvenido ${newUser.full_name || newUser.email}`
+        });
+        return { error: null };
+      } else {
+        console.error('❌ Error en registro:', error); // Debug
+        toast({
+          title: "Error en el registro",
+          description: error?.message || 'Error desconocido',
+          variant: "destructive"
+        });
+        return { error };
+      }
+    } catch (error) {
+      console.error('Signup error:', error);
+      toast({
+        title: "Error en el registro",
+        description: error.message,
+        variant: "destructive"
+      });
+      return { error: { message: error.message } };
+    } finally {
+      setLoading(false);
     }
-    return { error };
   };
 
   const logout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      toast({ title: "Error al cerrar sesión", description: error.message, variant: "destructive" });
-    } else {
+    console.log('🔐 Cerrando sesión');
+
+    try {
+      await authService.logout();
+      setUser(null);
+
+      // Limpiar localStorage al cerrar sesión
+      localStorage.removeItem('cart');
+      localStorage.removeItem('favorites');
+
       toast({ title: "Has cerrado sesión" });
+    } catch (error) {
+      console.error('Logout error:', error);
+      toast({
+        title: "Error al cerrar sesión",
+        description: error.message,
+        variant: "destructive"
+      });
     }
   };
 
   const value = {
     user,
-    profile,
+    profile: user, // En MySQL, el perfil está incluido en el usuario
     loading,
-    profileLoading,
+    profileLoading: false, // Ya no necesitamos carga separada de perfil
     login,
     signup,
     logout,
-    isAdmin: profile?.role === 'admin',
-    // Estado combinado para saber si aún se está cargando la autenticación completa
-    isAuthLoading: loading || (user && profileLoading),
+    isAdmin: user?.role === 'admin',
+    // Estado de carga de autenticación
+    isAuthLoading: loading,
   };
 
   return (

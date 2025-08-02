@@ -3,8 +3,8 @@ import { Link, useSearchParams } from 'react-router-dom';
 
 export default function PaymentFailurePage() {
   const [searchParams] = useSearchParams();
-  const orderId = searchParams.get('external_reference');
-  const paymentId = searchParams.get('payment_id');
+  const token = searchParams.get('token_ws');
+  const orderId = searchParams.get('buy_order');
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-rose-100">

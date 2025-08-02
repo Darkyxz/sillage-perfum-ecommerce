@@ -2,13 +2,16 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { Mail, Lock, Eye, EyeOff, Loader2, User } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Loader2, User, Shield, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from '@/components/ui/use-toast';
+import PasswordStrengthMeter from '@/components/ui/PasswordStrengthMeter';
+import { validatePassword, validateEmail, validateFullName } from '@/utils/passwordValidation';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -21,7 +24,9 @@ const Register = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const { signup, loginWithGoogle } = useAuth();
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
+  const { signup } = useAuth();
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -30,41 +35,118 @@ const Register = () => {
       ...prev,
       [name]: value
     }));
+
+    // Limpiar errores cuando el usuario empiece a escribir
+    if (formErrors[name]) {
+      setFormErrors(prev => ({
+        ...prev,
+        [name]: null
+      }));
+    }
+
+    // Validación en tiempo real
+    validateField(name, value);
+  };
+
+  const validateField = (name, value) => {
+    let error = null;
+
+    switch (name) {
+      case 'fullName':
+        const nameValidation = validateFullName(value);
+        error = nameValidation.error;
+        break;
+      case 'email':
+        const emailValidation = validateEmail(value);
+        error = emailValidation.error;
+        break;
+      case 'password':
+        const passwordValidation = validatePassword(value);
+        if (!passwordValidation.isValid && value.length > 0) {
+          error = 'La contraseña no cumple con todos los requisitos de seguridad';
+        }
+        break;
+      case 'confirmPassword':
+        if (value !== formData.password && value.length > 0) {
+          error = 'Las contraseñas no coinciden';
+        }
+        break;
+    }
+
+    if (error) {
+      setFormErrors(prev => ({
+        ...prev,
+        [name]: error
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validaciones
-    if (formData.password !== formData.confirmPassword) {
-      toast({ 
-        title: "Error de validación", 
-        description: "Las contraseñas no coinciden", 
-        variant: "destructive" 
-      });
-      return;
+    // Validar todos los campos
+    const nameValidation = validateFullName(formData.fullName);
+    const emailValidation = validateEmail(formData.email);
+    const passwordValidation = validatePassword(formData.password);
+
+    const errors = {};
+
+    if (!nameValidation.isValid) {
+      errors.fullName = nameValidation.error;
     }
 
-    if (formData.password.length < 6) {
+    if (!emailValidation.isValid) {
+      errors.email = emailValidation.error;
+    }
+
+    if (!passwordValidation.isValid) {
+      errors.password = 'La contraseña debe cumplir con todos los requisitos de seguridad';
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      errors.confirmPassword = 'Las contraseñas no coinciden';
+    }
+
+    if (!acceptTerms) {
+      errors.terms = 'Debes aceptar los términos y condiciones para continuar';
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
       toast({ 
         title: "Error de validación", 
-        description: "La contraseña debe tener al menos 6 caracteres", 
+        description: "Por favor corrige los errores en el formulario", 
         variant: "destructive" 
       });
       return;
     }
 
     setIsLoading(true);
-    const result = await signup(formData.email, formData.password, formData.fullName);
-    if (result.success) {
-      navigate('/login');
+    try {
+      const result = await signup(formData.email, formData.password, formData.fullName);
+      if (!result.error) {
+        toast({
+          title: "¡Registro exitoso!",
+          description: "Tu cuenta ha sido creada correctamente. ¡Bienvenido a Sillage Perfum!"
+        });
+        // Registro exitoso, redirigir al perfil
+        navigate('/perfil');
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const handleGoogleSignup = async () => {
     setIsGoogleLoading(true);
-    await loginWithGoogle();
+    toast({
+      title: "Función no disponible",
+      description: "El registro con Google no está disponible en este momento",
+      variant: "destructive"
+    });
+    setIsGoogleLoading(false);
   };
 
   return (
@@ -95,7 +177,7 @@ const Register = () => {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="fullName" className="text-foreground">
-                    Nombre Completo
+                    Nombre Completo *
                   </Label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -105,17 +187,25 @@ const Register = () => {
                       type="text"
                       value={formData.fullName}
                       onChange={handleInputChange}
-                      className="bg-background/50 border-border/50 text-foreground pl-10 placeholder:text-muted-foreground/50"
-                      placeholder="Tu nombre completo"
+                      className={`bg-background/50 border-border/50 text-foreground pl-10 placeholder:text-muted-foreground/50 ${
+                        formErrors.fullName ? 'border-red-500 focus:border-red-500' : ''
+                      }`}
+                      placeholder="Ej: María González Pérez"
                       required
                       autoComplete="name"
                     />
                   </div>
+                  {formErrors.fullName && (
+                    <div className="flex items-center space-x-1 text-red-600">
+                      <AlertCircle className="h-3 w-3" />
+                      <span className="text-xs">{formErrors.fullName}</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-foreground">
-                    Email
+                    Correo Electrónico *
                   </Label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -125,17 +215,26 @@ const Register = () => {
                       type="email"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className="bg-background/50 border-border/50 text-foreground pl-10 placeholder:text-muted-foreground/50"
-                      placeholder="tu@email.com"
+                      className={`bg-background/50 border-border/50 text-foreground pl-10 placeholder:text-muted-foreground/50 ${
+                        formErrors.email ? 'border-red-500 focus:border-red-500' : ''
+                      }`}
+                      placeholder="maria.gonzalez@ejemplo.com"
                       required
                       autoComplete="email"
                     />
                   </div>
+                  {formErrors.email && (
+                    <div className="flex items-center space-x-1 text-red-600">
+                      <AlertCircle className="h-3 w-3" />
+                      <span className="text-xs">{formErrors.email}</span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-foreground">
-                    Contraseña
+                  <Label htmlFor="password" className="text-foreground flex items-center space-x-1">
+                    <Shield className="h-4 w-4" />
+                    <span>Contraseña Segura *</span>
                   </Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -145,8 +244,10 @@ const Register = () => {
                       type={showPassword ? 'text' : 'password'}
                       value={formData.password}
                       onChange={handleInputChange}
-                      className="bg-background/50 border-border/50 text-foreground pl-10 pr-10 placeholder:text-muted-foreground/50"
-                      placeholder="Crea una contraseña segura"
+                      className={`bg-background/50 border-border/50 text-foreground pl-10 pr-10 placeholder:text-muted-foreground/50 ${
+                        formErrors.password ? 'border-red-500 focus:border-red-500' : ''
+                      }`}
+                      placeholder="Ej: MiContra$eña123!"
                       required
                       autoComplete="new-password"
                     />
@@ -158,11 +259,18 @@ const Register = () => {
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
+                  {formErrors.password && (
+                    <div className="flex items-center space-x-1 text-red-600">
+                      <AlertCircle className="h-3 w-3" />
+                      <span className="text-xs">{formErrors.password}</span>
+                    </div>
+                  )}
+                  <PasswordStrengthMeter password={formData.password} />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="confirmPassword" className="text-foreground">
-                    Confirmar Contraseña
+                    Confirmar Contraseña *
                   </Label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -172,8 +280,10 @@ const Register = () => {
                       type={showConfirmPassword ? 'text' : 'password'}
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
-                      className="bg-background/50 border-border/50 text-foreground pl-10 pr-10 placeholder:text-muted-foreground/50"
-                      placeholder="Confirma tu contraseña"
+                      className={`bg-background/50 border-border/50 text-foreground pl-10 pr-10 placeholder:text-muted-foreground/50 ${
+                        formErrors.confirmPassword ? 'border-red-500 focus:border-red-500' : ''
+                      }`}
+                      placeholder="Repite la misma contraseña"
                       required
                       autoComplete="new-password"
                     />
@@ -185,15 +295,59 @@ const Register = () => {
                       {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
+                  {formErrors.confirmPassword && (
+                    <div className="flex items-center space-x-1 text-red-600">
+                      <AlertCircle className="h-3 w-3" />
+                      <span className="text-xs">{formErrors.confirmPassword}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Checkbox de términos y condiciones */}
+                <div className="space-y-3">
+                  <div className="flex items-start space-x-3 p-4 bg-muted/30 rounded-lg border border-border/30">
+                    <Checkbox
+                      id="acceptTerms"
+                      checked={acceptTerms}
+                      onCheckedChange={setAcceptTerms}
+                      className="mt-0.5"
+                    />
+                    <div className="space-y-1">
+                      <Label 
+                        htmlFor="acceptTerms" 
+                        className="text-sm text-foreground cursor-pointer leading-relaxed"
+                      >
+                        Acepto los{' '}
+                        <Link to="/terminos" className="text-primary hover:underline font-medium">
+                          Términos y Condiciones
+                        </Link>{' '}
+                        y la{' '}
+                        <Link to="/privacidad" className="text-primary hover:underline font-medium">
+                          Política de Privacidad
+                        </Link>
+                      </Label>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        Al registrarte, aceptas que podemos usar tus datos para mejorar nuestros servicios, 
+                        personalizar tu experiencia de compra y enviarte comunicaciones de marketing relevantes. 
+                        Puedes cambiar tus preferencias en cualquier momento desde tu perfil.
+                      </p>
+                    </div>
+                  </div>
+                  {formErrors.terms && (
+                    <div className="flex items-center space-x-1 text-red-600">
+                      <AlertCircle className="h-3 w-3" />
+                      <span className="text-xs">{formErrors.terms}</span>
+                    </div>
+                  )}
                 </div>
 
                 <Button
                   type="submit"
                   className="w-full floating-button text-primary-foreground font-semibold py-3"
-                  disabled={isLoading}
+                  disabled={isLoading || !acceptTerms}
                 >
                   {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {isLoading ? 'Creando cuenta...' : 'Crear Cuenta'}
+                  {isLoading ? 'Creando cuenta...' : 'Crear Cuenta Segura'}
                 </Button>
               </form>
 

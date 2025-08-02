@@ -37,13 +37,13 @@ const ProductDetail = () => {
   const [isNotesOpen, setIsNotesOpen] = useState(false);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const { addToCart } = useCart();
-  const { toggleFavorite, isInFavorites } = useFavorites();
+  const { toggleFavorite, isFavorite } = useFavorites();
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        
+
         // Validar que el SKU existe y tiene el formato correcto
         if (!sku || sku.trim() === '') {
           console.error('SKU inválido:', sku);
@@ -57,7 +57,7 @@ const ProductDetail = () => {
         }
 
         const productData = await productService.getProductBySku(sku);
-        
+
         if (!productData) {
           console.error('Producto no encontrado para SKU:', sku);
           toast({
@@ -69,12 +69,14 @@ const ProductDetail = () => {
           return;
         }
 
-        // Procesar las notas de fragancia si existen
+        // Procesar las notas de fragancia desde la base de datos
         let notes = {
           top: [],
           middle: [],
           base: []
         };
+
+        let fragranceProfile = [];
 
         // Obtener información adicional basada en el SKU (fallback para productos antiguos)
         const getProductExtraInfo = (sku) => {
@@ -88,44 +90,69 @@ const ProductDetail = () => {
 
         const extraInfo = getProductExtraInfo(productData.sku);
 
-        // Priorizar las notas de la base de datos
-        if (productData.fragrance_notes && typeof productData.fragrance_notes === 'object') {
-          // Las notas vienen directamente de la base de datos
-          notes = {
-            top: productData.fragrance_notes.top || [],
-            middle: productData.fragrance_notes.middle || [],
-            base: productData.fragrance_notes.base || []
-          };
-        } else if (productData.fragrance_notes && typeof productData.fragrance_notes === 'string') {
+        // Procesar perfil de fragancia desde la base de datos
+        if (productData.fragrance_profile) {
           try {
-            // Si vienen como string JSON, parsearlas
-            const parsedNotes = JSON.parse(productData.fragrance_notes);
-            notes = {
-              top: parsedNotes.top || [],
-              middle: parsedNotes.middle || [],
-              base: parsedNotes.base || []
-            };
+            fragranceProfile = typeof productData.fragrance_profile === 'string'
+              ? JSON.parse(productData.fragrance_profile)
+              : productData.fragrance_profile;
           } catch (e) {
-            console.warn('Error parsing fragrance_notes JSON:', e);
-            // Fallback a notas por defecto
-            notes = { top: [], middle: [], base: [] };
+            console.warn('Error parsing fragrance_profile JSON:', e);
+            fragranceProfile = [];
           }
-        } else if (extraInfo.notes && extraInfo.notes !== "Notas no disponibles") {
-          // Fallback: usar datos hardcodeados para productos antiguos
-          const notesArray = extraInfo.notes.split(', ');
-          notes = {
-            top: notesArray.slice(0, Math.ceil(notesArray.length / 3)),
-            middle: notesArray.slice(Math.ceil(notesArray.length / 3), Math.ceil(2 * notesArray.length / 3)),
-            base: notesArray.slice(Math.ceil(2 * notesArray.length / 3))
-          };
-        } else if (productData.notes) {
-          // Otro fallback: campo notes como string
-          const notesArray = productData.notes.split(', ');
-          notes = {
-            top: notesArray.slice(0, Math.ceil(notesArray.length / 3)),
-            middle: notesArray.slice(Math.ceil(notesArray.length / 3), Math.ceil(2 * notesArray.length / 3)),
-            base: notesArray.slice(Math.ceil(2 * notesArray.length / 3))
-          };
+        }
+
+        // Procesar notas olfativas desde la base de datos
+        if (productData.fragrance_notes_top) {
+          try {
+            notes.top = typeof productData.fragrance_notes_top === 'string'
+              ? JSON.parse(productData.fragrance_notes_top)
+              : productData.fragrance_notes_top;
+          } catch (e) {
+            console.warn('Error parsing fragrance_notes_top JSON:', e);
+            notes.top = [];
+          }
+        }
+
+        if (productData.fragrance_notes_middle) {
+          try {
+            notes.middle = typeof productData.fragrance_notes_middle === 'string'
+              ? JSON.parse(productData.fragrance_notes_middle)
+              : productData.fragrance_notes_middle;
+          } catch (e) {
+            console.warn('Error parsing fragrance_notes_middle JSON:', e);
+            notes.middle = [];
+          }
+        }
+
+        if (productData.fragrance_notes_base) {
+          try {
+            notes.base = typeof productData.fragrance_notes_base === 'string'
+              ? JSON.parse(productData.fragrance_notes_base)
+              : productData.fragrance_notes_base;
+          } catch (e) {
+            console.warn('Error parsing fragrance_notes_base JSON:', e);
+            notes.base = [];
+          }
+        }
+
+        // Fallback si no hay notas en la base de datos
+        if (notes.top.length === 0 && notes.middle.length === 0 && notes.base.length === 0) {
+          if (extraInfo.notes && extraInfo.notes !== "Notas no disponibles") {
+            const notesArray = extraInfo.notes.split(', ');
+            notes = {
+              top: notesArray.slice(0, Math.ceil(notesArray.length / 3)),
+              middle: notesArray.slice(Math.ceil(notesArray.length / 3), Math.ceil(2 * notesArray.length / 3)),
+              base: notesArray.slice(Math.ceil(2 * notesArray.length / 3))
+            };
+          } else if (productData.notes) {
+            const notesArray = productData.notes.split(', ');
+            notes = {
+              top: notesArray.slice(0, Math.ceil(notesArray.length / 3)),
+              middle: notesArray.slice(Math.ceil(notesArray.length / 3), Math.ceil(2 * notesArray.length / 3)),
+              base: notesArray.slice(Math.ceil(2 * notesArray.length / 3))
+            };
+          }
         }
 
         // Crear array de imágenes
@@ -137,14 +164,15 @@ const ProductDetail = () => {
           ...productData,
           images,
           notes,
+          fragrance_profile: fragranceProfile,
           rating: productData.rating || 4.5,
           reviews: productData.reviews || Math.floor(Math.random() * 50) + 15,
           sku: productData.sku || `SKU-${productData.id}`,
           size: productData.size || "100ml",
           concentration: productData.concentration || "Eau de Parfum",
           longDescription: productData.description || "Descripción detallada no disponible.",
-          duration: extraInfo.duration,
-          originalInspiration: extraInfo.originalInspiration,
+          duration: productData.duration || extraInfo.duration,
+          originalInspiration: productData.original_inspiration || extraInfo.originalInspiration,
           // Valores por defecto para campos que pueden no existir
           stock_quantity: productData.stock_quantity || 0,
           in_stock: productData.in_stock !== undefined ? productData.in_stock : true
@@ -252,7 +280,7 @@ const ProductDetail = () => {
             <div className="space-y-4">
               {/* Main Image */}
               <div className="aspect-square overflow-hidden rounded-xl glass-effect">
-                <img 
+                <img
                   alt={`${product.name} - Vista principal`}
                   className="w-full h-full object-cover"
                   src={product.image_url || "https://images.unsplash.com/photo-1595872018818-97555653a011"}
@@ -268,13 +296,12 @@ const ProductDetail = () => {
                   <button
                     key={index}
                     onClick={() => setSelectedImage(index)}
-                    className={`aspect-square overflow-hidden rounded-lg transition-all ${
-                      selectedImage === index
-                        ? 'ring-2 ring-primary/50'
-                        : 'opacity-70 hover:opacity-100'
-                    }`}
+                    className={`aspect-square overflow-hidden rounded-lg transition-all ${selectedImage === index
+                      ? 'ring-2 ring-primary/50'
+                      : 'opacity-70 hover:opacity-100'
+                      }`}
                   >
-                    <img 
+                    <img
                       alt={`${product.name} - Vista ${index + 1}`}
                       className="w-full h-full object-cover"
                       src={image}
@@ -311,7 +338,7 @@ const ProductDetail = () => {
 
             {/* Product Name */}
             <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground leading-tight">
-              {product.name}
+              {product.name} | {product.sku}
             </h1>
 
             {/* Price */}
@@ -366,11 +393,10 @@ const ProductDetail = () => {
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
-                    className={`px-4 py-2 text-sm border rounded-md transition-all ${
-                      selectedSize === size
-                        ? 'bg-black text-white border-black'
-                        : 'bg-white text-foreground border-border hover:border-sillage-gold-dark'
-                    }`}
+                    className={`px-4 py-2 text-sm border rounded-md transition-all ${selectedSize === size
+                      ? 'bg-black text-white border-black'
+                      : 'bg-white text-foreground border-border hover:border-sillage-gold-dark'
+                      }`}
                   >
                     {size}
                   </button>
@@ -445,10 +471,10 @@ const ProductDetail = () => {
                           'floral': { emoji: '🌺', label: 'Floral', color: 'bg-pink-100 text-pink-800' },
                           'oriental': { emoji: '🌙', label: 'Oriental', color: 'bg-indigo-100 text-indigo-800' }
                         };
-                        
+
                         const profile = profileMap[profileId];
                         if (!profile) return null;
-                        
+
                         return (
                           <span key={profileId} className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${profile.color}`}>
                             {profile.emoji} {profile.label}
@@ -570,20 +596,18 @@ const ProductDetail = () => {
                 <ShoppingCart className="mr-2 h-5 w-5" />
                 Agregar al Carrito
               </Button>
-              
+
               <Button
                 variant="outline"
                 size="icon"
-                className={`p-3 transition-all duration-200 ${
-                  isInFavorites(product.id)
-                    ? 'bg-destructive/80 border-destructive text-white hover:bg-destructive/90'
-                    : 'border-sillage-gold-dark text-foreground hover:bg-sillage-gold/10'
-                }`}
+                className={`p-3 transition-all duration-200 ${isFavorite(product.id)
+                  ? 'bg-destructive/80 border-destructive text-white hover:bg-destructive/90'
+                  : 'border-sillage-gold-dark text-foreground hover:bg-sillage-gold/10'
+                  }`}
                 onClick={() => toggleFavorite(product)}
               >
-                <Heart className={`h-5 w-5 transition-colors ${
-                  isInFavorites(product.id) ? 'fill-current' : ''
-                }`} />
+                <Heart className={`h-5 w-5 transition-colors ${isFavorite(product.id) ? 'fill-current' : ''
+                  }`} />
               </Button>
             </div>
           </motion.div>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Camera, Scan } from 'lucide-react';
+import { Camera, Scan, Loader2 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import safeStorage from '@/utils/storage';
 
@@ -19,8 +19,8 @@ const FRAGRANCE_NOTES = {
     { id: 'aquatic', label: 'Acuático', emoji: '🌊', color: 'bg-cyan-100 text-cyan-800' }
   ],
   top: [
-    'Bergamota', 'Limón', 'Naranja', 'Mandarina', 'Pomelo', 'Lima', 'Lavanda', 'Menta', 
-    'Pimienta negra', 'Pimienta rosa', 'Cardamomo', 'Jengibre', 'Eucalipto', 'Romero', 
+    'Bergamota', 'Limón', 'Naranja', 'Mandarina', 'Pomelo', 'Lima', 'Lavanda', 'Menta',
+    'Pimienta negra', 'Pimienta rosa', 'Cardamomo', 'Jengibre', 'Eucalipto', 'Romero',
     'Albahaca', 'Petitgrain', 'Anís', 'Comino', 'Cilantro', 'Tomillo'
   ],
   middle: [
@@ -47,13 +47,55 @@ const getInitialState = (data = null) => ({
   size: data?.size || '100ml',
   concentration: data?.concentration || 'Eau de Parfum',
   image_url: data?.image_url || '',
-  // Notas olfativas
-  fragrance_profile: data?.fragrance_profile || [],
-  fragrance_notes: {
-    top: data?.fragrance_notes?.top || [],
-    middle: data?.fragrance_notes?.middle || [],
-    base: data?.fragrance_notes?.base || []
-  }
+  // Notas olfativas - parsear JSON si viene de la base de datos
+  fragrance_profile: (() => {
+    if (data?.fragrance_profile) {
+      try {
+        return typeof data.fragrance_profile === 'string'
+          ? JSON.parse(data.fragrance_profile)
+          : data.fragrance_profile;
+      } catch (e) {
+        return [];
+      }
+    }
+    return [];
+  })(),
+  fragrance_notes_top: (() => {
+    if (data?.fragrance_notes_top) {
+      try {
+        return typeof data.fragrance_notes_top === 'string'
+          ? JSON.parse(data.fragrance_notes_top)
+          : data.fragrance_notes_top;
+      } catch (e) {
+        return [];
+      }
+    }
+    return [];
+  })(),
+  fragrance_notes_middle: (() => {
+    if (data?.fragrance_notes_middle) {
+      try {
+        return typeof data.fragrance_notes_middle === 'string'
+          ? JSON.parse(data.fragrance_notes_middle)
+          : data.fragrance_notes_middle;
+      } catch (e) {
+        return [];
+      }
+    }
+    return [];
+  })(),
+  fragrance_notes_base: (() => {
+    if (data?.fragrance_notes_base) {
+      try {
+        return typeof data.fragrance_notes_base === 'string'
+          ? JSON.parse(data.fragrance_notes_base)
+          : data.fragrance_notes_base;
+      } catch (e) {
+        return [];
+      }
+    }
+    return [];
+  })()
 });
 
 const ProductForm = ({ onSubmit, initialData, onCancel }) => {
@@ -71,8 +113,8 @@ const ProductForm = ({ onSubmit, initialData, onCancel }) => {
     }
     return getInitialState(initialData);
   });
-  
-  const [imageFile, setImageFile] = useState(null); // Para el archivo de imagen real
+
+  // Removido imageFile ya que ahora usamos URLs directamente
   const [imagePreview, setImagePreview] = useState(() => {
     if (typeof window !== 'undefined' && !initialData) {
       return safeStorage.getItem('admin-form-image-preview') || '';
@@ -100,7 +142,6 @@ const ProductForm = ({ onSubmit, initialData, onCancel }) => {
       const initialState = getInitialState(initialData);
       setProductData(initialState);
       setImagePreview(initialData?.image_url || '');
-      setImageFile(null);
     }
   }, [initialData]);
 
@@ -109,9 +150,8 @@ const ProductForm = ({ onSubmit, initialData, onCancel }) => {
     const hasUnsavedChanges = () => {
       // Verificar si hay datos en el formulario que no sean los valores iniciales
       const initialState = getInitialState(initialData);
-      return JSON.stringify(productData) !== JSON.stringify(initialState) || 
-             imageFile !== null || 
-             (imagePreview && imagePreview !== (initialData?.image_url || ''));
+      return JSON.stringify(productData) !== JSON.stringify(initialState) ||
+        (imagePreview && imagePreview !== (initialData?.image_url || ''));
     };
 
     const handleBeforeUnload = (e) => {
@@ -130,7 +170,7 @@ const ProductForm = ({ onSubmit, initialData, onCancel }) => {
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [productData, imageFile, imagePreview, initialData]);
+  }, [productData, imagePreview, initialData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -149,14 +189,12 @@ const ProductForm = ({ onSubmit, initialData, onCancel }) => {
 
   // Manejar selección de notas olfativas
   const handleNoteToggle = (noteType, note) => {
+    const fieldName = `fragrance_notes_${noteType}`;
     setProductData(prev => ({
       ...prev,
-      fragrance_notes: {
-        ...prev.fragrance_notes,
-        [noteType]: prev.fragrance_notes[noteType].includes(note)
-          ? prev.fragrance_notes[noteType].filter(n => n !== note)
-          : [...prev.fragrance_notes[noteType], note]
-      }
+      [fieldName]: prev[fieldName].includes(note)
+        ? prev[fieldName].filter(n => n !== note)
+        : [...prev[fieldName], note]
     }));
   };
 
@@ -170,16 +208,120 @@ const ProductForm = ({ onSubmit, initialData, onCancel }) => {
     }, 2000);
   };
 
-  const handleImageUpload = (e) => {
+  const [imageFile, setImageFile] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      setImageFile(file); // Guardar el archivo real
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result); // Actualizar la vista previa
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    // Validaciones del lado del cliente
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+
+    if (file.size > maxSize) {
+      toast({
+        title: "Archivo demasiado grande",
+        description: "La imagen debe ser menor a 5MB. Intenta con una imagen más pequeña.",
+        variant: "destructive",
+      });
+      e.target.value = '';
+      return;
     }
+
+    if (!allowedTypes.includes(file.type)) {
+      toast({
+        title: "Tipo de archivo no válido",
+        description: "Solo se permiten imágenes JPEG, PNG y WEBP.",
+        variant: "destructive",
+      });
+      e.target.value = '';
+      return;
+    }
+
+    setImageFile(file);
+
+    // Crear vista previa local
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+
+    // Subir imagen al servidor
+    try {
+      setUploadingImage(true);
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        throw new Error('No hay sesión activa. Inicia sesión nuevamente.');
+      }
+
+      const response = await fetch('/api/upload/product-image', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Error del servidor: ${response.status} - ${errorText}`);
+      }
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Actualizar la URL de la imagen en el estado
+        setProductData(prev => ({ ...prev, image_url: result.data.url }));
+        toast({
+          title: "¡Imagen subida exitosamente!",
+          description: `Archivo: ${result.data.filename} (${(result.data.size / 1024).toFixed(1)} KB)`,
+        });
+      } else {
+        throw new Error(result.error || 'Error subiendo imagen');
+      }
+    } catch (error) {
+      console.error('Error uploading image:', error);
+
+      // Mensajes de error más específicos
+      let errorMessage = "No se pudo subir la imagen. Intenta de nuevo.";
+
+      if (error.message.includes('401')) {
+        errorMessage = "Sesión expirada. Inicia sesión nuevamente.";
+      } else if (error.message.includes('413')) {
+        errorMessage = "La imagen es demasiado grande. Máximo 5MB.";
+      } else if (error.message.includes('400')) {
+        errorMessage = "Formato de imagen no válido.";
+      } else if (error.message.includes('No hay sesión')) {
+        errorMessage = error.message;
+      }
+
+      toast({
+        title: "Error subiendo imagen",
+        description: errorMessage,
+        variant: "destructive",
+      });
+
+      // Limpiar el archivo si falló la subida
+      setImageFile(null);
+      setImagePreview(initialData?.image_url || '');
+      setProductData(prev => ({ ...prev, image_url: initialData?.image_url || '' }));
+      e.target.value = '';
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleImageUrlChange = (e) => {
+    const url = e.target.value;
+    setProductData(prev => ({ ...prev, image_url: url }));
+    setImagePreview(url);
+    // Limpiar archivo si se está usando URL
+    setImageFile(null);
   };
 
   const handleSubmit = (e) => {
@@ -192,14 +334,14 @@ const ProductForm = ({ onSubmit, initialData, onCancel }) => {
       });
       return;
     }
-    
+
     // Limpiar storage al guardar exitosamente
     if (!initialData) {
       safeStorage.removeItem('admin-form-data');
       safeStorage.removeItem('admin-form-image-preview');
     }
-    
-    onSubmit(productData, imageFile);
+
+    onSubmit(productData, null);
   };
 
   const handleCancel = () => {
@@ -273,7 +415,7 @@ const ProductForm = ({ onSubmit, initialData, onCancel }) => {
         <div>
           <Label className="admin-text font-medium text-base mb-3 block text-sillage-gold-dark">🌸 Perfil de Fragancia</Label>
           <p className="admin-text-muted text-xs mb-3">Selecciona las características principales del perfume</p>
-          
+
           {/* Perfil de Fragancia - Más compacto */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
             {FRAGRANCE_NOTES.profile.map((profile) => (
@@ -310,7 +452,7 @@ const ProductForm = ({ onSubmit, initialData, onCancel }) => {
                     key={note}
                     className={`
                       flex items-center space-x-1.5 p-1.5 rounded cursor-pointer transition-all duration-200 border text-xs
-                      ${productData.fragrance_notes.top.includes(note)
+                      ${productData.fragrance_notes_top.includes(note)
                         ? 'bg-sillage-gold/15 border-sillage-gold/50 text-sillage-gold-dark'
                         : 'bg-muted/20 border-border/50 hover:border-sillage-gold-dark/50 hover:bg-sillage-gold/5'
                       }
@@ -318,18 +460,18 @@ const ProductForm = ({ onSubmit, initialData, onCancel }) => {
                   >
                     <input
                       type="checkbox"
-                      checked={productData.fragrance_notes.top.includes(note)}
+                      checked={productData.fragrance_notes_top.includes(note)}
                       onChange={() => handleNoteToggle('top', note)}
                       className="sr-only"
                     />
                     <div className={`
                       w-3 h-3 rounded border flex items-center justify-center transition-all
-                      ${productData.fragrance_notes.top.includes(note)
+                      ${productData.fragrance_notes_top.includes(note)
                         ? 'bg-sillage-gold border-sillage-gold'
                         : 'border-muted-foreground/50'
                       }
                     `}>
-                      {productData.fragrance_notes.top.includes(note) && (
+                      {productData.fragrance_notes_top.includes(note) && (
                         <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                         </svg>
@@ -351,7 +493,7 @@ const ProductForm = ({ onSubmit, initialData, onCancel }) => {
                     key={note}
                     className={`
                       flex items-center space-x-1.5 p-1.5 rounded cursor-pointer transition-all duration-200 border text-xs
-                      ${productData.fragrance_notes.middle.includes(note)
+                      ${productData.fragrance_notes_middle.includes(note)
                         ? 'bg-sillage-gold/15 border-sillage-gold/50 text-sillage-gold-dark'
                         : 'bg-muted/20 border-border/50 hover:border-sillage-gold-dark/50 hover:bg-sillage-gold/5'
                       }
@@ -359,18 +501,18 @@ const ProductForm = ({ onSubmit, initialData, onCancel }) => {
                   >
                     <input
                       type="checkbox"
-                      checked={productData.fragrance_notes.middle.includes(note)}
+                      checked={productData.fragrance_notes_middle.includes(note)}
                       onChange={() => handleNoteToggle('middle', note)}
                       className="sr-only"
                     />
                     <div className={`
                       w-3 h-3 rounded border flex items-center justify-center transition-all
-                      ${productData.fragrance_notes.middle.includes(note)
+                      ${productData.fragrance_notes_middle.includes(note)
                         ? 'bg-sillage-gold border-sillage-gold'
                         : 'border-muted-foreground/50'
                       }
                     `}>
-                      {productData.fragrance_notes.middle.includes(note) && (
+                      {productData.fragrance_notes_middle.includes(note) && (
                         <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                         </svg>
@@ -392,7 +534,7 @@ const ProductForm = ({ onSubmit, initialData, onCancel }) => {
                     key={note}
                     className={`
                       flex items-center space-x-1.5 p-1.5 rounded cursor-pointer transition-all duration-200 border text-xs
-                      ${productData.fragrance_notes.base.includes(note)
+                      ${productData.fragrance_notes_base.includes(note)
                         ? 'bg-sillage-gold/15 border-sillage-gold/50 text-sillage-gold-dark'
                         : 'bg-muted/20 border-border/50 hover:border-sillage-gold-dark/50 hover:bg-sillage-gold/5'
                       }
@@ -400,18 +542,18 @@ const ProductForm = ({ onSubmit, initialData, onCancel }) => {
                   >
                     <input
                       type="checkbox"
-                      checked={productData.fragrance_notes.base.includes(note)}
+                      checked={productData.fragrance_notes_base.includes(note)}
                       onChange={() => handleNoteToggle('base', note)}
                       className="sr-only"
                     />
                     <div className={`
                       w-3 h-3 rounded border flex items-center justify-center transition-all
-                      ${productData.fragrance_notes.base.includes(note)
+                      ${productData.fragrance_notes_base.includes(note)
                         ? 'bg-sillage-gold border-sillage-gold'
                         : 'border-muted-foreground/50'
                       }
                     `}>
-                      {productData.fragrance_notes.base.includes(note) && (
+                      {productData.fragrance_notes_base.includes(note) && (
                         <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                         </svg>
@@ -426,14 +568,57 @@ const ProductForm = ({ onSubmit, initialData, onCancel }) => {
         </div>
       </div>
 
-      <div className="space-y-2">
+      <div className="space-y-4">
         <Label className="admin-text font-medium flex items-center">Imagen del Producto <Camera className="ml-2 h-4 w-4" /></Label>
-        <Input type="file" accept="image/*" onChange={handleImageUpload} className="admin-input file:bg-transparent file:text-current file:border-0" />
+
+        {/* Opción 1: Subir archivo */}
+        <div className="space-y-2">
+          <Label className="admin-text text-sm font-medium">Subir desde tu PC</Label>
+          <Input
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            className="admin-input file:bg-transparent file:text-current file:border-0"
+            disabled={uploadingImage}
+          />
+          {uploadingImage && (
+            <div className="flex items-center justify-center p-4 bg-sillage-gold/10 rounded-lg border border-sillage-gold/30">
+              <Loader2 className="h-4 w-4 animate-spin mr-2 text-sillage-gold" />
+              <span className="text-sm text-sillage-gold-dark font-medium">
+                Subiendo imagen al servidor...
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Separador */}
+        <div className="flex items-center">
+          <div className="flex-1 border-t border-border"></div>
+          <span className="px-3 text-xs text-muted-foreground">O</span>
+          <div className="flex-1 border-t border-border"></div>
+        </div>
+
+        {/* Opción 2: URL externa */}
+        <div className="space-y-2">
+          <Label className="admin-text text-sm font-medium">URL de imagen externa</Label>
+          <Input
+            name="image_url"
+            value={productData.image_url}
+            onChange={handleImageUrlChange}
+            className="admin-input"
+            placeholder="https://ejemplo.com/imagen.jpg"
+          />
+          <p className="admin-text-muted text-xs">
+            Ingresa la URL de una imagen externa (Imgur, Cloudinary, etc.)
+          </p>
+        </div>
+
+        {/* Vista previa */}
         {imagePreview && (
           <div className="mt-2">
-            <img src={imagePreview} alt="Vista previa" className="h-20 w-20 object-cover rounded-md admin-panel p-1"/>
+            <img src={imagePreview} alt="Vista previa" className="h-20 w-20 object-cover rounded-md admin-panel p-1" />
             <p className="admin-text-muted text-xs mt-1">
-              {imageFile ? 'Vista previa de la nueva imagen.' : 'Imagen actual.'}
+              {imageFile ? 'Imagen subida al servidor' : 'Vista previa de la imagen'}
             </p>
           </div>
         )}

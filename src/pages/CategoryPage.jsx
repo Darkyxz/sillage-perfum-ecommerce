@@ -14,40 +14,40 @@ import { QuantityDialog } from '@/components/QuantityDialog';
 import Breadcrumb from '@/components/Breadcrumb';
 import { ProductSkeletonGrid } from '@/components/ProductSkeleton';
 
-// Mapeo de categorías
+// Mapeo de categorías - Actualizado para MySQL
 const categoryMapping = {
-  'perfume-dama': { 
-    db: 'women', 
+  'perfume-dama': {
+    db: 'Mujer',
     display: 'Perfume Diseñador Dama',
     description: 'Fragancias femeninas de diseñador premium',
     seo: 'Perfumes de diseñador para mujer - Fragancias femeninas premium'
   },
-  'perfume-varon': { 
-    db: 'men', 
+  'perfume-varon': {
+    db: 'Hombre',
     display: 'Perfume Diseñador Varón',
     description: 'Fragancias masculinas de diseñador premium',
     seo: 'Perfumes de diseñador para hombre - Fragancias masculinas premium'
   },
-  'inspirado-nicho': { 
-    db: 'niche', 
+  'inspirado-nicho': {
+    db: 'Nicho',
     display: 'Inspirado Nicho',
     description: 'Fragancias inspiradas en perfumes de nicho exclusivos',
     seo: 'Perfumes inspirados en nicho - Fragancias exclusivas'
   },
-  'body-mist': { 
-    db: 'body', 
+  'body-mist': {
+    db: 'Body Mist',
     display: 'Body Mist',
     description: 'Brumas corporales refrescantes y ligeras',
     seo: 'Body mist - Brumas corporales refrescantes'
   },
-  'by-zachary': { 
-    db: 'zachary', 
+  'by-zachary': {
+    db: 'Zachary',
     display: 'By Zachary',
     description: 'Colección exclusiva de la marca Zachary',
     seo: 'Perfumes By Zachary - Colección exclusiva'
   },
-  'home-spray': { 
-    db: 'home', 
+  'home-spray': {
+    db: 'Home Spray',
     display: 'Home Spray',
     description: 'Aromatizadores para el hogar y espacios',
     seo: 'Home spray - Aromatizadores para el hogar'
@@ -68,7 +68,7 @@ const CategoryPage = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isQuantityDialogOpen, setIsQuantityDialogOpen] = useState(false);
   const { addToCart } = useCart();
-  const { toggleFavorite, isInFavorites } = useFavorites();
+  const { toggleFavorite, isFavorite } = useFavorites();
 
   const categoryInfo = categoryMapping[categorySlug];
 
@@ -98,7 +98,7 @@ const CategoryPage = () => {
 
       const pageToLoad = reset ? 1 : currentPage + 1;
       const result = await productService.getProductsByCategory(categoryInfo.db, pageToLoad, 24);
-      
+
       if (reset) {
         setProducts(result.products);
         setFilteredProducts(result.products);
@@ -107,10 +107,10 @@ const CategoryPage = () => {
         setFilteredProducts(prev => [...prev, ...result.products]);
         setCurrentPage(pageToLoad);
       }
-      
+
       setTotalCount(result.totalCount);
       setHasMore(result.hasMore);
-      
+
     } catch (error) {
       console.error('Error loading category products:', error);
       toast({
@@ -230,7 +230,7 @@ const CategoryPage = () => {
 
       <div className="container mx-auto px-4">
         {/* Breadcrumb */}
-        <Breadcrumb 
+        <Breadcrumb
           items={[
             { label: 'Productos', href: '/productos' },
             { label: categoryInfo.display }
@@ -251,7 +251,7 @@ const CategoryPage = () => {
               </Button>
             </Link>
           </div>
-          
+
           <h1 className="text-4xl font-display font-bold text-transparent bg-clip-text bg-gradient-to-r from-sillage-gold via-sillage-gold-bright to-sillage-gold-dark mb-4">
             {categoryInfo.display}
           </h1>
@@ -339,7 +339,7 @@ const CategoryPage = () => {
                   No se encontraron productos
                 </h3>
                 <p className="text-muted-foreground mb-6">
-                  {searchTerm 
+                  {searchTerm
                     ? `No hay productos que coincidan con "${searchTerm}" en esta categoría.`
                     : 'Esta categoría aún no tiene productos disponibles.'
                   }
@@ -375,13 +375,13 @@ const CategoryPage = () => {
                         </div>
 
                         <button
-                          className={`absolute top-3 right-3 p-2 rounded-full transition-all duration-200 ${isInFavorites(product.id)
+                          className={`absolute top-3 right-3 p-2 rounded-full transition-all duration-200 ${isFavorite(product.id)
                             ? 'bg-sillage-gold/90 opacity-100 shadow-lg'
                             : 'favorite-button-mobile hover:bg-sillage-gold/20 shadow-md'
                             }`}
                           onClick={() => toggleFavorite(product)}
                         >
-                          <Heart className={`h-5 w-5 transition-colors ${isInFavorites(product.id)
+                          <Heart className={`h-5 w-5 transition-colors ${isFavorite(product.id)
                             ? 'text-gold fill-current'
                             : 'text-black hover:text-yellow-100 drop-shadow-sm'
                             }`} />
@@ -411,9 +411,9 @@ const CategoryPage = () => {
                                 Ver Detalles
                               </Button>
                             </Link>
-                            <Button 
-                              size="icon" 
-                              className="bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white" 
+                            <Button
+                              size="icon"
+                              className="bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white"
                               onClick={() => openQuantityDialog(product)}
                             >
                               <ShoppingCart className="h-5 w-5" />

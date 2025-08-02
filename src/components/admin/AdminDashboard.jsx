@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus, BarChart3, Database } from 'lucide-react';
+import { Plus, BarChart3, Database, Trash2 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import OrderStats from './OrderStats';
+import { productService } from '@/lib/productService';
 
 const AdminDashboard = ({ stats, products, onProductAdded, onOpenAddForm }) => {
   const [loadingZacharProducts, setLoadingZacharProducts] = useState(false);
@@ -21,7 +22,7 @@ const AdminDashboard = ({ stats, products, onProductAdded, onOpenAddForm }) => {
       setLoadingZacharProducts(true);
       
       // Importación dinámica para evitar errores de SSR
-      const { loadNewZacharProducts } = await import('@/scripts/loadZacharProducts');
+      const { loadNewZacharProducts } = await import('@/scripts/loadZacharProductsMySQL');
       const newProducts = await loadNewZacharProducts();
       
       toast({
@@ -40,6 +41,47 @@ const AdminDashboard = ({ stats, products, onProductAdded, onOpenAddForm }) => {
       });
     } finally {
       setLoadingZacharProducts(false);
+    }
+  };
+
+  const handleClearProducts = async () => {
+    const confirmed = window.confirm(
+      '⚠️ ¿Estás seguro de que quieres ELIMINAR TODOS los productos?\n\n' +
+      'Esta acción:\n' +
+      '• Eliminará todos los productos de la base de datos\n' +
+      '• No se puede deshacer\n' +
+      '• Los productos desaparecerán de la tienda\n\n' +
+      'Escribe "ELIMINAR" para confirmar'
+    );
+
+    if (!confirmed) return;
+
+    const confirmation = prompt('Escribe "ELIMINAR" para confirmar:');
+    if (confirmation !== 'ELIMINAR') {
+      toast({
+        title: "Operación cancelada",
+        description: "No se eliminaron los productos",
+      });
+      return;
+    }
+
+    try {
+      const result = await productService.clearAllProducts();
+      
+      toast({
+        title: "¡Productos eliminados!",
+        description: `Se eliminaron ${result.deletedCount} productos exitosamente`,
+      });
+      
+      // Recargar la página para refrescar todos los datos
+      window.location.reload();
+    } catch (error) {
+      console.error('Error clearing products:', error);
+      toast({
+        title: "Error al eliminar productos",
+        description: "No se pudieron eliminar los productos. Intenta de nuevo.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -123,6 +165,15 @@ const AdminDashboard = ({ stats, products, onProductAdded, onOpenAddForm }) => {
             >
               <Database className="mr-2 h-4 w-4" />
               {loadingZacharProducts ? 'Agregando...' : 'Agregar Productos Nuevos Zachary'}
+            </Button>
+
+            <Button
+              onClick={handleClearProducts}
+              className="w-full admin-button"
+              variant="destructive"
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              Limpiar Todos los Productos
             </Button>
             
             <Button

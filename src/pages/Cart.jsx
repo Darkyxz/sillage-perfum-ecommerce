@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
-import { 
-  ShoppingCart, 
-  ArrowLeft, 
-  Plus, 
-  Minus, 
-  Trash2, 
-  CreditCard, 
+import {
+  ShoppingCart,
+  ArrowLeft,
+  Plus,
+  Minus,
+  Trash2,
+  CreditCard,
   Loader2,
   CheckCircle,
   XCircle
@@ -25,6 +25,7 @@ const Cart = () => {
   const { items, updateQuantity, removeFromCart, clearCart, getTotalPrice, loading: cartLoading } = useCart();
   const { user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [isLoadingCheckout, setIsLoadingCheckout] = useState(false);
   const [preferenceId, setPreferenceId] = useState(null);
   const [currentOrder, setCurrentOrder] = useState(null);
@@ -52,77 +53,70 @@ const Cart = () => {
     console.log("💰 Total del carrito calculado:", total);
 
     try {
+      // Debug del usuario
+      console.log("👤 Debug usuario completo:", user);
+      console.log("🆔 Debug user.id:", user?.id);
+
+      if (!user?.id) {
+        throw new Error('Usuario no válido o sin ID');
+      }
+
       // Paso 1: Crear el pedido en la base de datos de forma aislada.
       console.log("📦 Intentando crear el pedido en la base de datos...");
       order = await orderService.createOrder(user.id, items, total);
-      
+
       console.log("📄 Pedido creado:", order);
 
-      if (!order || !order.id) {
+      // El backend puede devolver order.id o order.order_id
+      const orderId = order?.id || order?.order_id;
+
+      if (!order || !orderId) {
         console.error("❌ ERROR: El pedido se creó pero no tiene ID.");
         throw new Error("El pedido fue creado, pero no se recibió un ID válido. No se puede continuar con el pago.");
       }
-      setCurrentOrder(order);
-      console.log("✅ Pedido creado exitosamente con ID:", order.id);
 
-      // Paso 2: Crear la preferencia de pago usando el servicio simplificado
-      console.log("💳 Creando preferencia de pago en Mercado Pago...");
+      // Normalizar la estructura del pedido
+      const normalizedOrder = {
+        ...order,
+        id: orderId
+      };
+      setCurrentOrder(normalizedOrder);
+      console.log("✅ Pedido creado exitosamente con ID:", orderId);
+
+      // Paso 2: Proceso de pago temporal (hasta tener credenciales)
+      console.log("� Rediriagiendo a checkout...");
       
-      // --- DEBUG: Simplificando el payload para aislar el problema ---
-      const itemsForMercadoPago = items.map(item => ({
-        title: item.name,
-        description: `SKU: ${item.sku || 'N/A'}`, // Usamos el SKU para identificarlo
-        quantity: item.quantity,
-        unit_price: parseFloat(item.price),
-        currency_id: 'CLP'
-      }));
+      navigate('/checkout', {
+        state: {
+          orderId: orderId
+        }
+      });
+      return; // Salir de la función después de navegar
 
-      const payer = {
-        name: user.user_metadata?.full_name || 'Usuario',
-        surname: 'Cliente',
-        email: user.email,
-      };
+      // Simular procesamiento
+      await new Promise(resolve => setTimeout(resolve, 2000));
 
-      const backUrls = {
-        success: `${window.location.origin}/pago-exitoso`,
-        failure: `${window.location.origin}/pago-fallido`,
-        pending: `${window.location.origin}/pago-pendiente`,
-      };
+      console.log("✅ Pago procesado exitosamente");
 
-      console.log("📋 Datos para Mercado Pago:", {
-        items: itemsForMercadoPago,
-        payer,
-        backUrls,
-        externalReference: order.id.toString()
+      // Limpiar carrito
+      clearCart();
+
+      toast({
+        title: "¡Pedido realizado con éxito!",
+        description: `Tu pedido #${orderId} ha sido procesado. Total: $${total.toLocaleString('es-CL')} CLP`,
       });
 
-      const preference = await createMercadoPagoPreference(
-        itemsForMercadoPago,
-        payer,
-        backUrls,
-        order.id.toString()
-      );
-      
-      console.log("🚀 Preferencia de pago creada:", preference);
-      setPreferenceId(preference.id);
-
-      // Redirigir al usuario a MercadoPago
-      if (preference.sandbox_init_point) {
-        window.location.href = preference.sandbox_init_point;
-      } else if (preference.init_point) {
-        window.location.href = preference.init_point;
-      } else {
-        throw new Error("No se recibió URL de pago de MercadoPago");
-      }
+      console.log("🎉 Proceso de checkout completado exitosamente");
 
     } catch (error) {
       console.error("💥 Error detallado en el proceso de pago:", error);
 
       // Si el error ocurrió después de crear el pedido, intentamos marcarlo como fallido.
-      if (order && order.id) {
-        console.log(`🔥 Marcando pedido ${order.id} como fallido.`);
+      const orderId = order?.id || order?.order_id;
+      if (order && orderId) {
+        console.log(`🔥 Marcando pedido ${orderId} como fallido.`);
         try {
-          await orderService.updateOrderStatus(order.id, 'failed');
+          await orderService.updateOrderStatus(orderId, 'failed');
         } catch (updateError) {
           console.error("Error actualizando estado del pedido:", updateError);
         }
@@ -176,20 +170,20 @@ const Cart = () => {
             <div className="glass-effect w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
               <ShoppingCart className="h-12 w-12 text-primary" />
             </div>
-            
+
             <h1 className="text-3xl font-display font-bold text-foreground mb-4">
               Tu carrito está vacío
             </h1>
-            
+
             <p className="text-muted-foreground text-lg mb-8">
               Descubre nuestra increíble colección de perfumes
             </p>
-            
-              <Link to="/productos">
-                <Button className="bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white font-semibold px-8 py-3 transition-all duration-300">
-                  Explorar Productos
-                </Button>
-              </Link>
+
+            <Link to="/productos">
+              <Button className="bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white font-semibold px-8 py-3 transition-all duration-300">
+                Explorar Productos
+              </Button>
+            </Link>
           </motion.div>
         </div>
       </div>
@@ -216,17 +210,17 @@ const Cart = () => {
             <ArrowLeft className="mr-2 h-4 w-4" />
             Continuar comprando
           </Link>
-          
+
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <h1 className="text-2xl sm:text-4xl font-display font-bold text-foreground">
               Carrito de Compras
             </h1>
-            
+
             <Button
               variant="outline"
               onClick={() => {
                 clearCart();
-                setPreferenceId(null); 
+                setPreferenceId(null);
               }}
               className="glass-effect border-border/30 text-foreground hover:bg-accent/15 w-full sm:w-auto"
             >
@@ -263,7 +257,7 @@ const Cart = () => {
                             </div>
                           )}
                         </div>
-                        
+
                         <div className="flex-1 min-w-0">
                           <h3 className="text-base font-semibold text-foreground truncate">{item.name}</h3>
                           <p className="text-muted-foreground text-sm">{item.brand}</p>
@@ -276,7 +270,7 @@ const Cart = () => {
                             )}
                           </div>
                         </div>
-                        
+
                         <Button
                           variant="outline"
                           size="icon"
@@ -286,7 +280,7 @@ const Cart = () => {
                           <Trash2 className="h-3 w-3" />
                         </Button>
                       </div>
-                      
+
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
                           <Button
@@ -297,11 +291,11 @@ const Cart = () => {
                           >
                             <Minus className="h-3 w-3" />
                           </Button>
-                          
+
                           <span className="text-foreground font-semibold min-w-[2rem] text-center">
                             {item.quantity}
                           </span>
-                          
+
                           <Button
                             variant="outline"
                             size="icon"
@@ -311,7 +305,7 @@ const Cart = () => {
                             <Plus className="h-3 w-3" />
                           </Button>
                         </div>
-                        
+
                         <div className="text-right">
                           <p className="text-primary font-semibold text-sm">
                             ${(parseFloat(item.price) * item.quantity).toLocaleString('es-CL')}
@@ -338,7 +332,7 @@ const Cart = () => {
                           </div>
                         )}
                       </div>
-                      
+
                       <div className="flex-1">
                         <h3 className="text-lg font-semibold text-foreground">{item.name}</h3>
                         <p className="text-muted-foreground text-sm">{item.brand}</p>
@@ -351,7 +345,7 @@ const Cart = () => {
                           )}
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center space-x-2">
                         <Button
                           variant="outline"
@@ -361,11 +355,11 @@ const Cart = () => {
                         >
                           <Minus className="h-4 w-4" />
                         </Button>
-                        
+
                         <span className="text-foreground font-semibold min-w-[2rem] text-center">
                           {item.quantity}
                         </span>
-                        
+
                         <Button
                           variant="outline"
                           size="icon"
@@ -375,7 +369,7 @@ const Cart = () => {
                           <Plus className="h-4 w-4" />
                         </Button>
                       </div>
-                      
+
                       <div className="text-right">
                         <p className="text-primary font-semibold">
                           ${(parseFloat(item.price) * item.quantity).toLocaleString('es-CL')}
@@ -384,7 +378,7 @@ const Cart = () => {
                           ${parseFloat(item.price).toLocaleString('es-CL')} c/u
                         </p>
                       </div>
-                      
+
                       <Button
                         variant="outline"
                         size="icon"
@@ -412,7 +406,7 @@ const Cart = () => {
                   <h2 className="text-2xl font-display font-bold text-foreground mb-6">
                     Resumen del Pedido
                   </h2>
-                  
+
                   <div className="space-y-4 mb-6">
                     <div className="flex justify-between text-muted-foreground">
                       <span>Subtotal ({items.length} productos)</span>
@@ -433,7 +427,7 @@ const Cart = () => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <Button
                     onClick={handleCheckout}
                     disabled={isLoadingCheckout || !user}
@@ -451,11 +445,11 @@ const Cart = () => {
                       </>
                     )}
                   </Button>
-                  
+
                   {!user && (
                     <p className="text-muted-foreground text-sm text-center mt-4">
                       Debes{' '}
-                      <Link 
+                      <Link
                         to="/login"
                         className="text-sillage-gold-dark hover:text-sillage-gold transition-colors relative inline-block"
                       >
@@ -465,7 +459,7 @@ const Cart = () => {
                       {' '}para continuar
                     </p>
                   )}
-                  
+
                   {preferenceId && (
                     <div className="mt-4 p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
                       <div className="flex items-center text-primary">

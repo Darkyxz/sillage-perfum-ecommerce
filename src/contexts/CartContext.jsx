@@ -1,9 +1,7 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from '@/components/ui/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
-import { cartService } from '@/lib/cartService';
-import safeStorage from '@/utils/storage';
+import safeStorage from '@/lib/utils';
 
 const CartContext = createContext();
 
@@ -18,93 +16,42 @@ export const useCart = () => {
 export const CartProvider = ({ children }) => {
   const { user } = useAuth();
   const [items, setItems] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  // Cargar carrito al iniciar o al cambiar de usuario
+  // Cargar carrito al iniciar - solo una vez
   useEffect(() => {
-    const loadCart = async () => {
-      setLoading(true);
-      if (user) {
-        // Usuario logueado
-        const localCart = JSON.parse(safeStorage.getItem('cart') || '[]');
+    const loadCart = () => {
+      try {
+        const cartData = safeStorage.getItem('cart');
+        console.log('🛒 Cargando carrito desde storage:', cartData);
+        const localCart = JSON.parse(cartData || '[]');
+        console.log('🛒 Carrito parseado:', localCart);
         if (localCart.length > 0) {
-          await syncLocalCartToSupabase(localCart);
-          safeStorage.removeItem('cart');
-        } else {
-          await loadSupabaseCart();
+          setItems(localCart);
         }
-      } else {
-        // Usuario invitado
-        const localCart = JSON.parse(safeStorage.getItem('cart') || '[]');
-        setItems(localCart);
-        setLoading(false);
+      } catch (error) {
+        console.error('Error loading cart:', error);
+        setItems([]);
       }
     };
-    loadCart();
-  }, [user]);
+    
+    // Solo cargar si no hay items ya
+    if (items.length === 0) {
+      loadCart();
+    }
+  }, []); // Dependencias vacías para que solo se ejecute una vez
 
-  // Guardar en storage solo si es invitado
+  // Guardar en storage cuando cambie el carrito
   useEffect(() => {
-    if (!user && !loading) {
+    if (!loading) {
+      console.log('🛒 Guardando carrito en storage:', items);
       safeStorage.setItem('cart', JSON.stringify(items));
     }
-  }, [items, user, loading]);
+  }, [items, loading]);
 
-  const loadSupabaseCart = async () => {
-    if (!user) return;
+  const addToCart = (product, quantity = 1) => {
     try {
-      const data = await cartService.getCart(user.id);
-      const mapped = data.map(item => ({
-        ...item.product, // Corregido de 'products' a 'product'
-        quantity: item.quantity,
-      }));
-      setItems(mapped);
-    } catch (error) {
-      console.error("Error loading Supabase cart:", error);
-      toast({ title: 'Error', description: 'No se pudo cargar el carrito', variant: 'destructive' });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const syncLocalCartToSupabase = async (localItems) => {
-    if (!user) return;
-    setLoading(true);
-    try {
-      const remoteCart = await cartService.getCart(user.id);
-      
-      for (const localItem of localItems) {
-        // Buscar por product_id (cada variante tiene su propio ID único)
-        const remoteItem = remoteCart.find(item => item.product_id === localItem.id);
-        if (remoteItem) {
-          // Si existe la misma variante, actualiza la cantidad (suma)
-          const newQuantity = remoteItem.quantity + localItem.quantity;
-          await cartService.updateQuantity(user.id, localItem.id, newQuantity);
-        } else {
-          // Si no existe esta variante específica, la añade
-          await cartService.addToCart(user.id, localItem.id, localItem.quantity);
-        }
-      }
-      await loadSupabaseCart(); // Cargar el carrito fusionado
-    } catch (error) {
-      console.error("Error syncing cart:", error);
-      toast({ title: 'Error', description: 'No se pudo sincronizar el carrito', variant: 'destructive' });
-      setLoading(false);
-    }
-  };
-
-  const addToCart = async (product, quantity = 1) => {
-    if (user) {
-      try {
-        await cartService.addToCart(user.id, product.id, quantity);
-        await loadSupabaseCart();
-      } catch (error) {
-        console.error("Error adding to Supabase cart:", error);
-        toast({ title: 'Error', description: 'No se pudo agregar al carrito', variant: 'destructive' });
-      }
-    } else {
       setItems(prevItems => {
-        // Identificar producto único por id (que ya incluye la variante específica)
         const existingItem = prevItems.find(item => item.id === product.id);
         if (existingItem) {
           return prevItems.map(item =>
@@ -115,75 +62,94 @@ export const CartProvider = ({ children }) => {
         }
         return [...prevItems, { ...product, quantity }];
       });
+
+      toast({
+        title: "Producto agregado",
+        description: `${product.name} se agregó al carrito`,
+      });
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      toast({ 
+        title: 'Error', 
+        description: 'No se pudo agregar al carrito', 
+        variant: 'destructive' 
+      });
     }
   };
 
-  const removeFromCart = async (productId) => {
-    if (user) {
-      try {
-        await cartService.removeFromCart(user.id, productId);
-        setItems(prev => prev.filter(item => item.id !== productId));
-      } catch (error) {
-        console.error("Error removing from Supabase cart:", error);
-        toast({ title: 'Error', description: 'No se pudo eliminar del carrito', variant: 'destructive' });
-      }
-    } else {
+  const removeFromCart = (productId) => {
+    try {
       setItems(prev => prev.filter(item => item.id !== productId));
+      toast({
+        title: "Producto eliminado",
+        description: "El producto se eliminó del carrito",
+      });
+    } catch (error) {
+      console.error("Error removing from cart:", error);
+      toast({ 
+        title: 'Error', 
+        description: 'No se pudo eliminar del carrito', 
+        variant: 'destructive' 
+      });
     }
   };
 
-  const updateQuantity = async (productId, quantity) => {
-     if (quantity <= 0) {
-      removeFromCart(productId);
-      return;
-    }
-    if (user) {
-      try {
-        await cartService.updateQuantity(user.id, productId, quantity);
-         setItems(prevItems =>
-          prevItems.map(item =>
-            item.id === productId ? { ...item, quantity } : item
-          )
-        );
-      } catch (error) {
-        console.error("Error updating Supabase cart quantity:", error);
-        toast({ title: 'Error', description: 'No se pudo actualizar la cantidad', variant: 'destructive' });
+  const updateQuantity = (productId, quantity) => {
+    try {
+      if (quantity <= 0) {
+        removeFromCart(productId);
+        return;
       }
-    } else {
+
       setItems(prevItems =>
         prevItems.map(item =>
           item.id === productId ? { ...item, quantity } : item
         )
       );
+    } catch (error) {
+      console.error("Error updating cart quantity:", error);
+      toast({ 
+        title: 'Error', 
+        description: 'No se pudo actualizar la cantidad', 
+        variant: 'destructive' 
+      });
     }
   };
   
-  const clearCart = async () => {
-    if (user) {
-      try {
-        await cartService.clearCart(user.id);
-        setItems([]);
-      } catch (error) {
-        console.error("Error clearing Supabase cart:", error);
-        toast({ title: 'Error', description: 'No se pudo vaciar el carrito', variant: 'destructive' });
-      }
-    } else {
+  const clearCart = () => {
+    try {
       setItems([]);
+      toast({
+        title: "Carrito vaciado",
+        description: "Se eliminaron todos los productos del carrito",
+      });
+    } catch (error) {
+      console.error("Error clearing cart:", error);
+      toast({ 
+        title: 'Error', 
+        description: 'No se pudo vaciar el carrito', 
+        variant: 'destructive' 
+      });
     }
   };
 
-  const getTotalItems = () => items.reduce((total, item) => total + (item.quantity || 0), 0);
+  const getTotalItems = () => {
+    return items.reduce((total, item) => total + (item.quantity || 0), 0);
+  };
   
-  const getTotalPrice = () => items.reduce((total, item) => {
-    const price = parseFloat(item.price);
-    const quantity = parseInt(item.quantity, 10);
-    if (!isNaN(price) && !isNaN(quantity)) {
-      return total + price * quantity;
-    }
-    return total;
-  }, 0);
+  const getTotalPrice = () => {
+    return items.reduce((total, item) => {
+      const price = parseFloat(item.price);
+      const quantity = parseInt(item.quantity, 10);
+      if (!isNaN(price) && !isNaN(quantity)) {
+        return total + price * quantity;
+      }
+      return total;
+    }, 0);
+  };
 
-  // Función helper para obtener información del carrito agrupada por producto base
+  const getCartTotal = () => getTotalPrice();
+
   const getCartSummary = () => {
     const grouped = {};
     items.forEach(item => {
@@ -219,6 +185,7 @@ export const CartProvider = ({ children }) => {
     clearCart,
     getTotalItems,
     getTotalPrice,
+    getCartTotal,
     getCartSummary,
   };
 
