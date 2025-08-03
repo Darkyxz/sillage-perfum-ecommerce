@@ -112,7 +112,24 @@ class ApiClient {
 
   // Métodos de autenticación
   async login(email, password) {
-    const response = await this.post('/auth/login', { email, password });
+    let response;
+    if (this.baseURL.includes('api-proxy.php')) {
+      // Usar proxy para login
+      const url = `${this.baseURL}?${new URLSearchParams({ path: 'api/auth/login' }).toString()}`;
+      const config = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      };
+      const res = await fetch(url, config);
+      response = await res.json();
+    } else {
+      // Método directo al backend
+      response = await this.post('/auth/login', { email, password });
+    }
+    
     if (response.success && response.data.token) {
       this.setToken(response.data.token);
     }
@@ -120,7 +137,24 @@ class ApiClient {
   }
 
   async register(email, password, full_name) {
-    const response = await this.post('/auth/register', { email, password, full_name });
+    let response;
+    if (this.baseURL.includes('api-proxy.php')) {
+      // Usar proxy para register
+      const url = `${this.baseURL}?${new URLSearchParams({ path: 'api/auth/register' }).toString()}`;
+      const config = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password, full_name }),
+      };
+      const res = await fetch(url, config);
+      response = await res.json();
+    } else {
+      // Método directo al backend
+      response = await this.post('/auth/register', { email, password, full_name });
+    }
+    
     if (response.success && response.data.token) {
       this.setToken(response.data.token);
     }
@@ -129,7 +163,21 @@ class ApiClient {
 
   async logout() {
     try {
-      await this.post('/auth/logout');
+      if (this.baseURL.includes('api-proxy.php')) {
+        // Usar proxy para logout
+        const url = `${this.baseURL}?${new URLSearchParams({ path: 'api/auth/logout' }).toString()}`;
+        const config = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(this.token && { Authorization: `Bearer ${this.token}` }),
+          },
+        };
+        await fetch(url, config);
+      } else {
+        // Método directo al backend
+        await this.post('/auth/logout');
+      }
     } catch (error) {
       console.error('Logout error:', error);
     } finally {
@@ -140,7 +188,23 @@ class ApiClient {
   async getCurrentUser() {
     if (!this.token) return null;
     try {
-      const response = await this.get('/auth/me');
+      let response;
+      if (this.baseURL.includes('api-proxy.php')) {
+        // Usar proxy para getCurrentUser
+        const url = `${this.baseURL}?${new URLSearchParams({ path: 'api/auth/me' }).toString()}`;
+        const config = {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${this.token}`,
+          },
+        };
+        const res = await fetch(url, config);
+        response = await res.json();
+      } else {
+        // Método directo al backend
+        response = await this.get('/auth/me');
+      }
       return response.success ? response.data : null;
     } catch (error) {
       console.error('Get current user error:', error);
@@ -150,18 +214,38 @@ class ApiClient {
 
   // Métodos de productos
   async getProducts(params = {}) {
-    const queryString = new URLSearchParams(params).toString();
-    const url = queryString ? `/products?${queryString}` : '/products';
-    return this.publicRequest(url);
+    // Si estamos usando el proxy, los parámetros deben ir como query params separados
+    if (this.baseURL.includes('api-proxy.php')) {
+      const allParams = { path: 'api/products', ...params };
+      const queryString = new URLSearchParams(allParams).toString();
+      return this.publicRequest(`?${queryString}`);
+    } else {
+      // Comportamiento normal para URLs directas del backend
+      const queryString = new URLSearchParams(params).toString();
+      const url = queryString ? `/products?${queryString}` : '/products';
+      return this.publicRequest(url);
+    }
   }
 
   async getFeaturedProducts(limit = 6) {
-    const queryString = new URLSearchParams({ limit }).toString();
-    return this.publicRequest(`/products/featured?${queryString}`);
+    if (this.baseURL.includes('api-proxy.php')) {
+      const allParams = { path: 'api/products/featured', limit };
+      const queryString = new URLSearchParams(allParams).toString();
+      return this.publicRequest(`?${queryString}`);
+    } else {
+      const queryString = new URLSearchParams({ limit }).toString();
+      return this.publicRequest(`/products/featured?${queryString}`);
+    }
   }
 
   async getProductBySku(sku) {
-    return this.publicRequest(`/products/${sku}`);
+    if (this.baseURL.includes('api-proxy.php')) {
+      const allParams = { path: `api/products/${sku}` };
+      const queryString = new URLSearchParams(allParams).toString();
+      return this.publicRequest(`?${queryString}`);
+    } else {
+      return this.publicRequest(`/products/${sku}`);
+    }
   }
 
   async createProduct(productData) {

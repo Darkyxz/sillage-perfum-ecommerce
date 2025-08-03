@@ -103,26 +103,6 @@ const Testimonials = () => {
           ))}
         </div>
 
-        {/* Estadísticas de confianza */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 md:mt-16 text-center max-w-4xl mx-auto"
-        >
-          <div className="bg-background/95 border border-border rounded-lg p-6 shadow-sm hover:shadow-md transition-all hover:border-primary/50">
-            <div className="text-3xl font-bold text-foreground">1100+</div>
-            <div className="text-muted-foreground text-sm mt-1">Clientes Felices</div>
-          </div>
-          <div className="bg-background/95 border border-border rounded-lg p-6 shadow-sm hover:shadow-md transition-all hover:border-primary/50">
-            <div className="text-3xl font-bold text-foreground">24h</div>
-            <div className="text-muted-foreground text-sm mt-1">Envío Express</div>
-          </div>
-          <div className="bg-background/95 border border-border rounded-lg p-6 shadow-sm hover:shadow-md transition-all hover:border-primary/50">
-            <div className="text-3xl font-bold text-foreground">6.9★</div>
-            <div className="text-muted-foreground text-sm mt-1">Calificación Promedio</div>
-          </div>
-        </motion.div>
       </div>
     </section>
   );

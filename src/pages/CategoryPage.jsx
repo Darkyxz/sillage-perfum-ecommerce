@@ -41,13 +41,15 @@ const categoryMapping = {
     seo: 'Body mist - Brumas corporales refrescantes'
   },
   'by-zachary': {
-    db: 'Zachary',
+    // Filtrar por brand en lugar de category
+    filterBy: 'brand',
+    db: 'Zachary Perfumes',
     display: 'By Zachary',
     description: 'Colección exclusiva de la marca Zachary',
     seo: 'Perfumes By Zachary - Colección exclusiva'
   },
   'home-spray': {
-    db: 'Home Spray',
+    db: 'Hogar',
     display: 'Home Spray',
     description: 'Aromatizadores para el hogar y espacios',
     seo: 'Home spray - Aromatizadores para el hogar'
@@ -97,7 +99,43 @@ const CategoryPage = () => {
       }
 
       const pageToLoad = reset ? 1 : currentPage + 1;
-      const result = await productService.getProductsByCategory(categoryInfo.db, pageToLoad, 24);
+      
+      let result;
+      
+      // Manejar filtros especiales
+      if (categorySlug === 'by-zachary') {
+        // Para by-zachary, obtener todos los productos y filtrar por brand
+        const allProductsResult = await productService.getAllProducts(pageToLoad, 100);
+        const zacharyProducts = allProductsResult.products.filter(product => 
+          product.brand === 'Zachary Perfumes' && 
+          (product.concentration === 'Eau de Parfum' || product.sku.startsWith('ZP'))
+        );
+        
+        result = {
+          products: zacharyProducts,
+          totalCount: zacharyProducts.length,
+          currentPage: pageToLoad,
+          totalPages: Math.ceil(zacharyProducts.length / 24),
+          hasMore: zacharyProducts.length > pageToLoad * 24
+        };
+      } else if (categorySlug === 'body-mist') {
+        // Para body-mist, filtrar por concentración
+        const allProductsResult = await productService.getAllProducts(pageToLoad, 100);
+        const bodyMistProducts = allProductsResult.products.filter(product => 
+          product.concentration === 'Body Mist' || product.category === 'Body Mist'
+        );
+        
+        result = {
+          products: bodyMistProducts,
+          totalCount: bodyMistProducts.length,
+          currentPage: pageToLoad,
+          totalPages: Math.ceil(bodyMistProducts.length / 24),
+          hasMore: bodyMistProducts.length > pageToLoad * 24
+        };
+      } else {
+        // Para otras categorías, usar el método normal
+        result = await productService.getProductsByCategory(categoryInfo.db, pageToLoad, 24);
+      }
 
       if (reset) {
         setProducts(result.products);

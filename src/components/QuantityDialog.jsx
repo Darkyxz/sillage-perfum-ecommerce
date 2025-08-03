@@ -1,9 +1,17 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Dialog, DialogPortal, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { Button } from '@/components/ui/button';
 import { Minus, Plus, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import ProductSizeSelector from '@/components/ProductSizeSelector';
+
+// Precios fijos para todos los productos Zachary
+const FIXED_PRICES = {
+  '30ml': 9000,   // $9,000 CLP
+  '50ml': 14000,  // $14,000 CLP  
+  '100ml': 18000  // $18,000 CLP
+};
 
 // Componente DialogContent optimizado fuera del render
 const CustomDialogContent = React.forwardRef(({ className, children, ...props }, ref) => (
@@ -24,14 +32,37 @@ const CustomDialogContent = React.forwardRef(({ className, children, ...props },
 
 export const QuantityDialog = React.memo(({ open, onOpenChange, product, onAddToCart }) => {
   const [quantity, setQuantity] = useState(1);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
+  // Inicializar producto seleccionado cuando se abre el dialog
+  useEffect(() => {
+    if (product && open) {
+      setSelectedProduct({
+        ...product,
+        size: product.size || '50ml',
+        price: FIXED_PRICES[product.size || '50ml']
+      });
+    }
+  }, [product, open]);
 
   const handleAddToCart = useCallback(() => {
-    if (product) {
-      onAddToCart(product, quantity);
+    if (selectedProduct) {
+      onAddToCart(selectedProduct, quantity);
       onOpenChange(false);
       setQuantity(1); // Reset quantity after adding
     }
-  }, [onAddToCart, product, quantity, onOpenChange]);
+  }, [onAddToCart, selectedProduct, quantity, onOpenChange]);
+
+  const handleSizeChange = useCallback((updatedProduct, newSize) => {
+    setSelectedProduct({
+      ...product,
+      size: newSize,
+      price: FIXED_PRICES[newSize],
+      sku: product.sku.includes('-') 
+        ? product.sku.replace(/-\d+ML$/i, `-${newSize.toUpperCase()}`)
+        : `${product.sku}-${newSize.toUpperCase()}`
+    });
+  }, [product]);
 
   const incrementQuantity = useCallback((e) => {
     e.preventDefault();
@@ -49,9 +80,7 @@ export const QuantityDialog = React.memo(({ open, onOpenChange, product, onAddTo
     onOpenChange(false);
   }, [onOpenChange]);
 
-  if (!product) return null;
-
-
+  if (!product || !selectedProduct) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -78,17 +107,49 @@ export const QuantityDialog = React.memo(({ open, onOpenChange, product, onAddTo
 
           {/* Contenido */}
           <div className="relative z-10 p-8">
-            <DialogHeader className="text-center mb-8">
+            <DialogHeader className="text-center mb-6">
               <DialogTitle className="text-2xl font-display font-bold text-transparent bg-clip-text bg-gradient-to-r from-sillage-gold via-sillage-gold-bright to-sillage-gold-dark mb-3">
                 {product.name}
               </DialogTitle>
               <DialogDescription className="text-sillage-gold-dark/80 text-base leading-relaxed">
-                Selecciona la cantidad que deseas agregar al carrito.
+                Selecciona el tamaño y cantidad que deseas agregar al carrito.
               </DialogDescription>
             </DialogHeader>
 
+            {/* Selector de tamaño */}
+            <div className="mb-6">
+              <ProductSizeSelector
+                baseProduct={product}
+                allSizes={['30ml', '50ml', '100ml']}
+                selectedSize={selectedProduct.size}
+                onSizeChange={handleSizeChange}
+                variant="dropdown"
+                className="w-full"
+              />
+            </div>
+
+            {/* Información del producto seleccionado */}
+            <div className="bg-sillage-gold/5 rounded-lg p-4 border border-sillage-gold/20 mb-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-foreground">
+                    {selectedProduct.size} seleccionado
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    SKU: {selectedProduct.sku}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-xl font-bold text-sillage-gold-dark">
+                    ${selectedProduct.price?.toLocaleString('es-CL')}
+                  </p>
+                  <p className="text-xs text-muted-foreground">CLP</p>
+                </div>
+              </div>
+            </div>
+
             {/* Selector de cantidad */}
-            <div className="py-4 flex items-center justify-center space-x-4">
+            <div className="py-4 flex items-center justify-center space-x-4 mb-6">
               <Button
                 type="button"
                 variant="outline"
@@ -116,8 +177,16 @@ export const QuantityDialog = React.memo(({ open, onOpenChange, product, onAddTo
               </Button>
             </div>
 
+            {/* Precio total */}
+            <div className="text-center mb-6">
+              <p className="text-sm text-muted-foreground">Total:</p>
+              <p className="text-2xl font-bold text-sillage-gold-dark">
+                ${(selectedProduct.price * quantity).toLocaleString('es-CL')} CLP
+              </p>
+            </div>
+
             {/* Botones de acción */}
-            <DialogFooter className="space-y-4 pt-4">
+            <DialogFooter className="space-y-4">
               <Button
                 onClick={handleAddToCart}
                 className="w-full bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white font-bold py-4 rounded-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
@@ -138,4 +207,4 @@ export const QuantityDialog = React.memo(({ open, onOpenChange, product, onAddTo
       </CustomDialogContent>
     </Dialog>
   );
-}); 
+});

@@ -9,6 +9,7 @@ import { useCart } from '@/contexts/CartContext';
 import { useFavorites } from '@/contexts/FavoritesContext';
 import { toast } from '@/components/ui/use-toast';
 import { productService } from '@/lib/productService';
+import ProductSizeSelector from '@/components/ProductSizeSelector';
 
 // Importar datos de productos para información adicional
 const zacharProducts = [
@@ -30,10 +31,11 @@ const ProductDetail = () => {
   const { sku } = useParams();
   const navigate = useNavigate();
   const [product, setProduct] = useState(null);
+  const [allVariants, setAllVariants] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
-  const [selectedSize, setSelectedSize] = useState('100ml');
   const [isNotesOpen, setIsNotesOpen] = useState(false);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const { addToCart } = useCart();
@@ -56,9 +58,16 @@ const ProductDetail = () => {
           return;
         }
 
-        const productData = await productService.getProductBySku(sku);
+        // Extraer SKU base (ej: ZP42H-30ML -> ZP42H)
+        const baseSKU = sku.replace(/-\d+ML$/i, '');
+        
+        // Obtener todos los productos y filtrar por SKU base
+        const allProductsResponse = await productService.getAllProducts(1, 200);
+        const filteredVariants = allProductsResponse.products.filter(p => 
+          p.sku.replace(/-\d+ML$/i, '') === baseSKU
+        );
 
-        if (!productData) {
+        if (!filteredVariants || filteredVariants.length === 0) {
           console.error('Producto no encontrado para SKU:', sku);
           toast({
             title: "Producto no encontrado",
@@ -68,6 +77,21 @@ const ProductDetail = () => {
           navigate('/productos');
           return;
         }
+
+        // Ordenar variantes por tamaño
+        const sortedVariants = filteredVariants.sort((a, b) => {
+          const sizeOrder = { '30ml': 1, '50ml': 2, '100ml': 3 };
+          return sizeOrder[a.size] - sizeOrder[b.size];
+        });
+
+        setAllVariants(sortedVariants);
+        
+        // Buscar el producto específico o usar el de 50ml por defecto
+        const specificProduct = filteredVariants.find(p => p.sku === sku) || 
+                               filteredVariants.find(p => p.size === '50ml') || 
+                               filteredVariants[0];
+
+        const productData = specificProduct;
 
         // Procesar las notas de fragancia desde la base de datos
         let notes = {
@@ -179,6 +203,7 @@ const ProductDetail = () => {
         };
 
         setProduct(processedProduct);
+        setSelectedProduct(processedProduct);
       } catch (error) {
         console.error('Error fetching product:', error);
         toast({
@@ -196,6 +221,30 @@ const ProductDetail = () => {
       fetchProduct();
     }
   }, [sku, navigate]);
+
+  // Función para manejar el cambio de tamaño
+  const handleSizeChange = (updatedProduct, newSize) => {
+    // Buscar la variante correspondiente al nuevo tamaño
+    const newVariant = allVariants.find(variant => variant.size === newSize);
+    if (newVariant) {
+      // Procesar el nuevo producto con la misma estructura
+      const updatedVariant = {
+        ...newVariant,
+        images: product.images, // Mantener las mismas imágenes
+        notes: product.notes, // Mantener las mismas notas
+        fragrance_profile: product.fragrance_profile,
+        rating: product.rating,
+        reviews: product.reviews,
+        concentration: product.concentration,
+        longDescription: product.longDescription,
+        duration: product.duration,
+        originalInspiration: product.originalInspiration,
+        stock_quantity: newVariant.stock_quantity || 0,
+        in_stock: newVariant.in_stock !== undefined ? newVariant.in_stock : true
+      };
+      setSelectedProduct(updatedVariant);
+    }
+  };
 
   const handleAddToCart = () => {
     if (!product.in_stock) {
@@ -338,12 +387,12 @@ const ProductDetail = () => {
 
             {/* Product Name */}
             <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground leading-tight">
-              {product.name} | {product.sku}
+              {product.name}
             </h1>
 
             {/* Price */}
             <div className="text-3xl font-bold text-foreground">
-              ${product.price?.toLocaleString('es-CL') || '0'}
+              ${selectedProduct?.price?.toLocaleString('es-CL') || '0'}
             </div>
             <p className="text-sm text-muted-foreground">
               Impuesto incluido. <span className="underline cursor-pointer">gastos de envío</span> se calculan en la pantalla de pagos.
@@ -382,27 +431,19 @@ const ProductDetail = () => {
             {/* Golden Divider */}
             <div className="border-t border-sillage-gold-dark my-6"></div>
 
-            {/* Size Selection */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <label className="text-sm font-medium text-foreground">Tamaño: {selectedSize}</label>
-                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+            {/* Size Selection with ProductSizeSelector */}
+            {allVariants.length > 0 && (
+              <div className="space-y-4">
+                <ProductSizeSelector
+                  baseProduct={product}
+                  allSizes={allVariants.map(v => v.size)}
+                  selectedSize={selectedProduct?.size}
+                  onSizeChange={handleSizeChange}
+                  variant="dropdown"
+                  className="w-full"
+                />
               </div>
-              <div className="flex space-x-2">
-                {['30 ml', '50 ml', '100 ml'].map((size) => (
-                  <button
-                    key={size}
-                    onClick={() => setSelectedSize(size)}
-                    className={`px-4 py-2 text-sm border rounded-md transition-all ${selectedSize === size
-                      ? 'bg-black text-white border-black'
-                      : 'bg-white text-foreground border-border hover:border-sillage-gold-dark'
-                      }`}
-                  >
-                    {size}
-                  </button>
-                ))}
-              </div>
-            </div>
+            )}
 
             {/* Quantity */}
             <div className="space-y-3">
