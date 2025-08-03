@@ -21,7 +21,28 @@ class ApiClient {
 
   // Método principal para hacer requests
   async request(endpoint, options = {}) {
-    const url = `${this.baseURL}${endpoint}`;
+    let url;
+    
+    // Si estamos usando el proxy, necesitamos formatear la URL de manera diferente
+    if (this.baseURL.includes('api-proxy.php')) {
+      // Remover la barra inicial del endpoint si existe
+      const cleanEndpoint = endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
+      // Construir la ruta completa para el proxy
+      const path = `api/${cleanEndpoint}`;
+      
+      // Si no hay parámetros en el endpoint, usar la sintaxis con ?path=
+      if (!endpoint.includes('?')) {
+        url = `${this.baseURL}?path=${encodeURIComponent(path)}`;
+      } else {
+        // Si hay parámetros, separarlos
+        const [basePath, queryString] = endpoint.split('?');
+        const cleanBasePath = basePath.startsWith('/') ? basePath.substring(1) : basePath;
+        url = `${this.baseURL}?path=${encodeURIComponent(`api/${cleanBasePath}`)}&${queryString}`;
+      }
+    } else {
+      // URL normal para conexión directa
+      url = `${this.baseURL}${endpoint}`;
+    }
     
     const config = {
       headers: {
@@ -58,7 +79,28 @@ class ApiClient {
 
   // Método para hacer requests públicos (sin token)
   async publicRequest(endpoint, options = {}) {
-    const url = `${this.baseURL}${endpoint}`;
+    let url;
+    
+    // Si estamos usando el proxy, necesitamos formatear la URL de manera diferente
+    if (this.baseURL.includes('api-proxy.php')) {
+      // Remover la barra inicial del endpoint si existe
+      const cleanEndpoint = endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
+      // Construir la ruta completa para el proxy
+      const path = `api/${cleanEndpoint}`;
+      
+      // Si no hay parámetros en el endpoint, usar la sintaxis con ?path=
+      if (!endpoint.includes('?')) {
+        url = `${this.baseURL}?path=${encodeURIComponent(path)}`;
+      } else {
+        // Si hay parámetros, separarlos
+        const [basePath, queryString] = endpoint.split('?');
+        const cleanBasePath = basePath.startsWith('/') ? basePath.substring(1) : basePath;
+        url = `${this.baseURL}?path=${encodeURIComponent(`api/${cleanBasePath}`)}&${queryString}`;
+      }
+    } else {
+      // URL normal para conexión directa
+      url = `${this.baseURL}${endpoint}`;
+    }
     
     const config = {
       headers: {

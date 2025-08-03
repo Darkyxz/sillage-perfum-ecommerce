@@ -40,35 +40,61 @@ const OrderManagementAdmin = () => {
         }
     };
 
-    const handleStatusChange = async (orderId, newStatus) => {
+    const handleStatusChange = async (orderId, newStatus, type = 'order') => {
         try {
             setUpdatingStatus(orderId);
-            await orderService.updateOrderStatusAdmin(orderId, newStatus);
-
-            // Actualizar el pedido en la lista
-            setOrders(prevOrders =>
-                prevOrders.map(order =>
-                    order.id === orderId
-                        ? { ...order, status: newStatus, updated_at: new Date().toISOString() }
-                        : order
-                )
-            );
-
-            // Si hay un pedido seleccionado, actualizarlo también
-            if (selectedOrder && selectedOrder.id === orderId) {
-                setSelectedOrder(prev => ({ ...prev, status: newStatus }));
+            
+            if (type === 'payment') {
+                // Actualizar payment_status
+                await orderService.updateOrderStatusAdmin(orderId, null, newStatus);
+                
+                // Actualizar el pedido en la lista
+                setOrders(prevOrders =>
+                    prevOrders.map(order =>
+                        order.id === orderId
+                            ? { ...order, payment_status: newStatus, updated_at: new Date().toISOString() }
+                            : order
+                    )
+                );
+                
+                // Si hay un pedido seleccionado, actualizarlo también
+                if (selectedOrder && selectedOrder.id === orderId) {
+                    setSelectedOrder(prev => ({ ...prev, payment_status: newStatus }));
+                }
+                
+                toast({
+                    title: "Estado de pago actualizado",
+                    description: `El pago del pedido #${orderId} ahora está ${getPaymentStatusText(newStatus)}`
+                });
+            } else {
+                // Actualizar status normal
+                await orderService.updateOrderStatusAdmin(orderId, newStatus);
+                
+                // Actualizar el pedido en la lista
+                setOrders(prevOrders =>
+                    prevOrders.map(order =>
+                        order.id === orderId
+                            ? { ...order, status: newStatus, updated_at: new Date().toISOString() }
+                            : order
+                    )
+                );
+                
+                // Si hay un pedido seleccionado, actualizarlo también
+                if (selectedOrder && selectedOrder.id === orderId) {
+                    setSelectedOrder(prev => ({ ...prev, status: newStatus }));
+                }
+                
+                toast({
+                    title: "Estado actualizado",
+                    description: `El pedido #${orderId} ahora está ${getStatusText(newStatus)}`
+                });
             }
-
-            toast({
-                title: "Estado actualizado",
-                description: `El pedido #${orderId} ahora está ${getStatusText(newStatus)}`
-            });
 
         } catch (error) {
             console.error('Error updating status:', error);
             toast({
                 title: "Error",
-                description: "No se pudo actualizar el estado del pedido",
+                description: "No se pudo actualizar el estado",
                 variant: "destructive"
             });
         } finally {
@@ -114,9 +140,40 @@ const OrderManagementAdmin = () => {
             'processing': 'bg-orange-100 text-orange-800',
             'shipped': 'bg-purple-100 text-purple-800',
             'delivered': 'bg-green-100 text-green-800',
-            'cancelled': 'bg-red-100 text-red-800'
+            'cancelled': 'bg-red-100 text-red-800',
+            'paid': 'bg-green-100 text-green-800',
+            'failed': 'bg-red-100 text-red-800',
+            'refunded': 'bg-gray-100 text-gray-800'
         };
         return colorMap[status] || 'bg-gray-100 text-gray-800';
+    };
+
+    const getPaymentStatusIcon = (status) => {
+        switch (status) {
+            case 'pending':
+                return <Clock className="w-4 h-4 text-yellow-500" />;
+            case 'processing':
+                return <CreditCard className="w-4 h-4 text-blue-500" />;
+            case 'paid':
+                return <CheckCircle className="w-4 h-4 text-green-500" />;
+            case 'failed':
+                return <XCircle className="w-4 h-4 text-red-500" />;
+            case 'refunded':
+                return <XCircle className="w-4 h-4 text-gray-500" />;
+            default:
+                return <Clock className="w-4 h-4 text-gray-500" />;
+        }
+    };
+
+    const getPaymentStatusText = (status) => {
+        const statusMap = {
+            'pending': 'Pago Pendiente',
+            'processing': 'Procesando Pago',
+            'paid': 'Pagado',
+            'failed': 'Pago Fallido',
+            'refunded': 'Reembolsado'
+        };
+        return statusMap[status] || status;
     };
 
     const formatDate = (dateString) => {
@@ -273,6 +330,14 @@ const OrderManagementAdmin = () => {
                                                         {getStatusText(order.status)}
                                                     </Badge>
                                                 </div>
+                                                {order.payment_status && (
+                                                    <div className="flex items-center gap-2">
+                                                        {getPaymentStatusIcon(order.payment_status)}
+                                                        <Badge className={getStatusColor(order.payment_status)}>
+                                                            {getPaymentStatusText(order.payment_status)}
+                                                        </Badge>
+                                                    </div>
+                                                )}
                                             </div>
 
                                             {/* Información del cliente */}
@@ -328,23 +393,42 @@ const OrderManagementAdmin = () => {
 
                                         {/* Acciones */}
                                         <div className="flex flex-col sm:flex-row gap-3">
-                                            <Select
-                                                value={order.status}
-                                                onValueChange={(newStatus) => handleStatusChange(order.id, newStatus)}
-                                                disabled={updatingStatus === order.id}
-                                            >
-                                                <SelectTrigger className="w-40">
-                                                    <SelectValue />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="pending">Pendiente</SelectItem>
-                                                    <SelectItem value="confirmed">Confirmado</SelectItem>
-                                                    <SelectItem value="processing">Procesando</SelectItem>
-                                                    <SelectItem value="shipped">Enviado</SelectItem>
-                                                    <SelectItem value="delivered">Entregado</SelectItem>
-                                                    <SelectItem value="cancelled">Cancelado</SelectItem>
-                                                </SelectContent>
-                                            </Select>
+                                            <div className="flex flex-col gap-2">
+                                                <Select
+                                                    value={order.status}
+                                                    onValueChange={(newStatus) => handleStatusChange(order.id, newStatus)}
+                                                    disabled={updatingStatus === order.id}
+                                                >
+                                                    <SelectTrigger className="w-40">
+                                                        <SelectValue />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="pending">Pendiente</SelectItem>
+                                                        <SelectItem value="confirmed">Confirmado</SelectItem>
+                                                        <SelectItem value="processing">Procesando</SelectItem>
+                                                        <SelectItem value="shipped">Enviado</SelectItem>
+                                                        <SelectItem value="delivered">Entregado</SelectItem>
+                                                        <SelectItem value="cancelled">Cancelado</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                                
+                                                <Select
+                                                    value={order.payment_status || 'pending'}
+                                                    onValueChange={(newStatus) => handleStatusChange(order.id, newStatus, 'payment')}
+                                                    disabled={updatingStatus === order.id}
+                                                >
+                                                    <SelectTrigger className="w-40">
+                                                        <SelectValue />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="pending">Pago Pendiente</SelectItem>
+                                                        <SelectItem value="processing">Procesando Pago</SelectItem>
+                                                        <SelectItem value="paid">Pagado</SelectItem>
+                                                        <SelectItem value="failed">Pago Fallido</SelectItem>
+                                                        <SelectItem value="refunded">Reembolsado</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
 
                                             <Button
                                                 variant="outline"
