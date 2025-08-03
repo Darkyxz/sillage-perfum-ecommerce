@@ -22,15 +22,18 @@ if (empty($apiPath)) {
 $vercelBaseUrl = 'https://sillage-backend-m5hzs0ps5-sillageperfums-projects.vercel.app';
 $fullUrl = $vercelBaseUrl . '/' . ltrim($apiPath, '/');
 
-// Add query parameters if they exist
+// Add query parameters if they exist (excluding 'path')
 if (!empty($_SERVER['QUERY_STRING'])) {
-    $queryString = $_SERVER['QUERY_STRING'];
-    // Remove the 'path' parameter from query string
-    $queryString = preg_replace('/&?path=[^&]*/', '', $queryString);
-    $queryString = ltrim($queryString, '&');
+    // Parse query string into array
+    parse_str($_SERVER['QUERY_STRING'], $queryParams);
     
-    if (!empty($queryString)) {
-        $fullUrl .= '?' . $queryString;
+    // Remove the 'path' parameter
+    unset($queryParams['path']);
+    
+    // Rebuild query string if we have remaining parameters
+    if (!empty($queryParams)) {
+        $cleanQueryString = http_build_query($queryParams);
+        $fullUrl .= '?' . $cleanQueryString;
     }
 }
 

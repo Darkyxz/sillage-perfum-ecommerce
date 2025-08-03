@@ -7,6 +7,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { Filter, Search, ShoppingCart as ShoppingCartIcon, Loader2 } from 'lucide-react';
 import { productService } from '@/lib/productService';
 import { useCart } from '@/contexts/CartContext';
+import ProductSizeSelector from '@/components/ProductSizeSelector';
+import { QuantityDialog } from '@/components/QuantityDialog';
 
 const ProductsPage = () => {
   const { toast } = useToast();
@@ -14,6 +16,8 @@ const ProductsPage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isQuantityDialogOpen, setIsQuantityDialogOpen] = useState(false);
 
   useEffect(() => {
     loadProducts();
@@ -36,12 +40,51 @@ const ProductsPage = () => {
     }
   };
 
-  const handleAddToCart = (product) => {
-    addToCart(product, 1);
+  // Agrupar productos por SKU base para el selector dinámico
+  const groupProductsByBaseSKU = (products) => {
+    const grouped = {};
+    
+    products.forEach(product => {
+      // Extraer SKU base (ej: ZP42H-30ML -> ZP42H)
+      const baseSKU = product.sku.replace(/-\d+ML$/i, '');
+      
+      if (!grouped[baseSKU]) {
+        grouped[baseSKU] = {
+          ...product,
+          baseSKU,
+          variants: [product],
+          availableSizes: [product.size]
+        };
+      } else {
+        grouped[baseSKU].variants.push(product);
+        if (!grouped[baseSKU].availableSizes.includes(product.size)) {
+          grouped[baseSKU].availableSizes.push(product.size);
+        }
+      }
+    });
+    
+    // Ordenar tamaños disponibles
+    Object.values(grouped).forEach(group => {
+      group.availableSizes.sort((a, b) => {
+        const sizeOrder = { '30ml': 1, '50ml': 2, '100ml': 3 };
+        return sizeOrder[a] - sizeOrder[b];
+      });
+    });
+    
+    return Object.values(grouped);
+  };
+
+  const handleAddToCart = (product, quantity) => {
+    addToCart(product, quantity);
     toast({
       title: "¡Producto agregado!",
-      description: `${product.name} se agregó al carrito`,
+      description: `${quantity} x ${product.name} (${product.size}) se agregó al carrito`,
     });
+  };
+
+  const openQuantityDialog = (product) => {
+    setSelectedProduct(product);
+    setIsQuantityDialogOpen(true);
   };
 
   const handleNotImplemented = (feature) => {
@@ -62,6 +105,9 @@ const ProductsPage = () => {
       if (selectedCategory === 'unisex') return category === 'unisex';
       return false;
     });
+
+  // Agrupar productos filtrados por SKU base
+  const groupedProducts = groupProductsByBaseSKU(filteredProducts);
 
   if (loading) {
     return (
@@ -138,9 +184,9 @@ const ProductsPage = () => {
           </div>
         </div>
 
-        {filteredProducts.length === 0 ? (
+        {groupedProducts.length === 0 ? (
           <div className="text-center py-12">
-            <img alt="Icono de caja de perfume vacía" class="w-32 h-32 mx-auto mb-4 text-gray-500" src="https://images.unsplash.com/photo-1637054235856-429a094805f9" />
+            <img alt="Icono de caja de perfume vacía" className="w-32 h-32 mx-auto mb-4 text-gray-500" src="https://images.unsplash.com/photo-1637054235856-429a094805f9" />
             <p className="text-2xl text-gray-500">
               {products.length === 0 ? 'Aún no hay perfumes cargados.' : 'No hay productos en esta categoría.'}
             </p>
@@ -149,94 +195,151 @@ const ProductsPage = () => {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {filteredProducts.map((product, index) => (
-              <motion.div
-                key={product.id}
-                className="bg-slate-800/70 rounded-xl shadow-2xl overflow-hidden border border-slate-700 flex flex-col justify-between transform hover:scale-105 transition-transform duration-300 ease-out relative"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ boxShadow: "0 10px 20px rgba(236, 72, 153, 0.2), 0 6px 6px rgba(192, 132, 252, 0.2)" }}
-              >
-                {/* Badges superiores */}
-                <div className="absolute top-2 left-2 z-10 flex flex-col gap-1">
-                  {product.is_featured && (
-                    <span className="bg-yellow-500 text-black text-xs px-2 py-1 rounded-full font-bold">DESTACADO</span>
-                  )}
-                  {product.rating >= 4.5 && (
-                    <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full font-bold">TOP RATED</span>
-                  )}
-                </div>
-
-                {/* Indicador de stock bajo */}
-                {product.stock_quantity <= 5 && (
-                  <div className="absolute top-2 right-2 z-10">
-                    <span className="bg-red-600/90 text-white text-xs px-2 py-1 rounded-full font-bold animate-pulse">
-                      ¡Solo {product.stock_quantity} disponibles!
-                    </span>
-                  </div>
-                )}
-
-                <div className="p-1 bg-gradient-to-r from-primary/80 to-primary/60">
-                  <img
-                    alt={product.name}
-                    className="w-full h-64 object-cover"
-                    src={product.image_url || "/images/sillapH.jpg"} />
-                </div>
-
-                <div className="p-5 flex flex-col flex-grow">
-                  <h2 className="text-2xl font-bold text-foreground mb-1">
-                    {product.name} | {product.sku}
-                  </h2>
-                  <p className="text-sm text-muted-foreground mb-2">{product.brand}</p>
-
-                  {/* Rating */}
-                  <div className="flex items-center mb-2">
-                    <div className="flex text-amber-400">
-                      {[...Array(5)].map((_, i) => (
-                        <span key={i} className={i < Math.floor(product.rating || 0) ? "text-amber-400" : "text-muted-foreground/30"}>
-                          ★
+          <div className="container mx-auto px-4">
+            <div className="mb-6">
+              <p className="text-muted-foreground text-center">
+                {groupedProducts.length} fragancia{groupedProducts.length !== 1 ? 's' : ''} únicas disponibles • 
+                Cada una en múltiples tamaños con precios fijos
+              </p>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {groupedProducts.map((productGroup, index) => {
+                const [selectedProduct, setSelectedProduct] = React.useState(
+                  productGroup.variants.find(v => v.size === '50ml') || productGroup.variants[0]
+                );
+                
+                const handleSizeChange = (updatedProduct) => {
+                  setSelectedProduct(updatedProduct);
+                };
+                
+                return (
+                  <motion.div
+                    key={productGroup.baseSKU}
+                    className="bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-slate-700 hover:shadow-xl transition-all duration-300"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: index * 0.1 }}
+                  >
+                    {/* Badges superiores */}
+                    <div className="absolute top-3 left-3 z-10 flex flex-col gap-1">
+                      {productGroup.is_featured && (
+                        <span className="bg-yellow-500 text-black text-xs px-2 py-1 rounded-full font-bold shadow-sm">
+                          DESTACADO
                         </span>
-                      ))}
+                      )}
+                      {productGroup.rating >= 4.5 && (
+                        <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full font-bold shadow-sm">
+                          TOP RATED
+                        </span>
+                      )}
                     </div>
-                    <span className="ml-2 text-muted-foreground text-sm">({product.rating || 0})</span>
-                  </div>
 
-                  <p className="text-muted-foreground text-sm mb-4 flex-grow">{product.description}</p>
-
-                  {/* Precios */}
-                  <div className="mb-4">
-                    <div className="flex items-center gap-2">
-                      <p className="text-2xl font-semibold text-primary">${product.price?.toLocaleString()}</p>
+                    {/* Imagen del producto */}
+                    <div className="relative aspect-square bg-gradient-to-br from-sillage-gold/10 to-transparent">
+                      <img
+                        alt={productGroup.name}
+                        className="w-full h-full object-cover"
+                        src={productGroup.image_url || "/images/sillapH.jpg"}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                     </div>
-                    <p className="text-sm text-muted-foreground">SKU: {product.sku}</p>
-                  </div>
 
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      className="bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/60 text-primary-foreground font-medium flex-1"
-                      onClick={() => handleAddToCart(product)}
-                    >
-                      <ShoppingCartIcon className="h-4 w-4 mr-2" />
-                      Añadir al carrito
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="text-primary border-primary/50 hover:bg-primary/10 hover:text-primary"
-                      onClick={() => handleNotImplemented("Ver detalles")}
-                    >
-                      Detalles
-                    </Button>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+                    {/* Contenido del producto */}
+                    <div className="p-6 space-y-4">
+                      {/* Información básica */}
+                      <div>
+                        <h3 className="text-lg font-bold text-foreground mb-1 line-clamp-2">
+                          {productGroup.name}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">
+                          {productGroup.brand}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          SKU Base: {productGroup.baseSKU}
+                        </p>
+                      </div>
+
+                      {/* Rating */}
+                      <div className="flex items-center gap-2">
+                        <div className="flex text-amber-400">
+                          {[...Array(5)].map((_, i) => (
+                            <span key={i} className={i < Math.floor(productGroup.rating || 0) ? "text-amber-400" : "text-muted-foreground/30"}>
+                              ★
+                            </span>
+                          ))}
+                        </div>
+                        <span className="text-muted-foreground text-sm">({productGroup.rating || 0})</span>
+                      </div>
+
+                      {/* Descripción */}
+                      <p className="text-muted-foreground text-sm line-clamp-3">
+                        {productGroup.description}
+                      </p>
+
+                      {/* Selector de tamaño compacto */}
+                      <ProductSizeSelector
+                        baseProduct={productGroup}
+                        allSizes={productGroup.availableSizes}
+                        selectedSize={selectedProduct?.size}
+                        onSizeChange={handleSizeChange}
+                        variant="compact"
+                        className="my-3"
+                      />
+
+                      {/* Información del producto seleccionado */}
+                      <div className="bg-sillage-gold/5 rounded-lg p-3 border border-sillage-gold/20">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm font-medium text-foreground">
+                              {selectedProduct?.size} seleccionado
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              SKU: {selectedProduct?.sku}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xl font-bold text-sillage-gold-dark">
+                              ${selectedProduct?.price?.toLocaleString('es-CL')}
+                            </p>
+                            <p className="text-xs text-muted-foreground">CLP</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Botones de acción */}
+                      <div className="flex gap-2 pt-2">
+                        <Button
+                          className="flex-1 bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white font-medium transition-all duration-300"
+                          onClick={() => openQuantityDialog(selectedProduct)}
+                        >
+                          <ShoppingCartIcon className="h-4 w-4 mr-2" />
+                          Agregar al Carrito
+                        </Button>
+                        <Button
+                          variant="outline"
+                          className="border-sillage-gold/30 text-sillage-gold-dark hover:bg-sillage-gold/10 hover:border-sillage-gold transition-all duration-300"
+                          onClick={() => handleNotImplemented("Ver detalles")}
+                        >
+                          Detalles
+                        </Button>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
           </div>
         )}
       </motion.div>
+      
+      {/* QuantityDialog */}
+      <QuantityDialog
+        open={isQuantityDialogOpen}
+        onOpenChange={setIsQuantityDialogOpen}
+        product={selectedProduct}
+        onAddToCart={handleAddToCart}
+      />
     </>
   );
 };

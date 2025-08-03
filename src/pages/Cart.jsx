@@ -11,7 +11,8 @@ import {
   CreditCard,
   Loader2,
   CheckCircle,
-  XCircle
+  XCircle,
+  User
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
@@ -428,23 +429,76 @@ const Cart = () => {
                     </div>
                   </div>
 
-                  <Button
-                    onClick={handleCheckout}
-                    disabled={isLoadingCheckout || !user}
-                    className="w-full bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white font-semibold py-3 transition-all duration-300"
-                  >
-                    {isLoadingCheckout ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Procesando...
-                      </>
-                    ) : (
-                      <>
-                        <CreditCard className="mr-2 h-4 w-4" />
-                        Proceder al Pago
-                      </>
+					{/* Botón temporal de Webpay */}
+					{user ? (
+					  <div className="w-full max-w-xs mx-auto">
+						<form 
+						  name='rec20108_btn1' 
+						  method='post' 
+						  action='https://www.webpay.cl/backpub/external/form-pay'
+						  target="_blank" // Esto hará que se abra en nueva pestaña
+						  onSubmit={(e) => {
+							e.preventDefault();
+							// Creamos un formulario dinámico para enviar los datos
+							const form = document.createElement('form');
+							form.method = 'post';
+							form.action = 'https://www.webpay.cl/backpub/external/form-pay';
+							form.target = '_blank'; // Abrir en nueva pestaña
+							
+							// Añadimos los campos ocultos
+							const addField = (name, value) => {
+							  const input = document.createElement('input');
+							  input.type = 'hidden';
+							  input.name = name;
+							  input.value = value;
+							  form.appendChild(input);
+							};
+							
+							addField('idFormulario', '299617');
+							addField('monto', Math.round(getTotalPrice() + 5000));
+							addField('Correo', user.email);
+							
+							document.body.appendChild(form);
+							form.submit();
+							document.body.removeChild(form);
+						  }}
+						>
+						  <div className="relative group">
+							<button 
+							  type="submit"
+							  className="w-full bg-transparent border-none p-0 cursor-pointer"
+							>
+							  <img 
+								src='https://www.webpay.cl/assets/img/boton_webpaycl.svg' 
+								alt='Pagar con Webpay'
+								className="w-full h-auto max-h-12 transition-transform group-hover:scale-105"
+							  />
+							</button>
+							<div className="absolute inset-0 bg-gradient-to-r from-sillage-gold/20 to-sillage-gold-dark/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+						  </div>
+						</form>
+					  </div>
+					) : (
+					  <Button
+						onClick={() => navigate('/login')}
+						className="w-full max-w-xs mx-auto bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white font-semibold py-2 transition-all duration-300"
+					  >
+						<User className="mr-2 h-4 w-4" />
+						Iniciar sesión para pagar
+					  </Button>
+					)}	
+
+                  {/* Información adicional */}
+                  <div className="mt-4 space-y-2">
+                    <p className="text-xs text-muted-foreground text-center">
+                      Serás redirigido a Webpay para completar tu pago de forma segura
+                    </p>
+                    {user && (
+                      <p className="text-xs text-muted-foreground text-center">
+                        Se usará el correo: <span className="font-medium">{user.email}</span>
+                      </p>
                     )}
-                  </Button>
+                  </div>
 
                   {!user && (
                     <p className="text-muted-foreground text-sm text-center mt-4">
