@@ -40,6 +40,54 @@ if (!empty($_SERVER['QUERY_STRING'])) {
 // Initialize cURL
 $ch = curl_init();
 
+// Prepare headers
+$headers = [
+    'Accept: application/json',
+    'User-Agent: Sillage-Proxy/1.0'
+];
+
+// Add Authorization header if present
+// Try different methods to get the Authorization header
+$authHeader = null;
+
+// Method 1: Direct HTTP_AUTHORIZATION
+if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+    $authHeader = $_SERVER['HTTP_AUTHORIZATION'];
+}
+// Method 2: From redirect (some Apache configurations)
+elseif (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
+    $authHeader = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
+}
+// Method 3: From getallheaders() function if available
+elseif (function_exists('getallheaders')) {
+    $allHeaders = getallheaders();
+    if (isset($allHeaders['Authorization'])) {
+        $authHeader = $allHeaders['Authorization'];
+    } elseif (isset($allHeaders['authorization'])) {
+        $authHeader = $allHeaders['authorization'];
+    }
+}
+// Method 4: From apache_request_headers() if available
+elseif (function_exists('apache_request_headers')) {
+    $allHeaders = apache_request_headers();
+    if (isset($allHeaders['Authorization'])) {
+        $authHeader = $allHeaders['Authorization'];
+    } elseif (isset($allHeaders['authorization'])) {
+        $authHeader = $allHeaders['authorization'];
+    }
+}
+
+// Add the Authorization header if we found it
+if ($authHeader) {
+    $headers[] = 'Authorization: ' . $authHeader;
+    // Debug log (remove in production)
+    error_log('PROXY DEBUG: Authorization header found: ' . $authHeader);
+} else {
+    // Debug log (remove in production)
+    error_log('PROXY DEBUG: No Authorization header found');
+    error_log('PROXY DEBUG: Available headers: ' . print_r(getallheaders(), true));
+}
+
 // Set cURL options
 curl_setopt_array($ch, [
     CURLOPT_URL => $fullUrl,
@@ -47,10 +95,7 @@ curl_setopt_array($ch, [
     CURLOPT_FOLLOWLOCATION => true,
     CURLOPT_TIMEOUT => 30,
     CURLOPT_CUSTOMREQUEST => $_SERVER['REQUEST_METHOD'],
-    CURLOPT_HTTPHEADER => [
-        'Accept: application/json',
-        'User-Agent: Sillage-Proxy/1.0'
-    ]
+    CURLOPT_HTTPHEADER => $headers
 ]);
 
 // Handle request body for POST/PUT/PATCH requests
@@ -58,11 +103,9 @@ if (in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH'])) {
     $inputData = file_get_contents('php://input');
     if (!empty($inputData)) {
         curl_setopt($ch, CURLOPT_POSTFIELDS, $inputData);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            'Accept: application/json',
-            'User-Agent: Sillage-Proxy/1.0',
-            'Content-Type: application/json'
-        ]);
+        // Add Content-Type header for POST/PUT/PATCH requests
+        $headers[] = 'Content-Type: application/json';
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     }
 }
 

@@ -64,7 +64,17 @@ const Cart = () => {
 
       // Paso 1: Crear el pedido en la base de datos de forma aislada.
       console.log("📦 Intentando crear el pedido en la base de datos...");
-      order = await orderService.createOrder(user.id, items, total);
+      
+      // Datos de envío por defecto (el usuario los actualizará más tarde)
+      const shippingData = {
+        address: user.address || 'Por confirmar',
+        city: user.city || 'Santiago',
+        region: user.region || 'Región Metropolitana',
+        postal_code: user.postal_code || '',
+        notes: 'Pedido creado desde el carrito. Envío a coordinar.'
+      };
+      
+      order = await orderService.createOrder(user.id, items, total, null, shippingData);
 
       console.log("📄 Pedido creado:", order);
 
@@ -87,25 +97,47 @@ const Cart = () => {
       // Paso 2: Proceso de pago temporal (hasta tener credenciales)
       console.log("� Rediriagiendo a checkout...");
 
-      navigate('/checkout', {
-        state: {
-          orderId: orderId
-        }
-      });
-      return; // Salir de la función después de navegar
+// Redirigir a la página de Webpay
+      const form = document.createElement('form');
+      form.method = 'post';
+      form.action = 'https://www.webpay.cl/backpub/external/form-pay';
+      form.target = '_blank';
 
-      // Simular procesamiento
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const idFormularioField = document.createElement('input');
+      idFormularioField.type = 'hidden';
+      idFormularioField.name = 'idFormulario';
+      idFormularioField.value = '299617';
+      form.appendChild(idFormularioField);
 
-      console.log("✅ Pago procesado exitosamente");
+      const montoField = document.createElement('input');
+      montoField.type = 'hidden';
+      montoField.name = 'monto';
+      montoField.value = Math.round(total + 5000);
+      form.appendChild(montoField);
 
-      // Limpiar carrito
+      const correoField = document.createElement('input');
+      correoField.type = 'hidden';
+      correoField.name = 'Correo';
+      correoField.value = user.email;
+      form.appendChild(correoField);
+
+      document.body.appendChild(form);
+      form.submit();
+      document.body.removeChild(form);
+
+      // Limpiar carrito inmediatamente
       clearCart();
 
+      // Mostrar toast de éxito
       toast({
-        title: "¡Pedido realizado con éxito!",
-        description: `Tu pedido #${orderId} ha sido procesado. Total: $${total.toLocaleString('es-CL')} CLP`,
+        title: "¡Pedido creado con éxito!",
+        description: `Tu pedido #${orderId} ha sido creado. Redirigiendo a Webpay...`,
       });
+
+      // Esperar un momento antes de redirigir al perfil
+      setTimeout(() => {
+        navigate('/perfil');
+      }, 2000);
 
       console.log("🎉 Proceso de checkout completado exitosamente");
 
@@ -429,56 +461,28 @@ const Cart = () => {
                     </div>
                   </div>
 
-					{/* Botón temporal de Webpay */}
-					{user ? (
-					  <div className="w-full max-w-xs mx-auto">
-						<form 
-						  name='rec20108_btn1' 
-						  method='post' 
-						  action='https://www.webpay.cl/backpub/external/form-pay'
-						  target="_blank" // Esto hará que se abra en nueva pestaña
-						  onSubmit={(e) => {
-							e.preventDefault();
-							// Creamos un formulario dinámico para enviar los datos
-							const form = document.createElement('form');
-							form.method = 'post';
-							form.action = 'https://www.webpay.cl/backpub/external/form-pay';
-							form.target = '_blank'; // Abrir en nueva pestaña
-							
-							// Añadimos los campos ocultos
-							const addField = (name, value) => {
-							  const input = document.createElement('input');
-							  input.type = 'hidden';
-							  input.name = name;
-							  input.value = value;
-							  form.appendChild(input);
-							};
-							
-							addField('idFormulario', '299617');
-							addField('monto', Math.round(getTotalPrice() + 5000));
-							addField('Correo', user.email);
-							
-							document.body.appendChild(form);
-							form.submit();
-							document.body.removeChild(form);
-						  }}
-						>
-						  <div className="relative group">
-							<button 
-							  type="submit"
-							  className="w-full bg-transparent border-none p-0 cursor-pointer"
-							>
-							  <img 
-								src='https://www.webpay.cl/assets/img/boton_webpaycl.svg' 
-								alt='Pagar con Webpay'
-								className="w-full h-auto max-h-12 transition-transform group-hover:scale-105"
-							  />
-							</button>
-							<div className="absolute inset-0 bg-gradient-to-r from-sillage-gold/20 to-sillage-gold-dark/20 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-						  </div>
-						</form>
-					  </div>
-					) : (
+                  {/* Botón de pago con Webpay */}
+                  {user ? (
+                    <div className="w-full">
+                      <Button
+                        onClick={handleCheckout}
+                        disabled={isLoadingCheckout || items.length === 0}
+                        className="w-full bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white font-semibold py-3 transition-all duration-300"
+                      >
+                        {isLoadingCheckout ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Procesando...
+                          </>
+                        ) : (
+                          <>
+                            <CreditCard className="mr-2 h-4 w-4" />
+                            Procesar Pago - ${(getTotalPrice() + 5000).toLocaleString('es-CL')}
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  ) : (
 					  <Button
 						onClick={() => navigate('/login')}
 						className="w-full max-w-xs mx-auto bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white font-semibold py-2 transition-all duration-300"

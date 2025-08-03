@@ -54,6 +54,23 @@ const OrdersSection = () => {
         }
     };
 
+    const getPaymentStatusIcon = (status) => {
+        switch (status) {
+            case 'pending':
+                return <Clock className="w-4 h-4 text-yellow-500" />;
+            case 'processing':
+                return <CreditCard className="w-4 h-4 text-blue-500" />;
+            case 'paid':
+                return <CheckCircle className="w-4 h-4 text-green-500" />;
+            case 'failed':
+                return <XCircle className="w-4 h-4 text-red-500" />;
+            case 'refunded':
+                return <XCircle className="w-4 h-4 text-gray-500" />;
+            default:
+                return <Clock className="w-4 h-4 text-gray-500" />;
+        }
+    };
+
     const getStatusText = (status) => {
         const statusMap = {
             'pending': 'Pendiente',
@@ -66,6 +83,17 @@ const OrdersSection = () => {
         return statusMap[status] || status;
     };
 
+    const getPaymentStatusText = (status) => {
+        const statusMap = {
+            'pending': 'Pendiente',
+            'processing': 'Procesando',
+            'paid': 'Pagado',
+            'failed': 'Fallido',
+            'refunded': 'Reembolsado'
+        };
+        return statusMap[status] || status;
+    };
+
     const getStatusColor = (status) => {
         const colorMap = {
             'pending': 'bg-yellow-100 text-yellow-800',
@@ -73,7 +101,10 @@ const OrdersSection = () => {
             'processing': 'bg-orange-100 text-orange-800',
             'shipped': 'bg-purple-100 text-purple-800',
             'delivered': 'bg-green-100 text-green-800',
-            'cancelled': 'bg-red-100 text-red-800'
+            'cancelled': 'bg-red-100 text-red-800',
+            'paid': 'bg-green-100 text-green-800',
+            'failed': 'bg-red-100 text-red-800',
+            'refunded': 'bg-gray-100 text-gray-800'
         };
         return colorMap[status] || 'bg-gray-100 text-gray-800';
     };
@@ -152,6 +183,14 @@ const OrdersSection = () => {
                                                     {getStatusText(order.status)}
                                                 </Badge>
                                             </div>
+                                            {order.payment_status && (
+                                                <div className="flex items-center gap-2">
+                                                    {getPaymentStatusIcon(order.payment_status)}
+                                                    <Badge className={getStatusColor(order.payment_status)}>
+                                                        Pago: {getPaymentStatusText(order.payment_status)}
+                                                    </Badge>
+                                                </div>
+                                            )}
                                         </div>
 
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">

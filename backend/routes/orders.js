@@ -134,19 +134,53 @@ router.put('/:id/shipping', authenticateToken, async (req, res) => {
 router.put('/:id/admin-status', authenticateToken, requireAdmin, async (req, res) => {
   try {
     const orderId = req.params.id;
-    const { status } = req.body;
+    const { status, payment_status } = req.body;
     
-    // Validar estado
+    // Validar estado del pedido
     const validStatuses = ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'];
-    if (!validStatuses.includes(status)) {
+    if (status && !validStatuses.includes(status)) {
       return res.status(400).json({
         success: false,
-        error: 'Estado inválido'
+        error: 'Estado de pedido inválido'
       });
     }
     
-    // Actualizar estado
-    const result = await query('UPDATE orders SET status = ?, updated_at = NOW() WHERE id = ?', [status, orderId]);
+    // Validar estado de pago
+    const validPaymentStatuses = ['pending', 'processing', 'paid', 'failed', 'refunded'];
+    if (payment_status && !validPaymentStatuses.includes(payment_status)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Estado de pago inválido'
+      });
+    }
+    
+    // Construir query dinámicamente
+    let updateFields = [];
+    let updateValues = [];
+    
+    if (status) {
+      updateFields.push('status = ?');
+      updateValues.push(status);
+    }
+    
+    if (payment_status) {
+      updateFields.push('payment_status = ?');
+      updateValues.push(payment_status);
+      
+      // Si el pago se marca como pagado, actualizar payment_date
+      if (payment_status === 'paid') {
+        updateFields.push('payment_date = NOW()');
+      }
+    }
+    
+    updateFields.push('updated_at = NOW()');
+    updateValues.push(orderId);
+    
+    // Actualizar
+    const result = await query(
+      `UPDATE orders SET ${updateFields.join(', ')} WHERE id = ?`,
+      updateValues
+    );
     
     if (result.affectedRows === 0) {
       return res.status(404).json({
@@ -157,14 +191,14 @@ router.put('/:id/admin-status', authenticateToken, requireAdmin, async (req, res
     
     res.json({
       success: true,
-      message: 'Estado del pedido actualizado'
+      message: 'Pedido actualizado correctamente'
     });
     
   } catch (error) {
-    console.error('Error actualizando estado del pedido (admin):', error);
+    console.error('Error actualizando pedido (admin):', error);
     res.status(500).json({
       success: false,
-      error: 'Error actualizando estado del pedido'
+      error: 'Error actualizando pedido'
     });
   }
 });

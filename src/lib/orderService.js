@@ -306,13 +306,15 @@ export const orderService = {
   },
 
   // Actualizar estado de pedido (admin)
-  async updateOrderStatusAdmin(orderId, status) {
+  async updateOrderStatusAdmin(orderId, status, paymentStatus) {
     try {
-      console.log('📦 Actualizando estado de pedido (admin):', orderId, 'a', status);
+      console.log('📦 Actualizando estado de pedido (admin):', orderId, 'status:', status, 'payment_status:', paymentStatus);
 
-      const response = await apiClient.put(`/orders/${orderId}/admin-status`, {
-        status
-      });
+      const updateData = {};
+      if (status) updateData.status = status;
+      if (paymentStatus) updateData.payment_status = paymentStatus;
+
+      const response = await apiClient.put(`/orders/${orderId}/admin-status`, updateData);
 
       if (response.success) {
         console.log('✅ Estado de pedido actualizado (admin)');
