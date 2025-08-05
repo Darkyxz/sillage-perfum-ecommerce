@@ -233,9 +233,10 @@ img {
   }
 
   .glass-effect {
-    @apply backdrop-blur-sm bg-card/80 border border-border/30;
-    backdrop-filter: blur(8px);
-    background: hsla(var(--card), 0.8);
+    @apply backdrop-blur-sm bg-card/80 border border-border/30 shadow-lg;
+    backdrop-filter: blur(10px);
+    background: hsla(var(--card), 0.85);
+    -webkit-backdrop-filter: blur(10px);
   }
 
   .perfume-card {

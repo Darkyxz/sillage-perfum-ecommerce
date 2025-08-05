@@ -22,7 +22,7 @@ const CatalogDropdown = () => {
   const categories = [
     {
       id: 'perfume-dama',
-      name: 'Perfume Diseñador Dama',
+      name: 'Sillage Perfume Dama',
       description: 'Fragancias femeninas de diseñador',
       icon: Heart,
       color: 'text-pink-500',
@@ -31,7 +31,7 @@ const CatalogDropdown = () => {
     },
     {
       id: 'perfume-varon',
-      name: 'Perfume Diseñador Varón',
+      name: 'Sillage Perfume Varón',
       description: 'Fragancias masculinas de diseñador',
       icon: User,
       color: 'text-blue-500',
@@ -40,7 +40,7 @@ const CatalogDropdown = () => {
     },
     {
       id: 'inspirado-nicho',
-      name: 'Inspirado Nicho',
+      name: 'Sillage Nicho Jardin Paraiso',
       description: 'Fragancias inspiradas en perfumes de nicho',
       icon: Sparkles,
       color: 'text-purple-500',
@@ -49,7 +49,7 @@ const CatalogDropdown = () => {
     },
     {
       id: 'body-mist',
-      name: 'Body Mist',
+      name: 'Sillage Body Mist',
       description: 'Brumas corporales refrescantes',
       icon: Droplets,
       color: 'text-cyan-500',
@@ -58,8 +58,8 @@ const CatalogDropdown = () => {
     },
     {
       id: 'by-zachary',
-      name: 'By Zachary',
-      description: 'Colección exclusiva Zachary',
+      name: 'By Sillage',
+      description: 'Colección exclusiva Sillage',
       icon: Package,
       color: 'text-amber-500',
       bgColor: 'bg-amber-50 hover:bg-amber-100',
@@ -67,7 +67,7 @@ const CatalogDropdown = () => {
     },
     {
       id: 'home-spray',
-      name: 'Home Spray',
+      name: 'Sillage Home Spray',
       description: 'Aromatizadores para el hogar',
       icon: Home,
       color: 'text-green-500',
@@ -85,8 +85,8 @@ const CatalogDropdown = () => {
         className="flex items-center space-x-1 text-sillage-gold-dark hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors font-medium text-sm uppercase tracking-wide px-3 py-2 rounded-md"
       >
         <span>Catálogo</span>
-        <ChevronDown 
-          className={`h-4 w-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} 
+        <ChevronDown
+          className={`h-4 w-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
         />
       </button>
 

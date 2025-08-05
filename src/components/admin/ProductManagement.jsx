@@ -272,7 +272,7 @@ const ProductManagement = () => {
 
                     <div className="flex items-center justify-between">
                       <span className="admin-text font-bold text-lg">
-                        ${product.price?.toLocaleString('es-CL')}
+                        ${product.price ? Math.round(product.price).toLocaleString('es-CL') : '0'}
                       </span>
                       <span className={`text-xs px-2 py-1 rounded-full ${product.category === 'Mujer' ? 'bg-pink-100 text-pink-700' :
                         product.category === 'Hombre' ? 'bg-blue-100 text-blue-700' :

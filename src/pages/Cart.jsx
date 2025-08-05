@@ -19,6 +19,7 @@ import { Card, CardContent } from '../components/ui/card';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 import { orderService } from '../lib/orderService';
+import { formatPrice } from '@/utils/formatPrice';
 
 import { useToast } from '../components/ui/use-toast';
 
@@ -64,7 +65,7 @@ const Cart = () => {
 
       // Paso 1: Crear el pedido en la base de datos de forma aislada.
       console.log("📦 Intentando crear el pedido en la base de datos...");
-      
+
       // Datos de envío por defecto (el usuario los actualizará más tarde)
       const shippingData = {
         address: user.address || 'Por confirmar',
@@ -73,7 +74,7 @@ const Cart = () => {
         postal_code: user.postal_code || '',
         notes: 'Pedido creado desde el carrito. Envío a coordinar.'
       };
-      
+
       order = await orderService.createOrder(user.id, items, total, null, shippingData);
 
       console.log("📄 Pedido creado:", order);
@@ -97,7 +98,7 @@ const Cart = () => {
       // Paso 2: Proceso de pago temporal (hasta tener credenciales)
       console.log("� Rediriagiendo a checkout...");
 
-// Redirigir a la página de Webpay
+      // Redirigir a la página de Webpay
       const form = document.createElement('form');
       form.method = 'post';
       form.action = 'https://www.webpay.cl/backpub/external/form-pay';
@@ -292,7 +293,7 @@ const Cart = () => {
                         </div>
 
                         <div className="flex-1 min-w-0">
-                          <h3 className="text-base font-semibold text-foreground truncate">{item.name}</h3>
+                          <h3 className="text-sm font-semibold text-foreground line-clamp-2">{item.name}</h3>
                           <p className="text-muted-foreground text-sm">{item.brand}</p>
                           <div className="flex items-center gap-2 mt-1">
                             <span className="text-muted-foreground/80 text-xs truncate">SKU: {item.sku}</span>
@@ -341,10 +342,10 @@ const Cart = () => {
 
                         <div className="text-right">
                           <p className="text-primary font-semibold text-sm">
-                            ${(parseFloat(item.price) * item.quantity).toLocaleString('es-CL')}
+                            {formatPrice(parseFloat(item.price) * item.quantity)}
                           </p>
                           <p className="text-muted-foreground text-xs">
-                            ${parseFloat(item.price).toLocaleString('es-CL')} c/u
+                            {formatPrice(parseFloat(item.price))} c/u
                           </p>
                         </div>
                       </div>
@@ -367,7 +368,7 @@ const Cart = () => {
                       </div>
 
                       <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-foreground">{item.name}</h3>
+                        <h3 className="text-base font-semibold text-foreground line-clamp-2">{item.name}</h3>
                         <p className="text-muted-foreground text-sm">{item.brand}</p>
                         <div className="flex items-center gap-2 mt-1">
                           <span className="text-muted-foreground/80 text-xs">SKU: {item.sku}</span>
@@ -405,10 +406,10 @@ const Cart = () => {
 
                       <div className="text-right">
                         <p className="text-primary font-semibold">
-                          ${(parseFloat(item.price) * item.quantity).toLocaleString('es-CL')}
+                          {formatPrice(parseFloat(item.price) * item.quantity)}
                         </p>
                         <p className="text-muted-foreground text-sm">
-                          ${parseFloat(item.price).toLocaleString('es-CL')} c/u
+                          {formatPrice(parseFloat(item.price))} c/u
                         </p>
                       </div>
 
@@ -443,19 +444,19 @@ const Cart = () => {
                   <div className="space-y-4 mb-6">
                     <div className="flex justify-between text-muted-foreground">
                       <span>Subtotal ({items.length} productos)</span>
-                      <span>${getTotalPrice().toLocaleString('es-CL')}</span>
+                      <span>{formatPrice(getTotalPrice())}</span>
                     </div>
 
                     <div className="flex justify-between text-muted-foreground">
-                      <span>Envío</span>
-                      <span>$5.000</span>
+                      {/* <span>Envío</span>
+                      <span>{formatPrice(5000)}</span> */}
                     </div>
 
                     <div className="border-t border-border/30 pt-4">
                       <div className="flex justify-between text-foreground font-semibold text-lg">
                         <span>Total</span>
                         <span className="text-primary">
-                          ${(getTotalPrice() + 5000).toLocaleString('es-CL')}
+                          {formatPrice(getTotalPrice() + 0)}
                         </span>
                       </div>
                     </div>
@@ -477,20 +478,40 @@ const Cart = () => {
                         ) : (
                           <>
                             <CreditCard className="mr-2 h-4 w-4" />
-                            Procesar Pago - ${(getTotalPrice() + 5000).toLocaleString('es-CL')}
+                            Procesar Pago - {formatPrice(getTotalPrice() + 5000)}
                           </>
                         )}
                       </Button>
                     </div>
                   ) : (
-					  <Button
-						onClick={() => navigate('/login')}
-						className="w-full max-w-xs mx-auto bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white font-semibold py-2 transition-all duration-300"
-					  >
-						<User className="mr-2 h-4 w-4" />
-						Iniciar sesión para pagar
-					  </Button>
-					)}	
+                    <div className="space-y-3">
+                      <Button
+                        onClick={() => navigate('/checkout-invitado')}
+                        className="w-full bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white font-semibold py-3 transition-all duration-300"
+                      >
+                        <CreditCard className="mr-2 h-4 w-4" />
+                        Comprar como Invitado
+                      </Button>
+
+                      <div className="relative">
+                        <div className="absolute inset-0 flex items-center">
+                          <div className="w-full border-t border-border/30" />
+                        </div>
+                        <div className="relative flex justify-center text-xs">
+                          <span className="px-2 bg-card text-muted-foreground">o</span>
+                        </div>
+                      </div>
+
+                      <Button
+                        onClick={() => navigate('/login')}
+                        variant="outline"
+                        className="w-full border-sillage-gold/30 hover:bg-sillage-gold/10 text-sillage-gold-dark font-semibold py-3 transition-all duration-300"
+                      >
+                        <User className="mr-2 h-4 w-4" />
+                        Iniciar sesión
+                      </Button>
+                    </div>
+                  )}
 
                   {/* Información adicional */}
                   <div className="mt-4 space-y-2">

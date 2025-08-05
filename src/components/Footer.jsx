@@ -80,7 +80,7 @@ const Footer = () => {
           <div className="text-center">
             <h4 className="text-base md:text-lg font-semibold text-foreground mb-3 md:mb-4">Información</h4>
             <ul className="space-y-2 md:space-y-3">
-              <li><a href="#" className="text-sillage-gold-dark hover:text-sillage-gold-bright transition-colors text-sm">Búsqueda</a></li>
+              <li><Link to="/rastrear-pedido" className="text-sillage-gold-dark hover:text-sillage-gold-bright transition-colors text-sm">Rastrear mi Pedido</Link></li>
               <li><a href="#" className="text-sillage-gold-dark hover:text-sillage-gold-bright transition-colors text-sm">Política de Reembolsos</a></li>
               <li><a href="#" className="text-sillage-gold-dark hover:text-sillage-gold-bright transition-colors text-sm">Políticas de Privacidad</a></li>
               <li><a href="#" className="text-sillage-gold-dark hover:text-sillage-gold-bright transition-colors text-sm">Términos y Condiciones</a></li>

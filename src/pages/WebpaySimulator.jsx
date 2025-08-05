@@ -7,7 +7,7 @@ const WebpaySimulator = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  
+
   const token = searchParams.get('token');
   const amount = searchParams.get('amount');
   const order = searchParams.get('order');
@@ -43,7 +43,7 @@ const WebpaySimulator = () => {
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-gray-600">Monto:</span>
-              <span className="font-semibold">${parseInt(amount || 0).toLocaleString('es-CL')} CLP</span>
+              <span className="font-semibold">${parseInt(amount || 0).toLocaleString('es-CL')}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-600">Orden:</span>
@@ -74,7 +74,7 @@ const WebpaySimulator = () => {
               </div>
             )}
           </Button>
-          
+
           <Button
             onClick={handleReject}
             disabled={loading}

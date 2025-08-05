@@ -5,8 +5,8 @@ const CourierTracking = ({ trackingNumber = '' }) => {
   const couriers = [
     {
       name: 'Starken',
-      url: trackingNumber ? 
-        `https://www.starken.cl/seguimiento?codigo=${trackingNumber}` : 
+      url: trackingNumber ?
+        `https://www.starken.cl/seguimiento?codigo=${trackingNumber}` :
         'https://www.starken.cl/seguimiento',
       icon: <FaTruck className="text-blue-600" />,
       color: 'bg-blue-50 hover:bg-blue-100',
@@ -14,22 +14,22 @@ const CourierTracking = ({ trackingNumber = '' }) => {
     },
     {
       name: 'Chilexpress',
-      url: trackingNumber ? 
-        `https://centrodeayuda.chilexpress.cl/home` : 
+      url: trackingNumber ?
+        `https://centrodeayuda.chilexpress.cl/home` :
         'https://centrodeayuda.chilexpress.cl/home',
       icon: <FaTruck className="text-red-600" />,
       color: 'bg-red-50 hover:bg-red-100',
       description: 'Centro de ayuda Chilexpress'
     },
-    {
+    /*{
       name: 'CorreosChile',
-      url: trackingNumber ? 
-        `https://www.correos.cl/seguimiento-en-linea` : 
+      url: trackingNumber ?
+        `https://www.correos.cl/seguimiento-en-linea` :
         'https://www.correos.cl/seguimiento-en-linea',
       icon: <FaTruck className="text-green-600" />,
       color: 'bg-green-50 hover:bg-green-100',
       description: 'Seguimiento en línea Correos Chile'
-    }
+    }*/
   ];
 
   return (
@@ -37,7 +37,7 @@ const CourierTracking = ({ trackingNumber = '' }) => {
       <h3 className="text-lg font-medium text-gray-900 flex items-center">
         <FaSearch className="mr-2" /> Seguimiento de envíos
       </h3>
-      
+
       {!trackingNumber && (
         <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 my-4">
           <div className="flex">
@@ -46,8 +46,8 @@ const CourierTracking = ({ trackingNumber = '' }) => {
             </div>
             <div className="ml-3">
               <p className="text-sm text-yellow-700">
-                {trackingNumber 
-                  ? "Utiliza los siguientes enlaces para rastrear tu envío:" 
+                {trackingNumber
+                  ? "Utiliza los siguientes enlaces para rastrear tu envío:"
                   : "Este producto no tiene número de seguimiento asignado. Puedes usar los siguientes enlaces para rastrear tu envío cuando lo tengas."}
               </p>
             </div>
@@ -57,8 +57,8 @@ const CourierTracking = ({ trackingNumber = '' }) => {
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 mt-4">
         {couriers.map((courier, index) => (
-          <div 
-            key={index} 
+          <div
+            key={index}
             className={`${courier.color} rounded-md p-4 border border-gray-200 transition-colors duration-200`}
           >
             <div className="flex items-center mb-2">
@@ -67,11 +67,11 @@ const CourierTracking = ({ trackingNumber = '' }) => {
               </div>
               <h4 className="text-sm font-medium text-gray-900">{courier.name}</h4>
             </div>
-            
+
             {trackingNumber && (
               <p className="text-xs text-gray-500 mb-2">N° de seguimiento: {trackingNumber}</p>
             )}
-            
+
             <a
               href={courier.url}
               target="_blank"

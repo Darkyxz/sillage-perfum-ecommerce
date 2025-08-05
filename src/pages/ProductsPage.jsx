@@ -4,11 +4,12 @@ import { Helmet } from 'react-helmet-async';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { useToast } from "@/components/ui/use-toast";
-import { Filter, Search, ShoppingCart as ShoppingCartIcon, Loader2 } from 'lucide-react';
+import { Search, ShoppingCart as ShoppingCartIcon, Loader2 } from 'lucide-react';
 import { productService } from '@/lib/productService';
 import { useCart } from '@/contexts/CartContext';
 import ProductSizeSelector from '@/components/ProductSizeSelector';
 import { QuantityDialog } from '@/components/QuantityDialog';
+import { formatPrice } from '@/utils/formatPrice';
 
 const ProductsPage = () => {
   const { toast } = useToast();
@@ -43,11 +44,11 @@ const ProductsPage = () => {
   // Agrupar productos por SKU base para el selector dinámico
   const groupProductsByBaseSKU = (products) => {
     const grouped = {};
-    
+
     products.forEach(product => {
       // Extraer SKU base (ej: ZP42H-30ML -> ZP42H)
       const baseSKU = product.sku.replace(/-\d+ML$/i, '');
-      
+
       if (!grouped[baseSKU]) {
         grouped[baseSKU] = {
           ...product,
@@ -62,7 +63,7 @@ const ProductsPage = () => {
         }
       }
     });
-    
+
     // Ordenar tamaños disponibles
     Object.values(grouped).forEach(group => {
       group.availableSizes.sort((a, b) => {
@@ -70,7 +71,7 @@ const ProductsPage = () => {
         return sizeOrder[a] - sizeOrder[b];
       });
     });
-    
+
     return Object.values(grouped);
   };
 
@@ -198,21 +199,21 @@ const ProductsPage = () => {
           <div className="container mx-auto px-4">
             <div className="mb-6">
               <p className="text-muted-foreground text-center">
-                {groupedProducts.length} fragancia{groupedProducts.length !== 1 ? 's' : ''} únicas disponibles • 
+                {groupedProducts.length} fragancia{groupedProducts.length !== 1 ? 's' : ''} únicas disponibles •
                 Cada una en múltiples tamaños con precios fijos
               </p>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {groupedProducts.map((productGroup, index) => {
                 const [selectedProduct, setSelectedProduct] = React.useState(
                   productGroup.variants.find(v => v.size === '50ml') || productGroup.variants[0]
                 );
-                
+
                 const handleSizeChange = (updatedProduct) => {
                   setSelectedProduct(updatedProduct);
                 };
-                
+
                 return (
                   <motion.div
                     key={productGroup.baseSKU}
@@ -249,7 +250,7 @@ const ProductsPage = () => {
                     <div className="p-6 space-y-4">
                       {/* Información básica */}
                       <div>
-                        <h3 className="text-lg font-bold text-foreground mb-1 line-clamp-2">
+                        <h3 className="text-sm font-bold text-foreground mb-1 line-clamp-2">
                           {productGroup.name}
                         </h3>
                         <p className="text-sm text-muted-foreground">
@@ -300,9 +301,12 @@ const ProductsPage = () => {
                           </div>
                           <div className="text-right">
                             <p className="text-xl font-bold text-sillage-gold-dark">
-                              ${selectedProduct?.price?.toLocaleString('es-CL')}
+                              {formatPrice(
+                                productGroup.category === 'Home Spray' || productGroup.category_name === 'Home Spray'
+                                  ? 7500
+                                  : selectedProduct?.price
+                              )}
                             </p>
-                            <p className="text-xs text-muted-foreground">CLP</p>
                           </div>
                         </div>
                       </div>
@@ -332,7 +336,7 @@ const ProductsPage = () => {
           </div>
         )}
       </motion.div>
-      
+
       {/* QuantityDialog */}
       <QuantityDialog
         open={isQuantityDialogOpen}

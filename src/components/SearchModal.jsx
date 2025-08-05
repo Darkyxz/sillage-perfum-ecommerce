@@ -52,12 +52,12 @@ const SearchModal = ({ isOpen, onClose }) => {
       setIsLoading(true);
       try {
         const products = await productService.getAllProductsNoPagination();
-        const filtered = products.filter(product => 
+        const filtered = products.filter(product =>
           product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           product.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
           product.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           product.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          product.fragrance_profile?.some(profile => 
+          product.fragrance_profile?.some(profile =>
             profile.toLowerCase().includes(searchTerm.toLowerCase())
           )
         );
@@ -77,7 +77,7 @@ const SearchModal = ({ isOpen, onClose }) => {
   // Guardar búsqueda reciente
   const saveRecentSearch = (term) => {
     if (!term.trim()) return;
-    
+
     const newRecentSearches = [
       term,
       ...recentSearches.filter(search => search !== term)
@@ -180,7 +180,7 @@ const SearchModal = ({ isOpen, onClose }) => {
                         </p>
                         <div className="flex items-center justify-between mt-2">
                           <span className="text-lg font-bold text-sillage-gold">
-                            ${product.price?.toLocaleString('es-CL')}
+                            ${product.price ? Math.round(product.price).toLocaleString('es-CL') : '0'}
                           </span>
                           {product.fragrance_profile && product.fragrance_profile.length > 0 && (
                             <span className="text-xs text-muted-foreground bg-muted/70 px-2 py-1 rounded-full">
