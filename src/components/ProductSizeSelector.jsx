@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ChevronDown, Package, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { formatPrice } from '@/utils/formatPrice';
 
 // Precios fijos para todos los productos Zachary
 const FIXED_PRICES = {
@@ -21,7 +22,7 @@ const SIZE_CONFIG = {
     icon: '💧'
   },
   '50ml': {
-    label: '50ml', 
+    label: '50ml',
     price: FIXED_PRICES['50ml'],
     description: 'Tamaño estándar',
     popular: true,
@@ -29,41 +30,48 @@ const SIZE_CONFIG = {
   },
   '100ml': {
     label: '100ml',
-    price: FIXED_PRICES['100ml'], 
+    price: FIXED_PRICES['100ml'],
     description: 'Mayor duración',
     popular: false,
     icon: '💎'
   }
 };
 
-const ProductSizeSelector = ({ 
-  baseProduct, 
+const ProductSizeSelector = ({
+  baseProduct,
   allSizes = ['30ml', '50ml', '100ml'],
-  selectedSize, 
+  selectedSize,
   onSizeChange,
   className,
   variant = 'default' // 'default', 'compact', 'dropdown'
 }) => {
-  const [currentSize, setCurrentSize] = useState(selectedSize || '50ml');
+  // Para Home Spray, siempre usar 200ml
+  const isHomeSpray = baseProduct?.category === 'Home Spray' || baseProduct?.category_name === 'Home Spray';
+  const availableSizes = isHomeSpray ? ['200ml'] : allSizes;
+  const defaultSize = isHomeSpray ? '200ml' : (selectedSize || '50ml');
+
+  const [currentSize, setCurrentSize] = useState(defaultSize);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   // Actualizar cuando cambie el tamaño seleccionado externamente
   useEffect(() => {
-    if (selectedSize && selectedSize !== currentSize) {
+    if (isHomeSpray) {
+      setCurrentSize('200ml');
+    } else if (selectedSize && selectedSize !== currentSize) {
       setCurrentSize(selectedSize);
     }
-  }, [selectedSize]);
+  }, [selectedSize, isHomeSpray]);
 
   // Calcular producto actual basado en tamaño seleccionado
   const getCurrentProduct = () => {
     if (!baseProduct) return null;
-    
+
     return {
       ...baseProduct,
       size: currentSize,
-      price: FIXED_PRICES[currentSize],
+      price: isHomeSpray ? 7500 : FIXED_PRICES[currentSize],
       // Generar SKU con tamaño si no existe
-      sku: baseProduct.sku.includes('-') 
+      sku: baseProduct.sku.includes('-')
         ? baseProduct.sku.replace(/-\d+ML$/i, `-${currentSize.toUpperCase()}`)
         : `${baseProduct.sku}-${currentSize.toUpperCase()}`
     };
@@ -73,13 +81,13 @@ const ProductSizeSelector = ({
   const handleSizeChange = (newSize) => {
     setCurrentSize(newSize);
     setIsDropdownOpen(false);
-    
+
     if (onSizeChange) {
       const updatedProduct = {
         ...baseProduct,
         size: newSize,
-        price: FIXED_PRICES[newSize],
-        sku: baseProduct.sku.includes('-') 
+        price: isHomeSpray ? 7500 : FIXED_PRICES[newSize],
+        sku: baseProduct.sku.includes('-')
           ? baseProduct.sku.replace(/-\d+ML$/i, `-${newSize.toUpperCase()}`)
           : `${baseProduct.sku}-${newSize.toUpperCase()}`
       };
@@ -88,7 +96,7 @@ const ProductSizeSelector = ({
   };
 
   const currentProduct = getCurrentProduct();
-  const currentPrice = FIXED_PRICES[currentSize];
+  const currentPrice = isHomeSpray ? 7500 : FIXED_PRICES[currentSize];
 
   if (!baseProduct) return null;
 
@@ -113,7 +121,7 @@ const ProductSizeSelector = ({
           ))}
         </div>
         <div className="text-sm font-semibold text-sillage-gold-dark">
-          ${currentPrice?.toLocaleString('es-CL')} CLP
+          {formatPrice(currentPrice)}
         </div>
       </div>
     );
@@ -133,7 +141,7 @@ const ProductSizeSelector = ({
             <div>
               <div className="text-sm font-medium">{currentSize}</div>
               <div className="text-xs text-muted-foreground">
-                ${currentPrice?.toLocaleString('es-CL')} CLP
+                {formatPrice(currentPrice)}
               </div>
             </div>
           </div>
@@ -170,7 +178,7 @@ const ProductSizeSelector = ({
                     </div>
                     <div className="text-right">
                       <div className="text-sm font-semibold">
-                        ${config.price.toLocaleString('es-CL')}
+                        {formatPrice(config.price)}
                       </div>
                       {currentSize === size && (
                         <Check className="h-3 w-3 text-sillage-gold ml-auto" />
@@ -197,7 +205,7 @@ const ProductSizeSelector = ({
           {allSizes.map((size) => {
             const config = SIZE_CONFIG[size];
             const isSelected = currentSize === size;
-            
+
             return (
               <Card
                 key={size}
@@ -212,7 +220,7 @@ const ProductSizeSelector = ({
                 <CardContent className="p-4 text-center">
                   <div className="flex flex-col items-center space-y-2">
                     <div className="text-2xl">{config.icon}</div>
-                    
+
                     <div className="space-y-1">
                       <div className="flex items-center justify-center gap-1">
                         <Package className="h-3 w-3 text-muted-foreground" />
@@ -223,17 +231,13 @@ const ProductSizeSelector = ({
                           </span>
                         )}
                       </div>
-                      
+
                       <div className="text-xs text-muted-foreground">
                         {config.description}
                       </div>
-                      
+
                       <div className="text-lg font-bold text-sillage-gold-dark">
-                        ${config.price.toLocaleString('es-CL')}
-                      </div>
-                      
-                      <div className="text-xs text-muted-foreground">
-                        CLP
+                        {formatPrice(config.price)}
                       </div>
                     </div>
 
@@ -265,9 +269,8 @@ const ProductSizeSelector = ({
             </div>
             <div className="text-right">
               <div className="text-xl font-bold text-sillage-gold-dark">
-                ${currentPrice?.toLocaleString('es-CL')}
+                {formatPrice(currentPrice)}
               </div>
-              <div className="text-xs text-muted-foreground">CLP</div>
             </div>
           </div>
         </CardContent>

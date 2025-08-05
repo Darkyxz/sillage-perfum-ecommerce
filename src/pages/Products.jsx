@@ -45,14 +45,12 @@ const Products = () => {
       }
 
       const pageToLoad = reset ? 1 : currentPage + 1;
-      const result = await productService.getAllProducts(pageToLoad, 24);
+      const result = await productService.getAllProducts(pageToLoad, 48); // Aumentamos a 48 para obtener más fragancias únicas
 
       if (reset) {
         setProducts(result.products);
-        setFilteredProducts(result.products);
       } else {
         setProducts(prev => [...prev, ...result.products]);
-        setFilteredProducts(prev => [...prev, ...result.products]);
         setCurrentPage(pageToLoad);
       }
 
@@ -94,29 +92,76 @@ const Products = () => {
 
     // Filtrar por categoría
     if (selectedCategory && selectedCategory !== 'all') {
-      filtered = filtered.filter(product => product.category === selectedCategory);
+      const categoryMap = {
+        'men': 'Hombre',
+        'women': 'Mujer',
+        'unisex': 'Unisex',
+        'home': 'Hogar',
+        'body': 'Body Mist'
+      };
+      filtered = filtered.filter(product => product.category === categoryMap[selectedCategory]);
     }
+
+    // Agrupar productos por fragancia base (SKU sin tamaño)
+    const groupedProducts = {};
+    filtered.forEach(product => {
+      const baseSKU = product.sku.replace(/-\d+ML$/i, '');
+      if (!groupedProducts[baseSKU]) {
+        groupedProducts[baseSKU] = {
+          ...product,
+          baseSKU,
+          variants: [product],
+          availableSizes: [product.size]
+        };
+      } else {
+        groupedProducts[baseSKU].variants.push(product);
+        if (!groupedProducts[baseSKU].availableSizes.includes(product.size)) {
+          groupedProducts[baseSKU].availableSizes.push(product.size);
+        }
+      }
+    });
+
+    // Convertir a array y seleccionar el producto representativo (preferir 50ml, luego 30ml, luego 100ml)
+    let uniqueProducts = Object.values(groupedProducts).map(group => {
+      const representative = group.variants.find(v => v.size === '50ml') ||
+        group.variants.find(v => v.size === '30ml') ||
+        group.variants[0];
+
+      return {
+        ...representative,
+        variants: group.variants,
+        availableSizes: group.availableSizes.sort((a, b) => {
+          const sizeOrder = { '30ml': 1, '50ml': 2, '100ml': 3 };
+          return sizeOrder[a] - sizeOrder[b];
+        })
+      };
+    });
 
     // Ordenar productos
     switch (sortOption) {
       case 'price-low':
-        filtered.sort((a, b) => a.price - b.price);
+        uniqueProducts.sort((a, b) => a.price - b.price);
         break;
       case 'price-high':
-        filtered.sort((a, b) => b.price - a.price);
+        uniqueProducts.sort((a, b) => b.price - a.price);
         break;
       case 'newest':
-        filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+        uniqueProducts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         break;
       case 'popular':
-        filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        uniqueProducts.sort((a, b) => (b.rating || 0) - (a.rating || 0));
         break;
       default:
-        // Mantener orden original
+        // Ordenar por SKU
+        uniqueProducts.sort((a, b) => {
+          const numA = parseInt(a.sku.match(/\d+/)?.[0] || '0', 10);
+          const numB = parseInt(b.sku.match(/\d+/)?.[0] || '0', 10);
+          return numA - numB;
+        });
         break;
     }
 
-    setFilteredProducts(filtered);
+    setFilteredProducts(uniqueProducts);
   }, [products, searchTerm, selectedCategory, sortOption]);
 
   // Infinite scroll
@@ -290,7 +335,7 @@ const Products = () => {
           <div className="lg:col-span-3 order-1 lg:order-2">
             <div className="mb-6 flex items-center justify-between">
               <p className="text-muted-foreground">
-                {filteredProducts.length} de {totalCount} producto{totalCount !== 1 ? 's' : ''}
+                {filteredProducts.length} producto{filteredProducts.length !== 1 ? 's' : ''}
                 {searchTerm || selectedCategory !== 'all' ? ' (filtrados)' : ''}
               </p>
               {loadingMore && (
@@ -335,59 +380,73 @@ const Products = () => {
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: index * 0.1 }}
                       >
-                        <Card className="glass-effect border-sillage-gold/20 group hover:border-sillage-gold/40 transition-all duration-300 h-full flex flex-col">
-                          <div className="relative overflow-hidden rounded-t-lg">
-                            <div className="aspect-square bg-sillage-gold/10 flex items-center justify-center">
-                              {product.image_url ? (
-                                <img
-                                  src={product.image_url}
-                                  alt={product.name}
-                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                />
-                              ) : (
-                                <div className="text-muted-foreground/50 text-center p-8">
-                                  <p>Sin imagen</p>
-                                </div>
-                              )}
-                            </div>
-
+                        <Card className="glass-effect border-sillage-gold/20 hover:border-sillage-gold/40 transition-all duration-300 hover:shadow-2xl h-full flex flex-col rounded-xl overflow-hidden group">
+                          <div className="relative aspect-[3/4] bg-gradient-to-br from-purple-50 to-pink-50 overflow-hidden">
+                            {product.image_url ? (
+                              <img
+                                src={product.image_url}
+                                alt={product.name}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                <p>Sin imagen</p>
+                              </div>
+                            )}
+                            {/* Favorite button */}
                             <button
-                              className={`absolute top-3 right-3 p-2 rounded-full transition-all duration-200 ${isFavorite(product.id)
-                                ? 'bg-sillage-gold/90 opacity-100 shadow-lg'
-                                : 'favorite-button-mobile hover:bg-sillage-gold/20 shadow-md'
-                                }`}
+                              className={`absolute top-3 right-3 p-2 rounded-full bg-sillage-gold/90 hover:bg-sillage-gold-bright transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-110 z-10`}
                               onClick={() => toggleFavorite(product)}
                             >
-                              <Heart className={`h-5 w-5 transition-colors ${isFavorite(product.id)
-                                ? 'text-gold fill-current'
-                                : 'text-black hover:text-yellow-100 drop-shadow-sm'
-                                }`} />
+                              <Heart className={`h-4 w-4 ${isFavorite(product.id) ? 'text-white fill-current' : 'text-white'}`} />
                             </button>
                           </div>
 
                           <CardContent className="p-4 flex flex-col flex-grow">
                             <div className="flex-grow">
-                              <h3 className="text-lg font-semibold text-foreground mb-2">
+                              {/* Brand */}
+                              <p className="text-foreground text-sm font-medium mb-2">
+                                Zachary Perfumes
+                              </p>
+
+                              {/* Product Name */}
+                              <h3 className="text-sm font-semibold text-sillage-gold-dark mb-2 leading-tight line-clamp-2">
                                 {product.name}
                               </h3>
-                              <p className="text-muted-foreground text-sm mb-2">
-                                {product.brand || 'Marca Premium'}
-                              </p>
-                              <p className="text-muted-foreground/80 text-xs mb-4 line-clamp-2">
-                                {product.description || 'Fragancia exclusiva de alta calidad'}
+
+                              {/* Description */}
+                              <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
+                                {product.description || 'Fragancia radiante y sofisticada, que irradia confianza y elegancia. Inspirada en SOLEIL Escada, captura la esencia del sol con notas florales y afrutadas, perfecta para la mujer moderna.'}
                               </p>
                             </div>
 
-                            <div className="mt-4 pt-4 border-t border-sillage-gold/20">
-                              <p className="text-xl font-bold text-sillage-gold-dark">
-                                ${product.price?.toLocaleString('es-CL') || '0'} CLP
+                            <div className="mt-auto pt-3 border-t border-sillage-gold/10">
+                              {/* SKU */}
+                              <p className="text-gray-500 text-xs mb-2">
+                                {product.sku}
                               </p>
-                              <div className="flex items-center space-x-2">
+
+                              {/* Price */}
+                              <p className="text-2xl font-bold text-sillage-gold-dark mb-3">
+                                ${product.price ? Math.round(product.price).toLocaleString('es-CL') : '0'}
+                              </p>
+
+                              {/* Buttons */}
+                              <div className="flex items-center gap-2">
                                 <Link to={`/productos/${product.sku}`} className="flex-1">
-                                  <Button variant="outline" className="w-full border-sillage-gold/30 text-sillage-gold-dark hover:bg-sillage-gold hover:text-white transition-all duration-300">Ver Detalles</Button>
+                                  <Button
+                                    variant="outline"
+                                    className="w-full border-sillage-gold/30 text-sillage-gold-dark hover:bg-sillage-gold hover:text-white transition-all duration-300 font-medium text-sm py-2"
+                                  >
+                                    Ver Detalles
+                                  </Button>
                                 </Link>
-                                <Button size="icon" className="bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white" onClick={() => openQuantityDialog(product)}>
-                                  <ShoppingCart className="h-5 w-5" />
+                                <Button
+                                  className="bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white px-3 py-2"
+                                  size="icon"
+                                  onClick={() => openQuantityDialog(product)}
+                                >
+                                  <ShoppingCart className="h-4 w-4" />
                                 </Button>
                               </div>
                             </div>

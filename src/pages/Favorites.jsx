@@ -5,6 +5,7 @@ import { useFavorites } from '@/contexts/FavoritesContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/contexts/CartContext';
 import FavoriteButton from '@/components/ui/FavoriteButton';
+import { formatPrice } from '@/utils/formatPrice';
 
 const Favorites = () => {
   const { favorites, loading, error, loadFavorites, favoritesCount } = useFavorites();
@@ -19,14 +20,6 @@ const Favorites = () => {
 
   const handleAddToCart = (product) => {
     addToCart(product, 1);
-  };
-
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('es-CL', {
-      style: 'currency',
-      currency: 'CLP',
-      minimumFractionDigits: 0
-    }).format(price);
   };
 
   // Si no está autenticado

@@ -43,11 +43,11 @@ const OrderManagementAdmin = () => {
     const handleStatusChange = async (orderId, newStatus, type = 'order') => {
         try {
             setUpdatingStatus(orderId);
-            
+
             if (type === 'payment') {
                 // Actualizar payment_status
                 await orderService.updateOrderStatusAdmin(orderId, null, newStatus);
-                
+
                 // Actualizar el pedido en la lista
                 setOrders(prevOrders =>
                     prevOrders.map(order =>
@@ -56,12 +56,12 @@ const OrderManagementAdmin = () => {
                             : order
                     )
                 );
-                
+
                 // Si hay un pedido seleccionado, actualizarlo también
                 if (selectedOrder && selectedOrder.id === orderId) {
                     setSelectedOrder(prev => ({ ...prev, payment_status: newStatus }));
                 }
-                
+
                 toast({
                     title: "Estado de pago actualizado",
                     description: `El pago del pedido #${orderId} ahora está ${getPaymentStatusText(newStatus)}`
@@ -69,7 +69,7 @@ const OrderManagementAdmin = () => {
             } else {
                 // Actualizar status normal
                 await orderService.updateOrderStatusAdmin(orderId, newStatus);
-                
+
                 // Actualizar el pedido en la lista
                 setOrders(prevOrders =>
                     prevOrders.map(order =>
@@ -78,12 +78,12 @@ const OrderManagementAdmin = () => {
                             : order
                     )
                 );
-                
+
                 // Si hay un pedido seleccionado, actualizarlo también
                 if (selectedOrder && selectedOrder.id === orderId) {
                     setSelectedOrder(prev => ({ ...prev, status: newStatus }));
                 }
-                
+
                 toast({
                     title: "Estado actualizado",
                     description: `El pedido #${orderId} ahora está ${getStatusText(newStatus)}`
@@ -367,7 +367,7 @@ const OrderManagementAdmin = () => {
 
                                                 <div className="flex items-center gap-2">
                                                     <CreditCard className="w-4 h-4" />
-                                                    <span>${parseFloat(order.total_amount).toLocaleString('es-CL')} CLP</span>
+                                                    <span>${Math.round(parseFloat(order.total_amount)).toLocaleString('es-CL')}</span>
                                                 </div>
 
                                                 <div className="flex items-center gap-2">
@@ -411,7 +411,7 @@ const OrderManagementAdmin = () => {
                                                         <SelectItem value="cancelled">Cancelado</SelectItem>
                                                     </SelectContent>
                                                 </Select>
-                                                
+
                                                 <Select
                                                     value={order.payment_status || 'pending'}
                                                     onValueChange={(newStatus) => handleStatusChange(order.id, newStatus, 'payment')}
@@ -491,7 +491,7 @@ const OrderManagementAdmin = () => {
                                     </CardHeader>
                                     <CardContent>
                                         <p className="font-bold text-lg text-sillage-gold-dark">
-                                            ${parseFloat(selectedOrder.total_amount).toLocaleString('es-CL')} CLP
+                                            ${Math.round(parseFloat(selectedOrder.total_amount)).toLocaleString('es-CL')}
                                         </p>
                                     </CardContent>
                                 </Card>
@@ -538,12 +538,12 @@ const OrderManagementAdmin = () => {
                                                     <h4 className="font-medium">{item.product_name}</h4>
                                                     <p className="text-sm text-gray-500">SKU: {item.product_sku}</p>
                                                     <p className="text-sm text-gray-500">
-                                                        Cantidad: {item.quantity} • Precio unitario: ${parseFloat(item.unit_price).toLocaleString('es-CL')}
+                                                        Cantidad: {item.quantity} • Precio unitario: ${Math.round(parseFloat(item.unit_price)).toLocaleString('es-CL')}
                                                     </p>
                                                 </div>
                                                 <div className="text-right">
                                                     <p className="font-semibold">
-                                                        ${parseFloat(item.total_price).toLocaleString('es-CL')}
+                                                        ${Math.round(parseFloat(item.total_price)).toLocaleString('es-CL')}
                                                     </p>
                                                 </div>
                                             </div>
@@ -552,7 +552,7 @@ const OrderManagementAdmin = () => {
                                         <div className="border-t pt-3">
                                             <div className="flex justify-between items-center text-lg font-bold text-sillage-gold-dark">
                                                 <span>Total</span>
-                                                <span>${parseFloat(selectedOrder.total_amount).toLocaleString('es-CL')} CLP</span>
+                                                <span>${Math.round(parseFloat(selectedOrder.total_amount)).toLocaleString('es-CL')}</span>
                                             </div>
                                         </div>
                                     </div>

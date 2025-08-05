@@ -36,6 +36,7 @@ const webpayRoutes = require('./routes/webpay');
 const favoritesRoutes = require('./routes/favorites');
 const uploadRoutes = require('./routes/upload');
 const contactRoutes = require('./routes/contact');
+const guestCheckoutRoutes = require('./routes/guestCheckout');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -62,25 +63,25 @@ if (helmet) {
 // CORS - Configuración permisiva para resolver problemas
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  
+
   console.log('🌐 CORS Request - Origin:', origin);
   console.log('🌐 CORS Request - Method:', req.method);
   console.log('🌐 CORS Request - Path:', req.path);
-  
+
   // Permitir todos los orígenes temporalmente
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', 'false'); // Cambiar a false cuando usamos *
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Cache-Control');
   res.setHeader('Access-Control-Max-Age', '86400');
-  
+
   // Handle preflight requests
   if (req.method === 'OPTIONS') {
     console.log('✅ CORS Preflight handled for:', origin);
     res.status(200).end();
     return;
   }
-  
+
   next();
 });
 
@@ -158,6 +159,7 @@ app.use('/api/webpay', webpayRoutes);
 app.use('/api/favorites', favoritesRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/guest-checkout', guestCheckoutRoutes);
 
 // Ruta para servir archivos estáticos (imágenes)
 app.use('/images', express.static('public/images'));

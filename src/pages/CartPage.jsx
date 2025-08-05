@@ -8,6 +8,7 @@ import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { checkoutService } from '@/lib/checkoutService';
 import { useNavigate } from 'react-router-dom';
+import { formatPrice } from '@/utils/formatPrice';
 
 const CartPage = () => {
   const { items: cartItems, updateQuantity, removeFromCart, clearCart, getCartTotal } = useCart();
@@ -16,7 +17,7 @@ const CartPage = () => {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const subtotal = getCartTotal();
-  const shipping = 5000; // Envío fijo de $5.000 CLP
+  const shipping = 0; // Envío fijo de $5.000 
   const total = subtotal + shipping;
 
   const handleQuantityChange = (productId, newQuantity) => {
@@ -29,12 +30,8 @@ const CartPage = () => {
 
   const handleCheckout = async () => {
     if (!user) {
-      toast({
-        title: "Inicia sesión",
-        description: "Debes iniciar sesión para proceder con la compra",
-        variant: "destructive",
-      });
-      navigate('/login');
+      // Redirigir a checkout de invitados en lugar de forzar login
+      navigate('/checkout-invitado');
       return;
     }
 
@@ -48,7 +45,7 @@ const CartPage = () => {
     }
 
     setIsProcessing(true);
-    
+
     try {
       const result = await checkoutService.processWebpayCheckout(
         user.id,
@@ -93,7 +90,7 @@ const CartPage = () => {
         </h1>
 
         {cartItems.length === 0 ? (
-          <motion.div 
+          <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.4 }}
@@ -119,9 +116,9 @@ const CartPage = () => {
                 >
                   <img alt={item.name} className="w-24 h-24 object-cover rounded-md mb-4 sm:mb-0 sm:mr-6" src={item.image_url || "https://images.unsplash.com/photo-1670538528394-18075d01726a"} />
                   <div className="flex-grow text-center sm:text-left">
-                    <h2 className="text-xl font-semibold text-pink-400">{item.name}</h2>
+                    <h2 className="text-base font-semibold text-pink-400 line-clamp-2">{item.name}</h2>
                     <p className="text-sm text-gray-400">{item.brand}</p>
-                    <p className="text-lg font-medium text-green-400 mt-1">${item.price?.toLocaleString('es-CL')} CLP</p>
+                    <p className="text-lg font-medium text-green-400 mt-1">{formatPrice(item.price)}</p>
                   </div>
                   <div className="flex items-center space-x-3 my-4 sm:my-0 sm:mx-6">
                     <Button variant="ghost" size="icon" onClick={() => handleQuantityChange(item.id, item.quantity - 1)} className="text-gray-400 hover:text-white">
@@ -139,7 +136,7 @@ const CartPage = () => {
               ))}
             </div>
 
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.4, delay: 0.2 }}
@@ -149,20 +146,20 @@ const CartPage = () => {
               <div className="space-y-3 mb-6 text-gray-300">
                 <div className="flex justify-between">
                   <span>Subtotal:</span>
-                  <span>${subtotal.toLocaleString('es-CL')} CLP</span>
+                  <span>{formatPrice(subtotal)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span>Envío:</span>
-                  <span>${shipping.toLocaleString('es-CL')} CLP</span>
+                  {/*<span>Envío:</span>*/}
+                  {/*<span>{formatPrice(shipping)}</span>*/}
                 </div>
                 <hr className="border-slate-700 my-2" />
                 <div className="flex justify-between text-xl font-bold text-white">
                   <span>Total:</span>
-                  <span className="text-green-400">${total.toLocaleString('es-CL')} CLP</span>
+                  <span className="text-green-400">{formatPrice(total)}</span>
                 </div>
               </div>
-              
-              <Button 
+
+              <Button
                 className="w-full bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white font-semibold py-4 text-lg rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={handleCheckout}
                 disabled={isProcessing || cartItems.length === 0}
@@ -179,18 +176,36 @@ const CartPage = () => {
                   </>
                 )}
               </Button>
-              
+
               <div className="mt-4 text-center">
                 <p className="text-xs text-gray-500">Serás redirigido a Webpay para completar tu pago seguro.</p>
                 <div className="mt-4">
-                  <img 
-                    src="https://www.webpay.cl/assets/img/boton_webpaycl.svg" 
-                    alt="Webpay" 
-                    className="h-12 mx-auto cursor-pointer" 
+                  <img
+                    src="https://www.webpay.cl/assets/img/boton_webpaycl.svg"
+                    alt="Webpay"
+                    className="h-12 mx-auto cursor-pointer"
                     onClick={handleCheckout}
                   />
                 </div>
               </div>
+
+              {/* Opción de checkout como invitado */}
+              {!user && (
+                <div className="mt-6 pt-6 border-t border-slate-700">
+                  <p className="text-sm text-gray-400 text-center mb-3">
+                    ¿No tienes cuenta?
+                  </p>
+                  <Button
+                    className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-3 text-md rounded-lg shadow-md hover:shadow-lg transform hover:scale-105 transition-all"
+                    onClick={() => navigate('/checkout-invitado')}
+                  >
+                    🛒 Comprar como Invitado
+                  </Button>
+                  <p className="text-xs text-gray-500 text-center mt-2">
+                    Completa tu compra sin necesidad de registrarte
+                  </p>
+                </div>
+              )}
             </motion.div>
           </div>
         )}

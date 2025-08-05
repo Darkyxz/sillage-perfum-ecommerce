@@ -38,7 +38,7 @@ const Checkout = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setShippingData(prev => ({ ...prev, [name]: value }));
-    
+
     // Limpiar error del campo
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
@@ -80,7 +80,7 @@ const Checkout = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       toast({
         title: "Datos incompletos",
@@ -95,7 +95,7 @@ const Checkout = () => {
     try {
       // Si no hay orderId, crear el pedido primero
       let finalOrderId = orderId;
-      
+
       if (!finalOrderId) {
         console.log("📦 Creando pedido con datos de envío...");
         const total = getTotalPrice();
@@ -165,7 +165,7 @@ const Checkout = () => {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Volver al carrito
           </Button>
-          
+
           <h1 className="text-3xl font-bold text-sillage-gold-dark mb-2">
             Finalizar Compra
           </h1>
@@ -317,7 +317,7 @@ const Checkout = () => {
                     ) : (
                       <>
                         <CreditCard className="w-5 h-5 mr-2" />
-                        Procesar Pago - ${total.toLocaleString('es-CL')} CLP
+                        Procesar Pago - ${Math.round(total).toLocaleString('es-CL')}
                       </>
                     )}
                   </Button>
@@ -346,15 +346,15 @@ const Checkout = () => {
                       </p>
                     </div>
                     <p className="font-semibold text-sm">
-                      ${(parseFloat(item.price) * item.quantity).toLocaleString('es-CL')}
+                      ${Math.round(parseFloat(item.price) * item.quantity).toLocaleString('es-CL')}
                     </p>
                   </div>
                 ))}
-                
+
                 <div className="border-t pt-4">
                   <div className="flex justify-between items-center text-lg font-bold text-sillage-gold-dark">
                     <span>Total</span>
-                    <span>${total.toLocaleString('es-CL')} CLP</span>
+                    <span>${Math.round(total).toLocaleString('es-CL')}</span>
                   </div>
                 </div>
               </CardContent>

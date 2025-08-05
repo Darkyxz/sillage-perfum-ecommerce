@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fix Missing Variants</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .incomplete {
+            background-color: #fff3cd;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .complete {
+            background-color: #d4edda;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .error {
+            color: red;
+        }
+        .success {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>Verificar y Crear Variantes Faltantes</h1>
+    
+    <div class="section">
+        <h2>SKUs Específicos a Verificar</h2>
+        <button onclick="checkSpecificSkus()">Verificar SKUs: ZBM-COC, ZP108W, ZP87W</button>
+        <div id="specific-results"></div>
+    </div>
+    
+    <div class="section">
+        <h2>Análisis Completo</h2>
+        <button onclick="checkAllSkus()">Analizar Todos los SKUs</button>
+        <div id="all-results"></div>
+    </div>
+    
+    <div class="section">
+        <h2>Crear Variantes Faltantes</h2>
+        <p>Después de revisar el análisis, puedes crear las variantes faltantes:</p>
+        <button onclick="createMissingVariants()" style="background-color: #28a745;">Crear Variantes Faltantes</button>
+        <div id="create-results"></div>
+    </div>
+
+    <script>
+        const API_URL = 'https://sillageperfum.cl/api-proxy.php';
+        let missingVariants = [];
+
+        async function fetchProducts(limit = 500) {
+            try {
+                const response = await fetch(`${API_URL}?path=api/products&limit=${limit}`);
+                const data = await response.json();
+                return data.success ? data.data : [];
+            } catch (error) {
+                console.error('Error fetching products:', error);
+                return [];
+            }
+        }
+
+        function getBaseSku(sku) {
+            return sku.replace(/-\d+ML$/i, '');
+        }
+
+        async function checkSpecificSkus() {
+            const resultDiv = document.getElementById('specific-results');
+            resultDiv.innerHTML = '<p>Cargando...</p>';
+            
+            const products = await fetchProducts();
+            const specificSkus = ['ZBM-COC', 'ZP108W', 'ZP87W'];
+            
+            let html = '';
+            
+            for (const baseSku of specificSkus) {
+                const variants = products.filter(p => getBaseSku(p.sku) === baseSku);
+                const sizes = variants.map(v => v.size);
+                const missingSizes = ['30ml', '50ml', '100ml'].filter(size => !sizes.includes(size));
+                
+                const statusClass = missingSizes.length === 0 ? 'complete' : 'incomplete';
+                html += `<div class="${statusClass}">`;
+                html += `<h3>${baseSku}</h3>`;
+                html += `<p>Variantes encontradas: ${variants.length}</p>`;
+                html += `<p>Tamaños existentes: ${sizes.join(', ') || 'Ninguno'}</p>`;
+                html += `<p>Tamaños faltantes: ${missingSizes.join(', ') || 'Ninguno'}</p>`;
+                
+                if (variants.length > 0) {
+                    html += '<ul>';
+                    variants.forEach(v => {
+                        html += `<li>${v.sku} - ${v.size} - $${v.price} - Stock: ${v.stock_quantity}</li>`;
+                    });
+                    html += '</ul>';
+                }
+                html += '</div>';
+            }
+            
+            resultDiv.innerHTML = html;
+        }
+
+        async function checkAllSkus() {
+            const resultDiv = document.getElementById('all-results');
+            resultDiv.innerHTML = '<p>Cargando...</p>';
+            
+            const products = await fetchProducts();
+            const skuGroups = {};
+            
+            // Agrupar por SKU base
+            products.forEach(p => {
+                const baseSku = getBaseSku(p.sku);
+                if (!skuGroups[baseSku]) {
+                    skuGroups[baseSku] = [];
+                }
+                skuGroups[baseSku].push(p);
+            });
+            
+            // Encontrar SKUs incompletos
+            missingVariants = [];
+            let incompleteCount = 0;
+            let html = '<h3>SKUs con variantes faltantes:</h3>';
+            
+            Object.entries(skuGroups).forEach(([baseSku, variants]) => {
+                const sizes = variants.map(v => v.size);
+                const missingSizes = ['30ml', '50ml', '100ml'].filter(size => !sizes.includes(size));
+                
+                if (missingSizes.length > 0) {
+                    incompleteCount++;
+                    html += `<div class="incomplete">`;
+                    html += `<strong>${baseSku}</strong> - ${variants.length} variante(s): ${sizes.join(', ')}`;
+                    html += `<br>Faltan: ${missingSizes.join(', ')}`;
+                    html += '</div>';
+                    
+                    // Guardar info para crear variantes
+                    missingSizes.forEach(size => {
+                        const sampleProduct = variants[0];
+                        missingVariants.push({
+                            baseSku: baseSku,
+                            size: size,
+                            sampleProduct: sampleProduct
+                        });
+                    });
+                }
+            });
+            
+            html = `<p>Total de productos: ${products.length}</p>` +
+                   `<p>Total de SKU base: ${Object.keys(skuGroups).length}</p>` +
+                   `<p>SKUs incompletos: ${incompleteCount}</p>` +
+                   `<p>Variantes a crear: ${missingVariants.length}</p>` + html;
+            
+            resultDiv.innerHTML = html;
+        }
+
+        async function createMissingVariants() {
+            if (missingVariants.length === 0) {
+                alert('Primero debes ejecutar el análisis completo para identificar las variantes faltantes.');
+                return;
+            }
+            
+            if (!confirm(`¿Estás seguro de que quieres crear ${missingVariants.length} variantes nuevas?`)) {
+                return;
+            }
+            
+            const resultDiv = document.getElementById('create-results');
+            resultDiv.innerHTML = '<p>Creando variantes...</p>';
+            
+            let created = 0;
+            let errors = [];
+            
+            for (const variant of missingVariants) {
+                const { baseSku, size, sampleProduct } = variant;
+                
+                // Determinar precio según tamaño
+                const price = size === '30ml' ? 9000 : size === '50ml' ? 14000 : 18000;
+                
+                // Crear nuevo producto
+                const newProduct = {
+                    name: sampleProduct.name,
+                    description: sampleProduct.description,
+                    price: price.toString(),
+                    sku: `${baseSku}-${size.toUpperCase()}`,
+                    brand: sampleProduct.brand,
+                    category: sampleProduct.category,
+                    image_url: sampleProduct.image_url,
+                    stock_quantity: 50,
+                    is_featured: sampleProduct.is_featured,
+                    rating: sampleProduct.rating,
+                    notes: sampleProduct.notes,
+                    duration: sampleProduct.duration,
+                    original_inspiration: sampleProduct.original_inspiration,
+                    size: size,
+                    concentration: sampleProduct.concentration,
+                    fragrance_profile: sampleProduct.fragrance_profile,
+                    fragrance_notes_top: sampleProduct.fragrance_notes_top,
+                    fragrance_notes_middle: sampleProduct.fragrance_notes_middle,
+                    fragrance_notes_base: sampleProduct.fragrance_notes_base
+                };
+                
+                try {
+                    const response = await fetch(`${API_URL}?path=api/products`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(newProduct)
+                    });
+                    
+                    if (response.ok) {
+                        created++;
+                        resultDiv.innerHTML = `<p>Creando variantes... ${created}/${missingVariants.length}</p>`;
+                    } else {
+                        const error = await response.text();
+                        errors.push(`Error creando ${newProduct.sku}: ${error}`);
+                    }
+                } catch (error) {
+                    errors.push(`Error creando ${newProduct.sku}: ${error.message}`);
+                }
+            }
+            
+            let html = `<p class="success">Variantes creadas exitosamente: ${created}</p>`;
+            if (errors.length > 0) {
+                html += `<p class="error">Errores: ${errors.length}</p>`;
+                html += '<ul>';
+                errors.forEach(error => {
+                    html += `<li class="error">${error}</li>`;
+                });
+                html += '</ul>';
+            }
+            
+            resultDiv.innerHTML = html;
+            
+            // Limpiar la lista de variantes faltantes
+            missingVariants = [];
+        }
+    </script>
+</body>
+</html>

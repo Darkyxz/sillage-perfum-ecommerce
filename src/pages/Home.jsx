@@ -10,10 +10,13 @@ import { productService } from '@/lib/productService';
 import Testimonials from '@/components/Testimonials';
 import About from '@/components/About';
 import TrustSignals from '@/components/TrustSignals';
+import { formatPrice } from '@/utils/formatPrice';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchFeaturedProducts = async () => {
@@ -48,11 +51,13 @@ const Home = () => {
     }
   }, []);
 
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('es-CL', {
-      style: 'currency',
-      currency: 'CLP'
-    }).format(price);
+  // Función para obtener el precio según la categoría
+  const getProductPrice = (product) => {
+    // Si el producto es de categoría "Home Spray", precio fijo de 7500
+    if (product.category_name === 'Home Spray' || product.category === 'Home Spray') {
+      return 7500;
+    }
+    return product.price;
   };
 
   return (
@@ -197,12 +202,7 @@ const Home = () => {
                 variant="outline"
                 size="sm"
                 className="border-sillage-gold text-sillage-gold-dark hover:bg-sillage-gold hover:text-white transition-all duration-300 px-3 py-2 sm:px-8 sm:py-3 text-xs sm:text-base shadow-lg hover:shadow-xl transform hover:scale-105"
-                onClick={() => {
-                  toast({
-                    title: "Catálogo",
-                    description: "🚧 Esta funcionalidad no está implementada aún—¡pero no te preocupes! Puedes solicitarla en tu próximo prompt! 🚀",
-                  });
-                }}
+                onClick={() => navigate('/inspiraciones')}
               >
                 <span className="hidden sm:inline">Ver Catálogo</span>
                 <span className="sm:hidden">Catálogo</span>
@@ -303,13 +303,10 @@ const Home = () => {
 
                       <CardContent className="p-6 bg-card">
                         <div className="flex justify-between items-start mb-2">
-                          <h3 className="text-xl font-semibold text-sillage-gold pr-2">
+                          <h3 className="text-base font-semibold text-sillage-gold pr-2 leading-tight line-clamp-2">
                             {product.name}
                           </h3>
-                          <div className="flex items-center space-x-1 flex-shrink-0">
-                            <Star className="h-4 w-4 fill-sillage-gold text-sillage-gold" />
-                            <span className="text-sillage-gold-dark text-sm font-medium">{product.rating || 4.5}</span>
-                          </div>
+
                         </div>
                         <p className="text-sillage-gold-dark text-sm mb-4">
                           {product.brand || 'Marca Premium'}
@@ -317,7 +314,7 @@ const Home = () => {
 
                         <div className="mt-4 flex justify-between items-center">
                           <p className="text-2xl font-bold text-sillage-gold-dark">
-                            {formatPrice(product.price)}
+                            {formatPrice(getProductPrice(product))}
                           </p>
                           <Link to={`/productos/${product.sku}`}>
                             <Button variant="outline" className="border-sillage-gold text-sillage-gold-dark hover:bg-sillage-gold hover:text-white transition-all duration-300">

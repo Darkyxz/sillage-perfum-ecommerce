@@ -36,6 +36,8 @@ const webpayRoutes = require('./routes/webpay');
 const favoritesRoutes = require('./routes/favorites');
 const uploadRoutes = require('./routes/upload');
 const contactRoutes = require('./routes/contact');
+const guestCheckoutRouter = require('./routes/guestCheckout');
+
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -138,7 +140,7 @@ app.use('/api/webpay', webpayRoutes);
 app.use('/api/favorites', favoritesRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/contact', contactRoutes);
-
+app.use('/api/guest-checkout', guestCheckoutRouter);
 // Ruta para servir archivos estáticos (imágenes)
 app.use('/images', express.static('public/images'));
 app.use('/uploads', express.static('uploads'));

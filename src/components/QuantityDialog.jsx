@@ -5,12 +5,15 @@ import { Button } from '@/components/ui/button';
 import { Minus, Plus, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import ProductSizeSelector from '@/components/ProductSizeSelector';
+import { formatPrice } from '@/utils/formatPrice';
+import { useNavigate } from 'react-router-dom';
 
 // Precios fijos para todos los productos Zachary
 const FIXED_PRICES = {
   '30ml': 9000,   // $9,000 CLP
   '50ml': 14000,  // $14,000 CLP  
-  '100ml': 18000  // $18,000 CLP
+  '100ml': 18000,  // $18,000 CLP
+  '200ml': 7500   // $7,500 CLP
 };
 
 // Componente DialogContent optimizado fuera del render
@@ -33,17 +36,32 @@ const CustomDialogContent = React.forwardRef(({ className, children, ...props },
 export const QuantityDialog = React.memo(({ open, onOpenChange, product, onAddToCart }) => {
   const [quantity, setQuantity] = useState(1);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const navigate = useNavigate();
+
+  // Detectar si es un producto Home Spray
+  const isHomeSpray = product?.category === 'Hogar' ||
+    product?.sku?.startsWith('ZHS-') ||
+    product?.name?.toLowerCase().includes('home spray');
 
   // Inicializar producto seleccionado cuando se abre el dialog
   useEffect(() => {
     if (product && open) {
-      setSelectedProduct({
-        ...product,
-        size: product.size || '50ml',
-        price: FIXED_PRICES[product.size || '50ml']
-      });
+      if (isHomeSpray) {
+        // Para Home Spray: forzar 200ml y precio $7.500
+        setSelectedProduct({
+          ...product,
+          size: '200ml',
+          price: 7500
+        });
+      } else {
+        setSelectedProduct({
+          ...product,
+          size: product.size || '50ml',
+          price: FIXED_PRICES[product.size || '50ml']
+        });
+      }
     }
-  }, [product, open]);
+  }, [product, open, isHomeSpray]);
 
   const handleAddToCart = useCallback(() => {
     if (selectedProduct) {
@@ -54,15 +72,14 @@ export const QuantityDialog = React.memo(({ open, onOpenChange, product, onAddTo
   }, [onAddToCart, selectedProduct, quantity, onOpenChange]);
 
   const handleSizeChange = useCallback((updatedProduct, newSize) => {
-    setSelectedProduct({
-      ...product,
-      size: newSize,
-      price: FIXED_PRICES[newSize],
-      sku: product.sku.includes('-') 
-        ? product.sku.replace(/-\d+ML$/i, `-${newSize.toUpperCase()}`)
-        : `${product.sku}-${newSize.toUpperCase()}`
-    });
-  }, [product]);
+    const newSku = product.sku.includes('-')
+      ? product.sku.replace(/-\d+ML$/i, `-${newSize.toUpperCase()}`)
+      : `${product.sku}-${newSize.toUpperCase()}`;
+
+    // Cerrar el dialog y navegar a la nueva URL
+    onOpenChange(false);
+    navigate(`/productos/${newSku}`);
+  }, [product, onOpenChange, navigate]);
 
   const incrementQuantity = useCallback((e) => {
     e.preventDefault();
@@ -118,14 +135,22 @@ export const QuantityDialog = React.memo(({ open, onOpenChange, product, onAddTo
 
             {/* Selector de tamaño */}
             <div className="mb-6">
-              <ProductSizeSelector
-                baseProduct={product}
-                allSizes={['30ml', '50ml', '100ml']}
-                selectedSize={selectedProduct.size}
-                onSizeChange={handleSizeChange}
-                variant="dropdown"
-                className="w-full"
-              />
+              {isHomeSpray ? (
+                // Para Home Spray mostrar solo 200ml sin opción de cambiar
+                <div className="bg-sillage-gold/10 rounded-lg p-4 border border-sillage-gold/30">
+                  <p className="text-sm font-medium text-foreground mb-1">Tamaño único</p>
+                  <p className="text-lg font-bold text-sillage-gold-dark">200ml</p>
+                </div>
+              ) : (
+                <ProductSizeSelector
+                  baseProduct={product}
+                  allSizes={['30ml', '50ml', '100ml']}
+                  selectedSize={selectedProduct.size}
+                  onSizeChange={handleSizeChange}
+                  variant="dropdown"
+                  className="w-full"
+                />
+              )}
             </div>
 
             {/* Información del producto seleccionado */}
@@ -141,47 +166,41 @@ export const QuantityDialog = React.memo(({ open, onOpenChange, product, onAddTo
                 </div>
                 <div className="text-right">
                   <p className="text-xl font-bold text-sillage-gold-dark">
-                    ${selectedProduct.price?.toLocaleString('es-CL')}
+                    {formatPrice(selectedProduct.price)}
                   </p>
-                  <p className="text-xs text-muted-foreground">CLP</p>
                 </div>
               </div>
             </div>
 
             {/* Selector de cantidad */}
-            <div className="py-4 flex items-center justify-center space-x-4 mb-6">
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                onClick={decrementQuantity}
-                className="bg-sillage-gold/10 border-sillage-gold/30 text-sillage-gold-dark hover:bg-sillage-gold/20 hover:border-sillage-gold/50 transition-colors duration-150 rounded-full w-8 h-8 shadow-sm"
-              >
-                <Minus className="h-3 w-3" />
-              </Button>
-
-              <div className="bg-sillage-gold/10 border-2 border-sillage-gold/30 rounded-lg px-3 py-1 min-w-[60px] shadow-inner">
-                <span className="text-center bg-transparent text-sillage-gold-dark text-lg font-bold block select-none">
-                  {quantity}
-                </span>
+            <div className="mb-6">
+              <label className="text-sm font-medium text-foreground block mb-2">Cantidad</label>
+              <div className="flex items-center justify-center space-x-0 bg-gray-100 rounded-lg inline-flex">
+                <button
+                  type="button"
+                  onClick={decrementQuantity}
+                  className="w-10 h-10 flex items-center justify-center text-lg font-medium hover:bg-gray-200 transition-colors rounded-l-lg"
+                >
+                  -
+                </button>
+                <div className="w-14 h-10 flex items-center justify-center border-x border-gray-300">
+                  <span className="text-lg font-medium">{quantity}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={incrementQuantity}
+                  className="w-10 h-10 flex items-center justify-center text-lg font-medium hover:bg-gray-200 transition-colors rounded-r-lg"
+                >
+                  +
+                </button>
               </div>
-
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                onClick={incrementQuantity}
-                className="bg-sillage-gold/10 border-sillage-gold/30 text-sillage-gold-dark hover:bg-sillage-gold/20 hover:border-sillage-gold/50 transition-colors duration-150 rounded-full w-8 h-8 shadow-sm"
-              >
-                <Plus className="h-3 w-3" />
-              </Button>
             </div>
 
             {/* Precio total */}
             <div className="text-center mb-6">
               <p className="text-sm text-muted-foreground">Total:</p>
               <p className="text-2xl font-bold text-sillage-gold-dark">
-                ${(selectedProduct.price * quantity).toLocaleString('es-CL')} CLP
+                {formatPrice(selectedProduct.price * quantity)}
               </p>
             </div>
 

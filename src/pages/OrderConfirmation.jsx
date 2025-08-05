@@ -82,12 +82,12 @@ const OrderConfirmation = () => {
                           {item.size} • {item.concentration}
                         </p>
                         <p className="text-xs text-gray-500">
-                          Cantidad: {item.quantity} • Precio unitario: ${parseFloat(item.price).toLocaleString('es-CL')}
+                          Cantidad: {item.quantity} • Precio unitario: ${Math.round(parseFloat(item.price)).toLocaleString('es-CL')}
                         </p>
                       </div>
                       <div className="text-right">
                         <p className="font-semibold">
-                          ${(parseFloat(item.price) * item.quantity).toLocaleString('es-CL')}
+                          ${Math.round(parseFloat(item.price) * item.quantity).toLocaleString('es-CL')}
                         </p>
                       </div>
                     </div>
@@ -97,7 +97,7 @@ const OrderConfirmation = () => {
                 <div className="border-t pt-4">
                   <div className="flex justify-between items-center text-xl font-bold text-sillage-gold-dark">
                     <span>Total Pagado</span>
-                    <span>${total?.toLocaleString('es-CL')} CLP</span>
+                    <span>${total ? Math.round(total).toLocaleString('es-CL') : '0'}</span>
                   </div>
                 </div>
               </CardContent>
@@ -190,7 +190,7 @@ const OrderConfirmation = () => {
               <User className="w-4 h-4 mr-2" />
               Ver Mis Pedidos
             </Button>
-            
+
             <Button
               onClick={() => navigate('/')}
               className="bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white"

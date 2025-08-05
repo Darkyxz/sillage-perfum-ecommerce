@@ -16,8 +16,12 @@ SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
 RewriteCond %{REQUEST_METHOD} OPTIONS
 RewriteRule ^(.*)$ $1 [R=200,L]
 
-# Permitir acceso directo a api-proxy.php
-RewriteCond %{REQUEST_URI} ^/api-proxy\.php
+# Permitir acceso directo a archivos PHP específicos
+RewriteCond %{REQUEST_URI} ^/(api-proxy|check-specific-skus|fix-missing-variants|check_products_sku|debug-proxy|test-proxy)\.php
+RewriteRule ^(.*)$ - [L]
+
+# Permitir acceso a archivos PHP
+RewriteCond %{REQUEST_URI} \.php$
 RewriteRule ^(.*)$ - [L]
 
 # Handle React Router (SPA) - Todas las rutas que no sean archivos van a index.html

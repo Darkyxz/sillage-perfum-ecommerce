@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Badge } from '@/components/ui/badge';
 import { orderService } from '@/lib/orderService';
 import { toast } from '@/components/ui/use-toast';
+import { formatPrice } from '@/utils/formatPrice';
 
 const OrdersSection = () => {
     const [orders, setOrders] = useState([]);
@@ -123,6 +124,41 @@ const OrdersSection = () => {
         setSelectedOrder(order);
         setDetailsOpen(true);
     };
+    
+    const handleContinuePayment = (order) => {
+        // Redirigir a Webpay con los datos del pedido
+        const form = document.createElement('form');
+        form.method = 'post';
+        form.action = 'https://www.webpay.cl/backpub/external/form-pay';
+        form.target = '_blank';
+
+        const idFormularioField = document.createElement('input');
+        idFormularioField.type = 'hidden';
+        idFormularioField.name = 'idFormulario';
+        idFormularioField.value = '299617';
+        form.appendChild(idFormularioField);
+
+        const montoField = document.createElement('input');
+        montoField.type = 'hidden';
+        montoField.name = 'monto';
+        montoField.value = Math.round(parseFloat(order.total_amount));
+        form.appendChild(montoField);
+
+        const correoField = document.createElement('input');
+        correoField.type = 'hidden';
+        correoField.name = 'Correo';
+        correoField.value = order.user_email || '';
+        form.appendChild(correoField);
+
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+        
+        toast({
+            title: "Redirigiendo a Webpay",
+            description: "Serás redirigido a la página de pago seguro...",
+        });
+    };
 
     if (loading) {
         return (
@@ -201,7 +237,7 @@ const OrdersSection = () => {
 
                                             <div className="flex items-center gap-2">
                                                 <CreditCard className="w-4 h-4" />
-                                                <span>${parseFloat(order.total_amount).toLocaleString('es-CL')} CLP</span>
+                                                <span>{formatPrice(order.total_amount)}</span>
                                             </div>
 
                                             <div className="flex items-center gap-2">
@@ -231,6 +267,18 @@ const OrdersSection = () => {
                                             <Eye className="w-4 h-4 mr-2" />
                                             Ver Detalles
                                         </Button>
+                                        
+                                        {/* Botón de continuar pago para órdenes pendientes */}
+                                        {(order.status === 'pending' || order.payment_status === 'pending') && (
+                                            <Button
+                                                size="sm"
+                                                onClick={() => handleContinuePayment(order)}
+                                                className="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white"
+                                            >
+                                                <CreditCard className="w-4 h-4 mr-2" />
+                                                Continuar Pago
+                                            </Button>
+                                        )}
                                     </div>
                                 </div>
                             </CardContent>
@@ -290,12 +338,12 @@ const OrdersSection = () => {
                                                     <h4 className="font-medium">{item.product_name}</h4>
                                                     <p className="text-sm text-gray-500">SKU: {item.product_sku}</p>
                                                     <p className="text-sm text-gray-500">
-                                                        Cantidad: {item.quantity} • Precio unitario: ${parseFloat(item.unit_price).toLocaleString('es-CL')}
+                                                        Cantidad: {item.quantity} • Precio unitario: {formatPrice(item.unit_price)}
                                                     </p>
                                                 </div>
                                                 <div className="text-right">
                                                     <p className="font-semibold">
-                                                        ${parseFloat(item.total_price).toLocaleString('es-CL')}
+                                                        {formatPrice(item.total_price)}
                                                     </p>
                                                 </div>
                                             </div>
@@ -304,7 +352,7 @@ const OrdersSection = () => {
                                         <div className="border-t pt-3">
                                             <div className="flex justify-between items-center text-lg font-bold text-sillage-gold-dark">
                                                 <span>Total</span>
-                                                <span>${parseFloat(selectedOrder.total_amount).toLocaleString('es-CL')} CLP</span>
+                                                <span>{formatPrice(selectedOrder.total_amount)}</span>
                                             </div>
                                         </div>
                                     </div>

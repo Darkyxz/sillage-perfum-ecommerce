@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Variants</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .debug-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+        }
+        .sku-group {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 3px;
+        }
+        .variant {
+            margin-left: 20px;
+            padding: 5px;
+            background-color: #f0f0f0;
+            margin-bottom: 5px;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 10px;
+            overflow-x: auto;
+        }
+        .error { color: red; }
+        .success { color: green; }
+        .warning { color: orange; }
+    </style>
+</head>
+<body>
+    <h1>Debug de Variantes de Productos</h1>
+    
+    <div class="debug-section">
+        <h2>1. Test de URLs específicas</h2>
+        <button onclick="testSpecificUrls()">Probar URLs problemáticas</button>
+        <div id="url-test-results"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>2. Análisis detallado de SKUs</h2>
+        <button onclick="analyzeSkus()">Analizar SKUs: ZBM-COC, ZP108W, ZP87W</button>
+        <div id="sku-analysis"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>3. Simulación de búsqueda del frontend</h2>
+        <button onclick="simulateFrontend()">Simular búsqueda como el frontend</button>
+        <div id="frontend-simulation"></div>
+    </div>
+
+    <script>
+        const API_URL = 'https://sillageperfum.cl/api-proxy.php';
+        
+        async function testSpecificUrls() {
+            const resultDiv = document.getElementById('url-test-results');
+            resultDiv.innerHTML = '<p>Probando URLs...</p>';
+            
+            const testSkus = [
+                'ZBM-COC-50ML',
+                'ZP108W-100ML',
+                'ZP87W-50ML'
+            ];
+            
+            let html = '<h3>Resultados de las pruebas:</h3>';
+            
+            for (const sku of testSkus) {
+                html += `<div class="sku-group">`;
+                html += `<h4>URL: /productos/${sku}</h4>`;
+                
+                // Simular lo que hace el frontend
+                const baseSKU = sku.replace(/-\d+ML$/i, '');
+                html += `<p>SKU base extraído: <strong>${baseSKU}</strong></p>`;
+                
+                try {
+                    // Obtener todos los productos
+                    const response = await fetch(`${API_URL}?path=api/products&limit=500`);
+                    const data = await response.json();
+                    const products = data.success ? data.data : [];
+                    
+                    // Filtrar por SKU base exactamente como lo hace el frontend
+                    const filteredVariants = products.filter(p => 
+                        p.sku.replace(/-\d+ML$/i, '') === baseSKU
+                    );
+                    
+                    html += `<p>Variantes encontradas: <strong>${filteredVariants.length}</strong></p>`;
+                    
+                    if (filteredVariants.length > 0) {
+                        html += '<div style="margin-left: 20px;">';
+                        filteredVariants.forEach(v => {
+                            const isCurrentSku = v.sku === sku;
+                            html += `<div class="variant ${isCurrentSku ? 'success' : ''}">`;
+                            html += `SKU: ${v.sku} | Size: ${v.size} | Price: $${v.price}`;
+                            if (isCurrentSku) html += ' <strong>(ACTUAL)</strong>';
+                            html += '</div>';
+                        });
+                        html += '</div>';
+                    }
+                    
+                } catch (error) {
+                    html += `<p class="error">Error: ${error.message}</p>`;
+                }
+                
+                html += '</div>';
+            }
+            
+            resultDiv.innerHTML = html;
+        }
+        
+        async function analyzeSkus() {
+            const resultDiv = document.getElementById('sku-analysis');
+            resultDiv.innerHTML = '<p>Analizando...</p>';
+            
+            try {
+                const response = await fetch(`${API_URL}?path=api/products&limit=500`);
+                const data = await response.json();
+                const products = data.success ? data.data : [];
+                
+                const targetSkus = ['ZBM-COC', 'ZP108W', 'ZP87W'];
+                let html = '<h3>Análisis detallado:</h3>';
+                
+                for (const baseSku of targetSkus) {
+                    const variants = products.filter(p => {
+                        const productBaseSku = p.sku.replace(/-\d+ML$/i, '');
+                        return productBaseSku === baseSku;
+                    });
+                    
+                    html += `<div class="sku-group">`;
+                    html += `<h4>${baseSku}</h4>`;
+                    html += `<p>Total de variantes: ${variants.length}</p>`;
+                    
+                    // Mostrar cada variante con todos sus campos
+                    variants.forEach(v => {
+                        html += '<pre>' + JSON.stringify({
+                            id: v.id,
+                            sku: v.sku,
+                            name: v.name,
+                            size: v.size,
+                            price: v.price,
+                            stock: v.stock_quantity
+                        }, null, 2) + '</pre>';
+                    });
+                    
+                    // Verificar qué tamaños faltan
+                    const sizes = variants.map(v => v.size);
+                    const missingSizes = ['30ml', '50ml', '100ml'].filter(size => !sizes.includes(size));
+                    
+                    if (missingSizes.length > 0) {
+                        html += `<p class="warning">Tamaños faltantes: ${missingSizes.join(', ')}</p>`;
+                    } else {
+                        html += `<p class="success">✓ Todas las variantes presentes</p>`;
+                    }
+                    
+                    html += '</div>';
+                }
+                
+                resultDiv.innerHTML = html;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        }
+        
+        async function simulateFrontend() {
+            const resultDiv = document.getElementById('frontend-simulation');
+            resultDiv.innerHTML = '<p>Simulando frontend...</p>';
+            
+            // Simular exactamente lo que hace ProductDetail.jsx
+            const testSku = 'ZP108W-100ML';
+            
+            try {
+                // Paso 1: Extraer SKU base
+                const baseSKU = testSku.replace(/-\d+ML$/i, '');
+                
+                // Paso 2: Obtener productos
+                const response = await fetch(`${API_URL}?path=api/products&limit=200`);
+                const allProductsResponse = await response.json();
+                const products = allProductsResponse.success ? allProductsResponse.data : [];
+                
+                // Paso 3: Filtrar por SKU base
+                const filteredVariants = products.filter(p =>
+                    p.sku.replace(/-\d+ML$/i, '') === baseSKU
+                );
+                
+                // Paso 4: Ordenar por tamaño
+                const sortedVariants = filteredVariants.sort((a, b) => {
+                    const sizeOrder = { '30ml': 1, '50ml': 2, '100ml': 3 };
+                    return sizeOrder[a.size] - sizeOrder[b.size];
+                });
+                
+                let html = `<h3>Simulación para SKU: ${testSku}</h3>`;
+                html += `<p>SKU base: ${baseSKU}</p>`;
+                html += `<p>Total productos en API: ${products.length}</p>`;
+                html += `<p>Variantes filtradas: ${filteredVariants.length}</p>`;
+                html += `<p>Variantes ordenadas: ${sortedVariants.length}</p>`;
+                
+                html += '<h4>Variantes encontradas:</h4>';
+                sortedVariants.forEach(v => {
+                    html += '<pre>' + JSON.stringify({
+                        sku: v.sku,
+                        size: v.size,
+                        price: v.price,
+                        name: v.name.substring(0, 50) + '...'
+                    }, null, 2) + '</pre>';
+                });
+                
+                // Verificar si el componente ProductSizeSelector recibiría las variantes correctas
+                html += '<h4>Datos que recibiría ProductSizeSelector:</h4>';
+                html += '<pre>' + JSON.stringify({
+                    allVariants: sortedVariants.map(v => ({
+                        sku: v.sku,
+                        size: v.size,
+                        price: v.price
+                    })),
+                    selectedProduct: sortedVariants.find(p => p.sku === testSku) || sortedVariants[0]
+                }, null, 2) + '</pre>';
+                
+                resultDiv.innerHTML = html;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

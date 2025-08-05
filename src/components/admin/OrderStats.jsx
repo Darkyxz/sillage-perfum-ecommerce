@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Package, DollarSign, Users, TrendingUp, Loader2 } from 'lucide-react';
 import { apiClient } from '@/lib/apiClient';
+import { formatPrice } from '../../utils/formatPrice';
 
 const OrderStats = () => {
   const [stats, setStats] = useState({
@@ -53,14 +54,6 @@ const OrderStats = () => {
     }
   };
 
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('es-CL', {
-      style: 'currency',
-      currency: 'CLP',
-      minimumFractionDigits: 0
-    }).format(amount);
-  };
-
   const statsData = [
     {
       title: "Total Órdenes",
@@ -70,19 +63,19 @@ const OrderStats = () => {
     },
     {
       title: "Ingresos Totales",
-      value: loading ? "..." : formatCurrency(stats.totalRevenue),
+      value: loading ? "..." : formatPrice(stats.totalRevenue),
       icon: DollarSign,
       color: "text-green-500"
     },
     {
-      title: "Total Usuarios",
-      value: loading ? "..." : stats.totalUsers.toString(),
+      title: "Usuarios registrados",
+      value: loading ? "..." : stats.totalUsers,
       icon: Users,
       color: "text-purple-500"
     },
     {
-      title: "Órdenes Pendientes",
-      value: loading ? "..." : stats.pendingOrders.toString(),
+      title: "Órdenes pendientes",
+      value: loading ? "..." : stats.pendingOrders,
       icon: TrendingUp,
       color: "text-orange-500"
     }

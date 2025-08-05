@@ -13,6 +13,8 @@ import Products from '@/pages/Products';
 import ProductDetail from '@/pages/ProductDetail';
 import Cart from '@/pages/Cart';
 import Checkout from '@/pages/Checkout';
+import GuestCheckout from '@/pages/GuestCheckout';
+import GuestTrackingPage from '@/pages/GuestTrackingPage';
 import OrderConfirmation from '@/pages/OrderConfirmation';
 import Favorites from '@/pages/Favorites';
 import Admin from '@/pages/Admin';
@@ -24,7 +26,7 @@ import PaymentFailurePage from '@/pages/PaymentFailurePage';
 import PaymentPendingPage from '@/pages/PaymentPendingPage';
 import ContactForm from '@/pages/ContactForm';
 import CategoryPage from '@/pages/CategoryPage';
-
+import Inspiraciones from './components/listadoProductos';
 import TrackingPage from '@/pages/TrackingPage';
 import MakeAdmin from '@/pages/MakeAdmin';
 import ComoComprar from './components/ComoComprar';
@@ -32,7 +34,6 @@ import CookiesPolicy from './components/CookiesPolicy';
 import TerminosCondiciones from './components/TerminosCondiciones';
 import PoliticaPrivacidad from './components/PoliticaPrivacidad';
 import CookieNotification from './components/CookieNotification';
-
 import SimpleTest from './components/SimpleTest';
 import MinimalApp from './components/MinimalApp';
 import SafeContextWrapper from './components/SafeContextWrapper';
@@ -42,6 +43,7 @@ import CookieConsent from './components/CookieConsent';
 import SEOStatus from './components/SEOStatus';
 import safeStorage from './utils/storage';
 import { ErrorBoundary } from 'react-error-boundary';
+import PagoRealizado from './pages/pagoRealizado';
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   const isStorageError = error.message.includes('localStorage') ||
@@ -176,6 +178,8 @@ function App() {
                                     <Route path="/productos/:sku" element={<ProductDetail />} />
                                     <Route path="/carrito" element={<Cart />} />
                                     <Route path="/checkout" element={<Checkout />} />
+                                    <Route path="/checkout-invitado" element={<GuestCheckout />} />
+                                    <Route path="/rastrear-pedido" element={<GuestTrackingPage />} />
                                     <Route path="/pedido-confirmado" element={<OrderConfirmation />} />
                                     <Route path="/favoritos" element={<Favorites />} />
                                     <Route path="/admin" element={<Admin />} />
@@ -188,7 +192,9 @@ function App() {
                                     <Route path="/pago-exitoso" element={<PaymentSuccessPage />} />
                                     <Route path="/pago-fallido" element={<PaymentFailurePage />} />
                                     <Route path="/pago-pendiente" element={<PaymentPendingPage />} />
+                                    <Route path="/Pago-realizado" element={<PagoRealizado />} />
                                     <Route path="/como-comprar" element={<ComoComprar />} />
+                                    <Route path="/inspiraciones" element={<Inspiraciones />} />
                                     <Route path="/cookies" element={<CookiesPolicy />} />
                                     <Route path="/terminos" element={<TerminosCondiciones />} />
                                     <Route path="/privacidad" element={<PoliticaPrivacidad />} />
