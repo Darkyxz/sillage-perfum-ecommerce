@@ -40,7 +40,7 @@ const getInitialState = (data = null) => ({
   name: data?.name || '',
   brand: data?.brand || '',
   price: data?.price || '',
-  category: data?.category || 'unisex',
+  category: data?.category || '',
   description: data?.description || '',
   sku: data?.sku || '',
   stock_quantity: data?.stock_quantity || '',
@@ -139,11 +139,54 @@ const ProductForm = ({ onSubmit, initialData, onCancel }) => {
 
   useEffect(() => {
     if (initialData) {
-      const initialState = getInitialState(initialData);
-      setProductData(initialState);
-      setImagePreview(initialData?.image_url || '');
+      const data = getInitialState(initialData);
+      setProductData(data);
+      if (data.image_url) {
+        // Asegurarse de que la URL de la imagen sea absoluta
+        const absoluteUrl = ensureAbsoluteImageUrl(data.image_url);
+        setImagePreview(absoluteUrl);
+      }
     }
   }, [initialData]);
+
+  // Función para asegurar que la URL de la imagen sea correcta para el entorno actual
+  function ensureAbsoluteImageUrl(url) {
+    if (!url) return '';
+
+    // Si la URL ya es absoluta o es un data URL, devolverla tal cual
+    if (url.startsWith('http') || url.startsWith('data:')) {
+      return url;
+    }
+
+    // En desarrollo, usar URLs relativas que pasarán por el proxy de Vite
+    if (import.meta.env.DEV) {
+      // Si la URL ya empieza con /, devolverla tal cual
+      if (url.startsWith('/')) {
+        // Asegurarse de que no tenga // duplicados
+        return url.replace(/^\/+/, '/');
+      }
+      // Para cualquier otra ruta relativa, asegurarse de que empiece con /
+      return `/${url}`.replace(/^\/+/, '/');
+    }
+
+    // En producción, construir la URL completa
+    const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+
+    // Eliminar la parte /api si existe al final de la URL base
+    const cleanBaseUrl = baseUrl.endsWith('/api')
+      ? baseUrl.slice(0, -3)
+      : baseUrl;
+
+    // Asegurarse de que la URL base termine con /
+    const normalizedBase = cleanBaseUrl.endsWith('/')
+      ? cleanBaseUrl
+      : `${cleanBaseUrl}/`;
+
+    // Eliminar / inicial de la URL si existe para evitar doble barra
+    const cleanUrl = url.startsWith('/') ? url.slice(1) : url;
+
+    return `${normalizedBase}${cleanUrl}`;
+  }
 
   // Prevenir cierre accidental del formulario
   useEffect(() => {
@@ -259,27 +302,65 @@ const ProductForm = ({ onSubmit, initialData, onCancel }) => {
         throw new Error('No hay sesión activa. Inicia sesión nuevamente.');
       }
 
-      const response = await fetch('/api/upload/product-image', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formData
-      });
+      // Elegir endpoint de subida según entorno
+      let uploadUrl;
+      const apiBase = import.meta.env.VITE_API_BASE_URL;
+      if (import.meta.env.PROD) {
+        if (apiBase && apiBase.includes('api-proxy.php')) {
+          uploadUrl = apiBase.replace(/\?.*$/, '') + '?action=upload-image';
+        } else {
+          uploadUrl = 'https://sillageperfum.cl/api-proxy.php?action=upload-image';
+        }
+      } else {
+        uploadUrl = '/api/upload/product-image';
+      }
+      console.log('Subiendo imagen a:', uploadUrl);
+
+      let response, result;
+      if (import.meta.env.PROD) {
+        // En producción (PHP proxy): no enviar Authorization ni credentials
+        response = await fetch(uploadUrl, {
+          method: 'POST',
+          body: formData
+        });
+      } else {
+        // En desarrollo (Node backend): enviar Authorization
+        response = await fetch(uploadUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+            // No establecer Content-Type, el navegador lo hará automáticamente con el boundary
+          },
+          body: formData,
+          credentials: 'include' // Incluir cookies para autenticación
+        });
+      }
 
       if (!response.ok) {
         const errorText = await response.text();
         throw new Error(`Error del servidor: ${response.status} - ${errorText}`);
       }
 
-      const result = await response.json();
+      result = await response.json();
 
       if (result.success) {
+        // Usar la URL devuelta por el servidor
+        let imageUrl = result.url || result.data?.url || '';
+        console.log('[UPLOAD] URL devuelta por el backend:', imageUrl, result);
+        // Para PHP proxy, ya es absoluta; para Node, puede ser relativa
+        if (!imageUrl) {
+          throw new Error('No se recibió URL de imagen del servidor');
+        }
         // Actualizar la URL de la imagen en el estado
-        setProductData(prev => ({ ...prev, image_url: result.data.url }));
+        setProductData(prev => {
+          const newData = { ...prev, image_url: imageUrl };
+          console.log('[UPLOAD] productData actualizado:', newData);
+          return newData;
+        });
+        setImagePreview(imageUrl);
         toast({
           title: "¡Imagen subida exitosamente!",
-          description: `Archivo: ${result.data.filename} (${(result.data.size / 1024).toFixed(1)} KB)`,
+          description: imageUrl,
         });
       } else {
         throw new Error(result.error || 'Error subiendo imagen');
@@ -335,6 +416,9 @@ const ProductForm = ({ onSubmit, initialData, onCancel }) => {
       return;
     }
 
+    // Log de depuración antes de enviar
+    console.log('[SUBMIT] Datos enviados al backend:', productData);
+
     // Limpiar storage al guardar exitosamente
     if (!initialData) {
       safeStorage.removeItem('admin-form-data');
@@ -374,6 +458,8 @@ const ProductForm = ({ onSubmit, initialData, onCancel }) => {
             <option value="men">Hombres</option>
             <option value="women">Mujeres</option>
             <option value="unisex">Unisex</option>
+            <option value="hogar">Hogar</option>
+            <option value="bodymist">Body Mist</option>
           </select>
         </div>
         <div className="space-y-2">
@@ -394,6 +480,7 @@ const ProductForm = ({ onSubmit, initialData, onCancel }) => {
             <option value="30ml">30ml</option>
             <option value="50ml">50ml</option>
             <option value="100ml">100ml</option>
+            <option value="200ml">200ml</option>
           </select>
         </div>
         <div className="space-y-2">

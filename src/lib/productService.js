@@ -1,20 +1,72 @@
 import { apiClient } from './apiClient';
 
+// Obtener la URL base de la API desde las variables de entorno
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+
+/**
+ * Asegura que la URL de la imagen sea correcta para el entorno actual
+ * @param {string} url - URL de la imagen (puede ser relativa o absoluta)
+ * @returns {string} URL de la imagen formateada correctamente
+ */
+function ensureAbsoluteImageUrl(url) {
+  if (!url) return '';
+
+  // Si la URL ya es absoluta o es un data URL, devolverla tal cual
+  if (url.startsWith('http') || url.startsWith('data:')) {
+    return url;
+  }
+
+  // En desarrollo, usar URLs relativas que pasarán por el proxy de Vite
+  if (import.meta.env.DEV) {
+    // Si la URL ya empieza con /, devolverla tal cual
+    if (url.startsWith('/')) {
+      // Asegurarse de que no tenga // duplicados
+      return url.replace(/^\/+/, '/');
+    }
+    // Para cualquier otra ruta relativa, asegurarse de que empiece con /
+    return `/${url}`.replace(/^\/+/, '/');
+  }
+
+  // En producción, construir la URL completa
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+
+  // Eliminar la parte /api si existe al final de la URL base
+  const cleanBaseUrl = baseUrl.endsWith('/api')
+    ? baseUrl.slice(0, -3)
+    : baseUrl;
+
+  // Asegurarse de que la URL base termine con /
+  const normalizedBase = cleanBaseUrl.endsWith('/')
+    ? cleanBaseUrl
+    : `${cleanBaseUrl}/`;
+
+  // Eliminar / inicial de la URL si existe para evitar doble barra
+  const cleanUrl = url.startsWith('/') ? url.slice(1) : url;
+
+  return `${normalizedBase}${cleanUrl}`;
+}
+
 // Servicio para manejar productos con API MySQL
 export const productService = {
   // Obtener todos los productos con paginación
   async getAllProducts(page = 1, limit = 24) {
     try {
       const offset = (page - 1) * limit;
-      
+
       const response = await apiClient.getProducts({
         limit,
         offset
       });
 
       if (response.success) {
+        // Asegurar que todas las URLs de imágenes sean absolutas
+        const productsWithAbsoluteUrls = (response.data || []).map(product => ({
+          ...product,
+          image_url: ensureAbsoluteImageUrl(product.image_url)
+        }));
+
         return {
-          products: response.data || [],
+          products: productsWithAbsoluteUrls,
           totalCount: response.total || 0,
           currentPage: page,
           totalPages: Math.ceil((response.total || 0) / limit),
@@ -61,6 +113,10 @@ export const productService = {
       const response = await apiClient.get(`/products/${id}`);
 
       if (response.success) {
+        // Asegurar que la URL de la imagen sea absoluta
+        if (response.data && response.data.image_url) {
+          response.data.image_url = ensureAbsoluteImageUrl(response.data.image_url);
+        }
         return response.data;
       } else {
         throw new Error(response.error || 'Producto no encontrado');
@@ -167,25 +223,36 @@ export const productService = {
   },
 
   // Subir imagen al servidor
-  async uploadProductImage(file, productId) {
+  async uploadProductImage(file) {
     try {
       const formData = new FormData();
       formData.append('image', file);
 
-      const response = await fetch('/api/upload/product-image', {
+      // Usar la URL base de la API desde las variables de entorno
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001';
+      let uploadUrl;
+      if (baseUrl.includes('api-proxy.php')) {
+        uploadUrl = baseUrl.replace(/\?.*$/, '') + '?action=upload-image';
+      } else if (baseUrl.endsWith('/api')) {
+        uploadUrl = `${baseUrl}/upload/product-image`;
+      } else {
+        uploadUrl = `${baseUrl}/api/upload/product-image`;
+      }
+      console.log('Subiendo imagen a:', uploadUrl);
+
+      const response = await fetch(uploadUrl, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${apiClient.getToken()}`
+          ...(apiClient.getToken() ? { 'Authorization': `Bearer ${apiClient.getToken()}` } : {})
         },
         body: formData
       });
 
-      const result = await response.json();
-
-      if (result.success) {
-        return result.data.url;
+      const responseData = await response.json();
+      if (response.ok && responseData.success) {
+        return responseData.url || responseData.fullUrl || responseData.data?.url || responseData.data?.fullUrl;
       } else {
-        throw new Error(result.error || 'Error subiendo imagen');
+        throw new Error(responseData.error || 'Error subiendo imagen');
       }
     } catch (error) {
       console.error('Error uploading image:', error);

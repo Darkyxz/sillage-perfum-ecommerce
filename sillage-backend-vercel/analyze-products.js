@@ -2,7 +2,8 @@ const { query } = require('./config/database');
 
 async function analyzeProducts() {
   console.log('🔍 ANALIZANDO PRODUCTOS ACTUALES...\n');
-  
+  let hasError = false;
+  let errorMessages = [];
   try {
     // Analizar algunos productos para ver la estructura
     const sampleProducts = await query(`
@@ -27,6 +28,27 @@ async function analyzeProducts() {
     
     console.log('\n💰 ANÁLISIS DE PRECIOS POR TAMAÑO:');
     console.table(priceAnalysis);
+
+    // Validar precios por tamaño (ejemplo de rango esperado)
+    const expectedPriceRanges = {
+      '30ml': { min: 8000, max: 10000 },
+      '50ml': { min: 12000, max: 15000 },
+      '100ml': { min: 17000, max: 20000 },
+      '200ml': { min: 7000, max: 8000 },
+    };
+    for (const row of priceAnalysis) {
+      const size = row.size;
+      const range = expectedPriceRanges[size];
+      if (!range) {
+        hasError = true;
+        errorMessages.push(`Tamaño inesperado encontrado en precios: ${size}`);
+        continue;
+      }
+      if (row.min_price < range.min || row.max_price > range.max) {
+        hasError = true;
+        errorMessages.push(`Precios fuera de rango para ${size}: min ${row.min_price}, max ${row.max_price} (esperado entre ${range.min}-${range.max})`);
+      }
+    }
     
     // Detectar productos con nombres problemáticos
     const longNames = await query(`
@@ -40,6 +62,10 @@ async function analyzeProducts() {
     
     console.log('\n⚠️ PRODUCTOS CON NOMBRES LARGOS (POSIBLES DESCRIPCIONES):');
     console.table(longNames);
+    if (longNames.length > 0) {
+      hasError = true;
+      errorMessages.push(`Se encontraron ${longNames.length} productos con nombres excesivamente largos (posibles errores de carga o descripción en campo nombre).`);
+    }
     
     // Contar productos por tamaño
     const sizeCount = await query(`
@@ -52,9 +78,29 @@ async function analyzeProducts() {
     
     console.log('\n📊 DISTRIBUCIÓN POR TAMAÑOS:');
     console.table(sizeCount);
+    // Validar que solo existan tamaños esperados
+    const validSizes = ['30ml', '50ml', '100ml', '200ml'];
+    for (const row of sizeCount) {
+      if (!validSizes.includes(row.size)) {
+        hasError = true;
+        errorMessages.push(`Tamaño inesperado en distribución: ${row.size}`);
+      }
+    }
     
   } catch (error) {
-    console.error('❌ Error:', error.message);
+    hasError = true;
+    errorMessages.push('❌ Error inesperado: ' + error.message);
+  }
+
+  if (hasError) {
+    console.error('\n❌ TEST DE PRODUCTOS FALLIDO');
+    for (const msg of errorMessages) {
+      console.error('  - ' + msg);
+    }
+    process.exit(1);
+  } else {
+    console.log('\n✅ TEST DE PRODUCTOS EXITOSO: Todos los checks pasaron.');
+    process.exit(0);
   }
 }
 

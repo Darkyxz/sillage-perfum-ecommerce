@@ -27,7 +27,7 @@ const CatalogDropdown = () => {
       icon: Heart,
       color: 'text-pink-500',
       bgColor: 'bg-pink-50 hover:bg-pink-100',
-      count: 135
+      count: 93
     },
     {
       id: 'perfume-varon',
@@ -36,7 +36,7 @@ const CatalogDropdown = () => {
       icon: User,
       color: 'text-blue-500',
       bgColor: 'bg-blue-50 hover:bg-blue-100',
-      count: 114
+      count: 93
     },
     {
       id: 'inspirado-nicho',
@@ -48,8 +48,8 @@ const CatalogDropdown = () => {
       count: 0
     },
     {
-      id: 'body-mist',
-      name: 'Sillage Body Mist',
+      id: 'lociones',
+      name: 'Sillage Lociones',
       description: 'Brumas corporales refrescantes',
       icon: Droplets,
       color: 'text-cyan-500',
@@ -57,7 +57,7 @@ const CatalogDropdown = () => {
       count: 0
     },
     {
-      id: 'by-zachary',
+      id: 'by-sillage',
       name: 'By Sillage',
       description: 'Colección exclusiva Sillage',
       icon: Package,
@@ -157,9 +157,9 @@ const CatalogDropdown = () => {
                     <h4 className="font-medium text-gray-900 text-sm">
                       Ver Todos los Productos
                     </h4>
-                    <span className="ml-2 px-2 py-1 text-xs font-medium bg-sillage-gold text-white rounded-full">
+                    {/*<span className="ml-2 px-2 py-1 text-xs font-medium bg-sillage-gold text-white rounded-full">
                       249
-                    </span>
+                    </span>*/}
                   </div>
                   <p className="text-xs text-gray-500 mt-1">
                     Explora toda nuestra colección

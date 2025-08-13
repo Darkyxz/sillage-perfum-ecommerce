@@ -81,10 +81,9 @@ const Inspiraciones = () => {
     return (
         <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
-                <h1 className="text-4xl font-bold text-sillage-dark mb-4">Listado completo de inspiraciones</h1>
+                <h1 className="text-4xl font-bold text-sillage-dark mb-4">Catalogo Sillage Perfum</h1>
                 <p className="text-lg text-sillage-dark-light max-w-3xl mx-auto">
-                    Explora el listado completo de nuestras fragancias inspiradas en perfumes icónicos.
-                    Encuentra fácilmente tu aroma favorito, organizado por género. <span className="font-semibold text-sillage-gold-500">Haz click en el código.</span>
+                    Explora el catalogo completo de nuestras fragancias convencionales y exclusivas creacion By Sillage. <span className="font-semibold text-sillage-gold-500">Haz click en el código.</span>
                 </p>
             </div>
 
@@ -92,7 +91,7 @@ const Inspiraciones = () => {
                 {/* Tabla para mujeres */}
                 <div className="bg-sillage-cream rounded-lg shadow-lg overflow-hidden border border-sillage-gold-200">
                     <div className="bg-sillage-gold-500 px-6 py-3">
-                        <h2 className="text-xl font-bold text-sillage-dark">Inspiraciones Mujer</h2>
+                        <h2 className="text-xl font-bold text-sillage-dark">Sillage Inspiraciones Mujer</h2>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="min-w-full divide-y divide-sillage-gold-200">
@@ -130,7 +129,7 @@ const Inspiraciones = () => {
                 {/* Tabla para hombres */}
                 <div className="bg-sillage-cream rounded-lg shadow-lg overflow-hidden border border-sillage-gold-200">
                     <div className="bg-sillage-gold-500 px-6 py-3">
-                        <h2 className="text-xl font-bold text-sillage-dark">Inspiraciones Hombre</h2>
+                        <h2 className="text-xl font-bold text-sillage-dark">Sillage Inspiraciones Hombre</h2>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="min-w-full divide-y divide-sillage-gold-200">

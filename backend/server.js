@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 
 // Intentar importar paquetes opcionales
 let helmet, compression, rateLimit;
@@ -62,18 +63,33 @@ if (helmet) {
 }
 
 // CORS configurado para el frontend
-app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'http://localhost:3000',
-    'https://sillageperfum.cl',
-    'https://www.sillageperfum.cl',
-    'https://sillageperfum.store'
-  ],
+const corsOptions = {
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'https://sillageperfum.cl',
+      'https://www.sillageperfum.cl',
+      'https://sillageperfum.store'
+    ];
+    
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    
+    return callback(null, true);
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  exposedHeaders: ['Content-Disposition']
+};
+
+app.use(cors(corsOptions));
 
 // Rate limiting
 if (rateLimit) {
@@ -141,9 +157,98 @@ app.use('/api/favorites', favoritesRoutes);
 app.use('/api/upload', uploadRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/guest-checkout', guestCheckoutRouter);
-// Ruta para servir archivos estáticos (imágenes)
-app.use('/images', express.static('public/images'));
-app.use('/uploads', express.static('uploads'));
+
+// Asegurarse de que las rutas sean absolutas
+const uploadsPath = path.resolve(__dirname, '..', 'uploads');
+const publicImagesPath = path.resolve(__dirname, '..', 'public', 'images');
+
+console.log('📁 Ruta de uploads:', uploadsPath);
+console.log('📁 Ruta de imágenes públicas:', publicImagesPath);
+
+// Crear directorios si no existen
+if (!fs.existsSync(uploadsPath)) {
+  fs.mkdirSync(uploadsPath, { recursive: true });
+}
+if (!fs.existsSync(publicImagesPath)) {
+  fs.mkdirSync(publicImagesPath, { recursive: true });
+}
+
+// Configuración mejorada para servir archivos estáticos
+const serveStatic = (path, prefix = '') => {
+  // Crear el directorio si no existe
+  if (!fs.existsSync(path)) {
+    fs.mkdirSync(path, { recursive: true });
+    console.log(`✅ Directorio creado: ${path}`);
+  }
+
+  // Configuración de CORS y cabeceras para archivos estáticos
+  return express.static(path, {
+    setHeaders: (res, filePath) => {
+      // Configuración de CORS
+      res.set('Access-Control-Allow-Origin', '*');
+      res.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
+      res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+      
+      // Configuración de caché
+      const ext = path.extname(filePath).toLowerCase();
+      const isImage = ['.jpg', '.jpeg', '.png', '.webp', '.gif'].includes(ext);
+      
+      if (isImage) {
+        // Cachear imágenes por 1 año
+        res.set('Cache-Control', 'public, max-age=31536000, immutable');
+        res.set('Expires', new Date(Date.now() + 31536000000).toUTCString());
+      } else {
+        // No cachear otros tipos de archivos por defecto
+        res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+        res.set('Pragma', 'no-cache');
+        res.set('Expires', '0');
+      }
+      
+      // Configuración de tipo MIME
+      if (ext === '.js') res.type('application/javascript');
+      if (ext === '.css') res.type('text/css');
+    },
+    // Permitir acceso a archivos ocultos (que empiezan con .)
+    dotfiles: 'allow'
+  });
+};
+
+// Servir archivos estáticos con prefijos específicos
+app.use('/images', serveStatic(publicImagesPath, 'images'));
+app.use('/uploads', serveStatic(uploadsPath, 'uploads'));
+
+// Agregar encabezados CORS para las rutas de archivos estáticos
+app.use(['/images', '/uploads'], (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  next();
+});
+
+// Ruta para verificar la disponibilidad de archivos estáticos
+app.get('/api/static/check', (req, res) => {
+  const testFilePath = path.join(uploadsPath, 'test.txt');
+  try {
+    fs.writeFileSync(testFilePath, 'test');
+    fs.unlinkSync(testFilePath);
+    res.json({
+      success: true,
+      message: 'El sistema de archivos está funcionando correctamente',
+      uploadsPath,
+      publicImagesPath,
+      writable: true
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error en el sistema de archivos',
+      error: error.message,
+      uploadsPath,
+      publicImagesPath,
+      writable: false
+    });
+  }
+});
 
 // =====================================================
 // MANEJO DE ERRORES

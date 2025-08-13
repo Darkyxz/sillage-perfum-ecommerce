@@ -9,34 +9,34 @@ import { productService } from '@/lib/productService';
 
 const AdminDashboard = ({ stats, products, onProductAdded, onOpenAddForm }) => {
   const [loadingZacharProducts, setLoadingZacharProducts] = useState(false);
-  
+
   // Debug: verificar que la función se recibe correctamente
   console.log('🔧 AdminDashboard received onOpenAddForm:', typeof onOpenAddForm, onOpenAddForm);
 
   const handleLoadZacharProducts = async () => {
-    if (!window.confirm('¿Estás seguro? Esto agregará SOLO los productos nuevos de Zachary Perfumes sin eliminar los existentes.')) {
+    if (!window.confirm('¿Estás seguro? Esto agregará SOLO los productos nuevos de Sillage Perfumes sin eliminar los existentes.')) {
       return;
     }
 
     try {
       setLoadingZacharProducts(true);
-      
+
       // Importación dinámica para evitar errores de SSR
       const { loadNewZacharProducts } = await import('@/scripts/loadZacharProductsMySQL');
       const newProducts = await loadNewZacharProducts();
-      
+
       toast({
         title: "¡Productos nuevos agregados exitosamente!",
-        description: `Se han agregado ${newProducts?.length || 0} nuevas variantes de productos Zachary Perfumes.`,
+        description: `Se han agregado ${newProducts?.length || 0} nuevas variantes de productos Sillage Perfumes.`,
       });
-      
+
       // Recargar la página para refrescar todos los datos
       window.location.reload();
     } catch (error) {
-      console.error('Error loading Zachary products:', error);
+      console.error('Error loading Sillage products:', error);
       toast({
         title: "Error al agregar productos nuevos",
-        description: "No se pudieron agregar los productos nuevos de Zachary. Intenta de nuevo.",
+        description: "No se pudieron agregar los productos nuevos de Sillage. Intenta de nuevo.",
         variant: "destructive",
       });
     } finally {
@@ -67,12 +67,12 @@ const AdminDashboard = ({ stats, products, onProductAdded, onOpenAddForm }) => {
 
     try {
       const result = await productService.clearAllProducts();
-      
+
       toast({
         title: "¡Productos eliminados!",
         description: `Se eliminaron ${result.deletedCount} productos exitosamente`,
       });
-      
+
       // Recargar la página para refrescar todos los datos
       window.location.reload();
     } catch (error) {
@@ -89,7 +89,7 @@ const AdminDashboard = ({ stats, products, onProductAdded, onOpenAddForm }) => {
     <>
       {/* Componente de estadísticas avanzadas de pedidos */}
       <OrderStats />
-      
+
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {stats.map((stat, index) => (
           <motion.div
@@ -156,7 +156,7 @@ const AdminDashboard = ({ stats, products, onProductAdded, onOpenAddForm }) => {
               <Plus className="mr-2 h-4 w-4" />
               Agregar Producto
             </Button>
-            
+
             <Button
               onClick={handleLoadZacharProducts}
               disabled={loadingZacharProducts}
@@ -164,7 +164,7 @@ const AdminDashboard = ({ stats, products, onProductAdded, onOpenAddForm }) => {
               variant="secondary"
             >
               <Database className="mr-2 h-4 w-4" />
-              {loadingZacharProducts ? 'Agregando...' : 'Agregar Productos Nuevos Zachary'}
+              {loadingZacharProducts ? 'Agregando...' : 'Agregar Productos Nuevos Sillage'}
             </Button>
 
             <Button
@@ -175,7 +175,7 @@ const AdminDashboard = ({ stats, products, onProductAdded, onOpenAddForm }) => {
               <Trash2 className="mr-2 h-4 w-4" />
               Limpiar Todos los Productos
             </Button>
-            
+
             <Button
               variant="outline"
               className="w-full admin-button-outline"

@@ -56,8 +56,9 @@ router.post('/product-image', authenticateToken, requireAdmin, upload.single('im
             });
         }
 
-        // Construir URL de la imagen
-        const imageUrl = `/uploads/products/${req.file.filename}`;
+        // Devolver solo la ruta relativa de la imagen
+        // El frontend se encargará de construir la URL completa según el entorno
+        const imagePath = `/uploads/products/${req.file.filename}`;
 
         res.json({
             success: true,
@@ -66,8 +67,8 @@ router.post('/product-image', authenticateToken, requireAdmin, upload.single('im
                 filename: req.file.filename,
                 originalName: req.file.originalname,
                 size: req.file.size,
-                url: imageUrl,
-                fullUrl: `${req.protocol}://${req.get('host')}${imageUrl}`
+                url: imagePath
+                // No incluir fullUrl, el frontend lo manejará
             }
         });
 

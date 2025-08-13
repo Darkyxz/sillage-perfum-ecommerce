@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
 import {
-  ArrowLeft,
+  ArrowLeft, Banknote,
   MapPin,
   User,
   Phone,
@@ -239,7 +239,7 @@ const GuestCheckout = () => {
           <Info className="h-4 w-4 text-sillage-gold-dark" />
           <AlertDescription className="text-gray-700">
             <strong>Compra como invitado:</strong> Podrás completar tu pedido sin registrarte.
-            Te enviaremos un email con los detalles para retirar tu envío.
+            Te enviaremos un email con los detalles para retirar tu compra.
           </AlertDescription>
         </Alert>
 
@@ -502,13 +502,26 @@ const GuestCheckout = () => {
                       style={{ pointerEvents: 'none' }}
                     />
                   </button>
+                  <button
+                    type="button"
+                    aria-label="Transferencia bancaria"
+                    onClick={() => { window.location.href = '/como-comprar'; }}
+                    className="flex flex-col items-center justify-center gap-1 p-2 text-center hover:bg-gray-50 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-sillage-gold"
+                  >
+                    <Banknote className="h-6 w-6 text-sillage-gold-dark" /> {/* Icono más grande */}
+                    <span className="text-xs text-gray-600">Transferencia bancaria</span> {/* Texto pequeño */}
+                  </button>
                 </div>
 
                 <p className="text-xs text-center text-muted-foreground">
                   Serás redirigido a Webpay para completar tu pago de forma segura
                 </p>
+                <span className="text-xs text-center text-muted-foreground">
+                  <strong>Nota:</strong> El cliente asume los costos de envío.
+                </span>
               </CardContent>
             </Card>
+
           </motion.div>
         </div>
       </div>

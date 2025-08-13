@@ -267,18 +267,18 @@ const Header = () => {
                       Inspirado Nicho
                     </Link>
                     <Link
-                      to="/categoria/body-mist"
+                      to="/categoria/lociones"
                       className="block text-sillage-gold-dark/80 hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors text-sm px-3 py-2 rounded-md"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      Body Mist
+                      Sillage Lociones
                     </Link>
                     <Link
-                      to="/categoria/by-zachary"
+                      to="/categoria/by-sillage"
                       className="block text-sillage-gold-dark/80 hover:text-sillage-gold hover:bg-sillage-gold/10 transition-colors text-sm px-3 py-2 rounded-md"
                       onClick={() => setIsMenuOpen(false)}
                     >
-                      By Zachary
+                      By Sillage
                     </Link>
                     <Link
                       to="/categoria/home-spray"

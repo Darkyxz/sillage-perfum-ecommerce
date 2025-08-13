@@ -140,14 +140,19 @@ const Home = () => {
         </div>
 
         {/* Background image behind text - Mobile */}
-        <div className="absolute inset-0 flex items-start justify-center md:hidden" style={{ zIndex: 1 }}>
+        <div className="absolute inset-0 flex items-center justify-center md:hidden" style={{ zIndex: 1 }}>
           <img
             src="/hero.png"
             alt="Background perfume mobile"
-            className="w-auto h-48 xs:h-64 sm:h-72 object-contain opacity-60 mt-0"
-            style={{ filter: 'none', backdropFilter: 'none' }}
+            className="w-full h-auto max-h-[80vh] object-contain opacity-60"
+            style={{
+              filter: 'none',
+              backdropFilter: 'none',
+              maxWidth: '100%'
+            }}
           />
         </div>
+
         {/* Video */}
         <motion.div
           className="absolute right-2 md:right-10 top-2 md:top-5 w-16 h-16 md:w-[150px] md:h-[150px]"
@@ -173,41 +178,35 @@ const Home = () => {
         </motion.div>
 
 
-        {/* Botones posicionados al final de la imagen */}
-        <div className="absolute bottom-4 md:bottom-20 left-4 right-4 sm:left-14 sm:right-auto" style={{ zIndex: 10 }}>
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="max-w-4xl mx-auto"
-          >
-            <motion.div
-              className="flex flex-row gap-2 sm:gap-4 justify-center sm:justify-start"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-            >
-              <Link to="/productos">
-                <Button
-                  size="sm"
-                  className="bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white font-semibold px-3 py-2 sm:px-8 sm:py-3 text-xs sm:text-base shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
-                >
-                  <span className="hidden sm:inline">Explorar Colección</span>
-                  <span className="sm:hidden">Explorar</span>
-                  <ArrowRight className="ml-1 sm:ml-2 h-3 w-3 sm:h-5 sm:w-5" />
-                </Button>
-              </Link>
 
+        {/* Botones posicionados al final del texto */}
+        <div className="absolute bottom-4 left-4 right-4 md:bottom-20 md:left-14" style={{ zIndex: 3 }}>
+          <motion.div
+            className="flex flex-row gap-2 sm:gap-4 justify-center md:justify-start"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+          >
+            <Link to="/productos">
               <Button
-                variant="outline"
                 size="sm"
-                className="border-sillage-gold text-sillage-gold-dark hover:bg-sillage-gold hover:text-white transition-all duration-300 px-3 py-2 sm:px-8 sm:py-3 text-xs sm:text-base shadow-lg hover:shadow-xl transform hover:scale-105"
-                onClick={() => navigate('/inspiraciones')}
+                className="bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white font-semibold px-3 py-2 sm:px-8 sm:py-3 text-xs sm:text-base shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
               >
-                <span className="hidden sm:inline">Ver Catálogo</span>
-                <span className="sm:hidden">Catálogo</span>
+                <span className="hidden sm:inline">Explorar Colección</span>
+                <span className="sm:hidden">Explorar</span>
+                <ArrowRight className="ml-1 sm:ml-2 h-3 w-3 sm:h-5 sm:w-5" />
               </Button>
-            </motion.div>
+            </Link>
+
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-sillage-gold text-sillage-gold-dark hover:bg-sillage-gold hover:text-white transition-all duration-300 px-3 py-2 sm:px-8 sm:py-3 text-xs sm:text-base shadow-lg hover:shadow-xl transform hover:scale-105"
+              onClick={() => navigate('/inspiraciones')}
+            >
+              <span className="hidden sm:inline">Ver Catálogo</span>
+              <span className="sm:hidden">Catálogo</span>
+            </Button>
           </motion.div>
         </div>
 

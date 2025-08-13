@@ -40,13 +40,13 @@ const categoryMapping = {
     description: 'Brumas corporales refrescantes y ligeras',
     seo: 'Body mist - Brumas corporales refrescantes'
   },
-  'by-zachary': {
+  'lociones': {
     // Filtrar por brand en lugar de category
     filterBy: 'brand',
-    db: 'Zachary Perfumes',
-    display: 'By Zachary',
-    description: 'Colección exclusiva de la marca Zachary',
-    seo: 'Perfumes By Zachary - Colección exclusiva'
+    db: 'Sillage Perfumes',
+    display: 'Lociones',
+    description: 'Colección exclusiva de la marca Sillage',
+    seo: 'Perfumes By Sillage - Colección exclusiva'
   },
   'home-spray': {
     db: 'Hogar',
@@ -107,26 +107,25 @@ const CategoryPage = () => {
       let result;
 
       // Manejar filtros especiales
-      if (categorySlug === 'by-zachary') {
-        // Para by-zachary, obtener todos los productos y filtrar por brand
+      if (categorySlug === 'lociones') {
+        // Para by-sillage, obtener todos los productos y filtrar por brand
         const allProductsResult = await productService.getAllProducts(1, 500);
-        const zacharyProducts = allProductsResult.products.filter(product =>
-          product.brand === 'Zachary Perfumes' &&
-          (product.concentration === 'Eau de Parfum' || product.sku.startsWith('ZP'))
+        const sillageProducts = allProductsResult.products.filter(product =>
+          product.category === 'Lociones'
         );
 
         result = {
-          products: zacharyProducts,
-          totalCount: zacharyProducts.length,
+          products: sillageProducts,
+          totalCount: sillageProducts.length,
           currentPage: 1,
           totalPages: 1,
           hasMore: false
         };
-      } else if (categorySlug === 'body-mist') {
+      } else if (categorySlug === 'lociones') {
         // Para body-mist, filtrar por concentración
         const allProductsResult = await productService.getAllProducts(1, 500);
         const bodyMistProducts = allProductsResult.products.filter(product =>
-          product.concentration === 'Body Mist' || product.category === 'Body Mist'
+          product.concentration === 'Lociones' || product.category === 'Lociones'
         );
 
         result = {
@@ -467,7 +466,7 @@ const CategoryPage = () => {
                         <div className="flex-grow">
                           {/* Brand */}
                           <p className="text-foreground text-sm font-medium mb-2">
-                            Zachary Perfumes
+                            Sillage Perfumes
                           </p>
 
                           {/* Product Name */}

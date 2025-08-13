@@ -24,10 +24,25 @@ export default defineConfig({
 			'Cross-Origin-Embedder-Policy': 'credentialless',
 		},
 		allowedHosts: true,
-		// Configuración para manejar mejor Ctrl+C
 		host: true,
 		port: 5173,
 		strictPort: false,
+		// Proxy configuration
+		proxy: {
+			// Proxy API requests
+			'/api': {
+				target: 'http://localhost:3001',
+				changeOrigin: true,
+				secure: false,
+				ws: true,
+			},
+			// Proxy uploads directory
+			'/uploads': {
+				target: 'http://localhost:3001',
+				changeOrigin: true,
+				secure: false,
+			},
+		},
 		// Configurar señales de cierre
 		watch: {
 			usePolling: false,

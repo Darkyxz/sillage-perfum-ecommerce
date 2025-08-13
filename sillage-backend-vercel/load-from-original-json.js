@@ -55,10 +55,10 @@ async function loadFromOriginalJSON() {
 
         console.log(`📋 Productos encontrados en JSON: ${products.length}`);
 
-        // 1. ELIMINAR todos los productos de mujer existentes
-        console.log('🧹 Eliminando productos de mujer existentes...');
-        const deleteResult = await query('DELETE FROM products WHERE category = "Mujer"');
-        console.log(`✅ Eliminados ${deleteResult.affectedRows} productos de mujer`);
+        // 1. ELIMINAR todos los productos de hombre existentes
+        console.log('🧹 Eliminando productos de hombre existentes...');
+        const deleteResult = await query('DELETE FROM products WHERE category = "Hombre"');
+        console.log(`✅ Eliminados ${deleteResult.affectedRows} productos de hombre`);
 
         let insertedCount = 0;
         let errorCount = 0;
@@ -92,8 +92,8 @@ async function loadFromOriginalJSON() {
                     product.rating,
                     product.notes || '',
                     product.duration || '6-8 horas',
-                    product.original_inspiration || 'Creación original',
-                    product.size || '30ml',
+                    product.original_inspiration || 'Perfume Imitacion',
+                    product.size,
                     product.concentration || 'Eau de Parfum'
                 ]);
 
@@ -114,11 +114,11 @@ async function loadFromOriginalJSON() {
         const finalProducts = await query(`
       SELECT sku, name, is_active, size, price 
       FROM products 
-      WHERE category = 'Mujer' 
+      WHERE category = 'Hombre' 
       ORDER BY sku
     `);
 
-        console.log(`\n📦 Total productos de mujer en BD: ${finalProducts.length}`);
+        console.log(`\n📦 Total productos de hombre en BD: ${finalProducts.length}`);
         console.log(`✅ Productos activos: ${finalProducts.filter(p => p.is_active).length}`);
 
         // Agrupar por fragancia (sin el tamaño)
@@ -173,7 +173,7 @@ if (require.main === module) {
             console.log(`🧪 ${result.fragrances} fragancias únicas cargadas`);
             console.log('✅ SKUs originales mantenidos como están en el JSON');
             console.log('💰 Precios: 30ml=$9,000 | 50ml=$14,000 | 100ml=$18,000');
-            console.log('\n🔗 Verifica en: http://localhost:5173/categoria/perfume-dama');
+            console.log('\n🔗 Verifica en: http://localhost:5173/categoria/perfume-varon');
 
             if (result.total < 129) {
                 console.log(`\n⚠️ NOTA: Se cargaron ${result.total} productos, pero para 43 fragancias`);

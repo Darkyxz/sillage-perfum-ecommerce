@@ -10,6 +10,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit();
 }
 
+// --- NUEVO: Manejar subida de imagen directamente desde el proxy PHP ---
+if (isset($_GET['action']) && $_GET['action'] === 'upload-image' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+    $targetDir = __DIR__ . '/uploads/products/';
+    if (!is_dir($targetDir)) {
+        mkdir($targetDir, 0777, true);
+    }
+    if (!isset($_FILES['image'])) {
+        http_response_code(400);
+        echo json_encode(['success' => false, 'error' => 'No se subió ningún archivo']);
+        exit();
+    }
+    $fileName = basename($_FILES['image']['name']);
+    // Evitar colisiones de nombres
+    $ext = pathinfo($fileName, PATHINFO_EXTENSION);
+    $base = pathinfo($fileName, PATHINFO_FILENAME);
+    $uniqueName = $base . '-' . time() . '-' . rand(1000,9999) . '.' . $ext;
+    $targetFile = $targetDir . $uniqueName;
+    if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFile)) {
+        $url = 'https://sillageperfum.cl/uploads/products/' . $uniqueName;
+        echo json_encode(['success' => true, 'url' => $url]);
+    } else {
+        http_response_code(500);
+        echo json_encode(['success' => false, 'error' => 'Error al guardar el archivo']);
+    }
+    exit();
+}
+// --- FIN: subida de imagen ---
+
 // Get the API path from the query parameter
 $apiPath = isset($_GET['path']) ? $_GET['path'] : '';
 if (empty($apiPath)) {

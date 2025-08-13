@@ -493,11 +493,11 @@ const ProductDetail = () => {
                   exit={{ opacity: 0, height: 0 }}
                   className="space-y-4 text-sm"
                 >
-                  <div>
+                  {/* <div>
                     <h4 className="font-medium text-foreground mb-2">
                       {product.originalInspiration ? `Inspirado en ${product.originalInspiration.split(' - ')[0]}` : 'Fragancia Premium'}
                     </h4>
-                  </div>
+                  </div>*/}
                   <div>
                     <h4 className="font-medium text-foreground mb-2">Descripción general:</h4>
                     <p className="text-muted-foreground leading-relaxed">
@@ -517,12 +517,12 @@ const ProductDetail = () => {
                       <span className="text-muted-foreground">Duración:</span>
                       <p className="text-foreground font-medium">{product.duration}</p>
                     </div>
-                    <div>
+                    {/* <div>
                       <span className="text-muted-foreground">Categoría:</span>
                       <p className="text-foreground font-medium capitalize">
                         {product.category === 'women' ? 'Femenino' : product.category === 'men' ? 'Masculino' : 'Unisex'}
                       </p>
-                    </div>
+                    </div>*/}
                   </div>
                 </motion.div>
               )}
