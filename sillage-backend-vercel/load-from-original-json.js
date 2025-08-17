@@ -91,10 +91,10 @@ async function loadFromOriginalJSON() {
                     product.is_featured || false,
                     product.rating,
                     product.notes || '',
-                    product.duration || '6-8 horas',
-                    product.original_inspiration || 'Perfume Imitacion',
+                    product.duration || '',
+                    product.original_inspiration || '',
                     product.size,
-                    product.concentration || 'Eau de Parfum'
+                    product.concentration || ''
                 ]);
 
                 console.log(`✅ Insertado: ${product.sku} - ${product.name.substring(0, 50)}...`);

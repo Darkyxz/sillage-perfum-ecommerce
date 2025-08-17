@@ -50,7 +50,7 @@ const CatalogDropdown = () => {
     {
       id: 'lociones',
       name: 'Sillage Lociones',
-      description: 'Brumas corporales refrescantes',
+      description: 'Lociones corporales refrescantes',
       icon: Droplets,
       color: 'text-cyan-500',
       bgColor: 'bg-cyan-50 hover:bg-cyan-100',

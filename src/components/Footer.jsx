@@ -24,7 +24,7 @@ const Footer = () => {
             {/* Redes sociales */}
             <div className="flex space-x-3 md:space-x-4 justify-center">
               <a
-                href="#"
+                href="https://www.instagram.com/sillage668" target='_blank' rel='noreferrer'
                 className="w-8 h-8 md:w-12 md:h-12 bg-white border border-gray-200 rounded-full flex items-center justify-center relative overflow-hidden group transition-all duration-300 shadow-sm hover:shadow-lg"
               >
                 {/* Fondo de gradiente (solo visible en hover) */}
@@ -33,17 +33,17 @@ const Footer = () => {
                 {/* Icono */}
                 <Instagram className="w-4 h-4 md:w-5 md:h-5 text-gray-700 group-hover:text-white relative z-10 transition-colors duration-300" />
               </a>
-              <a href="#" className="w-8 h-8 md:w-12 md:h-12 bg-white border border-gray-200 rounded-full flex items-center justify-center hover:bg-[#1877F2] hover:border-[#1877F2] transition-all duration-300 shadow-sm hover:shadow-md group">
+              <a href="https://web.facebook.com/profile.php?id=61578843794049" target='_blank' rel='noreferrer' className="w-8 h-8 md:w-12 md:h-12 bg-white border border-gray-200 rounded-full flex items-center justify-center hover:bg-[#1877F2] hover:border-[#1877F2] transition-all duration-300 shadow-sm hover:shadow-md group">
                 <Facebook className="w-4 h-4 md:w-5 md:h-5 text-[#1877F2] group-hover:text-white" />
               </a>
-              <a href="#" className="w-8 h-8 md:w-12 md:h-12 bg-white border border-gray-200 rounded-full flex items-center justify-center relative overflow-hidden group transition-all duration-300 shadow-sm hover:shadow-lg"				>
+              <a href="https://www.tiktok.com/@sillage.perfum.sp" target='_blank' rel='noreferrer' className="w-8 h-8 md:w-12 md:h-12 bg-white border border-gray-200 rounded-full flex items-center justify-center relative overflow-hidden group transition-all duration-300 shadow-sm hover:shadow-lg"				>
                 {/* Fondo gradiente (hover) */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-[#25F4EE] via-[#000000] to-[#FE2C55] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
                 {/* Icono de TikTok */}
                 <FaTiktok className="w-4 h-4 md:w-5 md:h-5 text-gray-700 group-hover:text-white relative z-10 transition-colors duration-300" />
               </a>
-              <a href="#" className="w-8 h-8 md:w-12 md:h-12 bg-white border border-gray-200 rounded-full flex items-center justify-center relative overflow-hidden group transition-all duration-300 shadow-sm hover:shadow-lg"				>
+              <a href="https://wa.me/56973749375" target='_blank' rel='noreferrer' className="w-8 h-8 md:w-12 md:h-12 bg-white border border-gray-200 rounded-full flex items-center justify-center relative overflow-hidden group transition-all duration-300 shadow-sm hover:shadow-lg"				>
                 <div className="absolute inset-0 bg-[#25D366] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <FaWhatsapp className="w-4 h-4 md:w-5 md:h-5 text-gray-700 group-hover:text-white relative z-10 transition-colors duration-300" />
               </a>

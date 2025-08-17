@@ -61,20 +61,24 @@ const ProductDetail = () => {
           return;
         }
 
-        // Extraer SKU base para buscar variantes
-        const baseSKU = sku.replace(/-\d+ML$/i, '');
 
-        // Buscar todas las variantes del mismo producto
+
+        // Buscar variantes del producto dentro de la misma categoría.
+        const baseSKU = sku.replace(/-\d+ML$/i, '');
+        // TODO: Considerar optimizar esta llamada en el futuro para no traer todos los productos.
         const response = await productService.getAllProducts(1, 500);
         const variants = response.products.filter(p =>
-          p.sku.replace(/-\d+ML$/i, '') === baseSKU
+          p.sku.replace(/-\d+ML$/i, '') === baseSKU && p.category === productData.category
         );
 
-        // Ordenar variantes por tamaño
-        const sortedVariants = variants.sort((a, b) => {
-          const sizeOrder = { '30ml': 1, '50ml': 2, '100ml': 3 };
-          return sizeOrder[a.size] - sizeOrder[b.size];
-        });
+        let sortedVariants = [];
+        if (variants.length > 0) {
+          sortedVariants = variants.sort((a, b) => {
+            const sizeOrder = { '30ml': 1, '50ml': 2, '100ml': 3, '120ml': 4 };
+            // Usar toLowerCase por si el tamaño viene en mayúsculas (e.g., 30ML)
+            return (sizeOrder[a.size.toLowerCase()] || 99) - (sizeOrder[b.size.toLowerCase()] || 99);
+          });
+        }
 
         // Procesar y asignar las notas olfativas correctamente desde la base de datos
         const parseNotesArray = (field) => {
@@ -377,159 +381,10 @@ const ProductDetail = () => {
             {/* Golden Divider */}
             <div className="border-t border-sillage-gold-dark my-6"></div>
 
-            {/* Collapsible Notes Section */}
-            <div className="space-y-4">
-              <button
-                onClick={() => setIsNotesOpen(!isNotesOpen)}
-                className="w-full flex items-center justify-between py-3 text-left"
-              >
-                <span className="text-lg font-medium text-foreground">Notas principales</span>
-                {isNotesOpen ? (
-                  <ChevronUp className="h-5 w-5 text-muted-foreground" />
-                ) : (
-                  <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                )}
-              </button>
-
-              {isNotesOpen && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="space-y-4"
-                >
-                  {/* Fragrance Profile - Dynamic */}
-                  {product.fragrance_profile && product.fragrance_profile.length > 0 ? (
-                    <div className="flex flex-wrap gap-2">
-                      {product.fragrance_profile.map((profileId) => {
-                        // Mapear IDs a información visual
-                        const profileMap = {
-                          'fresh_spicy': { emoji: '🌿', label: 'Fresco especiado', color: 'bg-amber-100 text-amber-800' },
-                          'amber': { emoji: '🌰', label: 'Ámbar', color: 'bg-amber-100 text-amber-800' },
-                          'citrus': { emoji: '🍋', label: 'Cítrico', color: 'bg-green-100 text-green-800' },
-                          'aromatic': { emoji: '🌸', label: 'Aromático', color: 'bg-purple-100 text-purple-800' },
-                          'musky': { emoji: '🧊', label: 'Almizclado', color: 'bg-blue-100 text-blue-800' },
-                          'woody': { emoji: '🌳', label: 'Amaderado', color: 'bg-brown-100 text-brown-800' },
-                          'floral': { emoji: '🌺', label: 'Floral', color: 'bg-pink-100 text-pink-800' },
-                          'oriental': { emoji: '🌙', label: 'Oriental', color: 'bg-indigo-100 text-indigo-800' }
-                        };
-
-                        const profile = profileMap[profileId];
-                        if (!profile) return null;
-
-                        return (
-                          <span key={profileId} className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${profile.color}`}>
-                            {profile.emoji} {profile.label}
-                          </span>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    // Fallback para productos sin perfil definido
-                    <div className="flex flex-wrap gap-2">
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-amber-100 text-amber-800">
-                        Fresco especiado
-                      </span>
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-amber-100 text-amber-800">
-                        Ámbar
-                      </span>
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 text-green-800">
-                        Cítrico
-                      </span>
-                    </div>
-                  )}
-
-                  {/* Notes Details */}
-                  <div className="space-y-3 text-sm">
-                    <div>
-                      <span className="font-medium text-foreground">Notas olfativas:</span>
-                    </div>
-                    <div className="ml-4 space-y-2">
-                      <div>
-                        <span className="text-muted-foreground">- Notas de salida:</span>
-                        <span className="ml-2 text-foreground">
-                          {product.notes.top.length > 0 ? product.notes.top.join(', ') : 'bergamota de Calabria, pimienta'}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">- Notas de corazón:</span>
-                        <span className="ml-2 text-foreground">
-                          {product.notes.middle.length > 0 ? product.notes.middle.join(', ') : 'pimienta de Sichuan, lavanda, pimienta rosa, vetiver, pachulí, geranio, elemi'}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-muted-foreground">- Notas de fondo:</span>
-                        <span className="ml-2 text-foreground">
-                          {product.notes.base.length > 0 ? product.notes.base.join(', ') : 'ambroxan, cedro, ládano'}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </div>
-
-            {/* Golden Divider */}
-            <div className="border-t border-sillage-gold-dark my-6"></div>
-
-            {/* Collapsible Details Section */}
-            <div className="space-y-4">
-              <button
-                onClick={() => setIsDetailsOpen(!isDetailsOpen)}
-                className="w-full flex items-center justify-between py-3 text-left"
-              >
-                <span className="text-lg font-medium text-foreground">Detalles</span>
-                {isDetailsOpen ? (
-                  <ChevronUp className="h-5 w-5 text-muted-foreground" />
-                ) : (
-                  <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                )}
-              </button>
-
-              {isDetailsOpen && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="space-y-4 text-sm"
-                >
-                  {/* <div>
-                    <h4 className="font-medium text-foreground mb-2">
-                      {product.originalInspiration ? `Inspirado en ${product.originalInspiration.split(' - ')[0]}` : 'Fragancia Premium'}
-                    </h4>
-                  </div>*/}
-                  <div>
-                    <h4 className="font-medium text-foreground mb-2">Descripción general:</h4>
-                    <p className="text-muted-foreground leading-relaxed">
-                      {product.description || product.longDescription || 'Una fragancia audaz y sofisticada, diseñada para el hombre moderno que busca dejar una impresión duradera. Con un aroma fresco y especiado, este perfume ofrece una intensidad equilibrada que se adapta tanto a eventos formales como a encuentros casuales. Inspirado en la naturaleza salvaje, refleja una personalidad segura y carismática.'}
-                    </p>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4 mt-4">
-                    <div>
-                      <span className="text-muted-foreground">SKU:</span>
-                      <p className="text-foreground font-medium">{product.sku}</p>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Concentración:</span>
-                      <p className="text-foreground font-medium">{product.concentration || 'Eau de Parfum'}</p>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Duración:</span>
-                      <p className="text-foreground font-medium">{product.duration}</p>
-                    </div>
-                    {/* <div>
-                      <span className="text-muted-foreground">Categoría:</span>
-                      <p className="text-foreground font-medium capitalize">
-                        {product.category === 'women' ? 'Femenino' : product.category === 'men' ? 'Masculino' : 'Unisex'}
-                      </p>
-                    </div>*/}
-                  </div>
-                </motion.div>
-              )}
-            </div>
 
 
-            {/* 
+
+
             <div className="space-y-4">
               <button
                 onClick={() => setIsNotesOpen(!isNotesOpen)}
@@ -550,7 +405,7 @@ const ProductDetail = () => {
                   exit={{ opacity: 0, height: 0 }}
                   className="space-y-4 text-sm"
                 >
-                   Mostrar cada sección solo si hay datos, igual que detalles 
+                  {/*Mostrar cada sección solo si hay datos, igual que detalles*/}
                   {((Array.isArray(product.fragrance_profile) && product.fragrance_profile.length > 0) ||
                     (Array.isArray(product.fragrance_notes_middle) && product.fragrance_notes_middle.length > 0) ||
                     (Array.isArray(product.fragrance_notes_base) && product.fragrance_notes_base.length > 0)) ? (
@@ -580,8 +435,9 @@ const ProductDetail = () => {
                 </motion.div>
               )}
             </div>
-
-             Collapsible Details Section 
+            {/* Golden Divider */}
+            <div className="border-t border-sillage-gold-dark my-6"></div>
+            {/*Collapsible Details Section */}
             <div className="space-y-4">
               <button
                 onClick={() => setIsDetailsOpen(!isDetailsOpen)}
@@ -619,6 +475,10 @@ const ProductDetail = () => {
                       <p className="text-foreground font-medium">{selectedProduct?.sku || product.sku}</p>
                     </div>
                     <div>
+                      <span className="text-muted-foreground">Concentración:</span>
+                      <p className="text-foreground font-medium">{product.concentration || 'Eau de Parfum'}</p>
+                    </div>
+                    <div>
                       <span className="text-muted-foreground">Duración:</span>
                       <p className="text-foreground font-medium">{product.duration}</p>
                     </div>
@@ -626,8 +486,7 @@ const ProductDetail = () => {
                 </motion.div>
               )}
             </div>
-             este codigo funciona con la base de datos a segun
-            */}
+
             {/* Add to Cart and Favorites */}
             <div className="flex space-x-4 pt-6">
               <Button

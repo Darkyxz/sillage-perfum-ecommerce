@@ -9,23 +9,23 @@ async function analyzeProducts() {
     const sampleProducts = await query(`
       SELECT id, name, sku, price, size, brand 
       FROM products 
-      WHERE brand = "Zachary Perfumes" 
+      WHERE brand = "Sillage Perfum" 
       ORDER BY id DESC 
       LIMIT 10
     `);
-    
+
     console.log('📋 MUESTRA DE PRODUCTOS RECIENTES:');
     console.table(sampleProducts);
-    
+
     // Analizar precios actuales
     const priceAnalysis = await query(`
       SELECT size, MIN(price) as min_price, MAX(price) as max_price, COUNT(*) as count
       FROM products 
-      WHERE brand = "Zachary Perfumes" 
+      WHERE brand = "Sillage Perfum" 
       GROUP BY size 
       ORDER BY CAST(SUBSTRING(size, 1, LENGTH(size)-2) AS UNSIGNED)
     `);
-    
+
     console.log('\n💰 ANÁLISIS DE PRECIOS POR TAMAÑO:');
     console.table(priceAnalysis);
 
@@ -49,33 +49,33 @@ async function analyzeProducts() {
         errorMessages.push(`Precios fuera de rango para ${size}: min ${row.min_price}, max ${row.max_price} (esperado entre ${range.min}-${range.max})`);
       }
     }
-    
+
     // Detectar productos con nombres problemáticos
     const longNames = await query(`
       SELECT id, sku, LEFT(name, 100) as short_name
       FROM products 
-      WHERE brand = "Zachary Perfumes" 
+      WHERE brand = "Sillage Perfum" 
       AND LENGTH(name) > 60
       ORDER BY LENGTH(name) DESC
       LIMIT 10
     `);
-    
+
     console.log('\n⚠️ PRODUCTOS CON NOMBRES LARGOS (POSIBLES DESCRIPCIONES):');
     console.table(longNames);
     if (longNames.length > 0) {
       hasError = true;
       errorMessages.push(`Se encontraron ${longNames.length} productos con nombres excesivamente largos (posibles errores de carga o descripción en campo nombre).`);
     }
-    
+
     // Contar productos por tamaño
     const sizeCount = await query(`
       SELECT size, COUNT(*) as count
       FROM products 
-      WHERE brand = "Zachary Perfumes"
+      WHERE brand = "Sillage Perfum"
       GROUP BY size
       ORDER BY count DESC
     `);
-    
+
     console.log('\n📊 DISTRIBUCIÓN POR TAMAÑOS:');
     console.table(sizeCount);
     // Validar que solo existan tamaños esperados
@@ -86,7 +86,7 @@ async function analyzeProducts() {
         errorMessages.push(`Tamaño inesperado en distribución: ${row.size}`);
       }
     }
-    
+
   } catch (error) {
     hasError = true;
     errorMessages.push('❌ Error inesperado: ' + error.message);

@@ -5,77 +5,96 @@ const Inspiraciones = () => {
     const navigate = useNavigate();
     // Datos para las inspiraciones de mujer
     const inspiracionesMujer = [
-        { codigo: 'ZP1W', inspiradoEn: '212' },
-        { codigo: 'ZP2W', inspiradoEn: '212 SEXY' },
-        { codigo: 'ZP3W', inspiradoEn: '212 VIP' },
-        { codigo: 'ZP4W', inspiradoEn: '212 VIP ROSE' },
-        { codigo: 'ZP5W', inspiradoEn: 'ACQUA DI GIO' },
-        { codigo: 'ZP7W', inspiradoEn: 'AMOR AMOR' },
-        { codigo: 'ZP13W', inspiradoEn: 'BE DELICIOUS' },
-        { codigo: 'ZP18W', inspiradoEn: 'CAN-CAN' },
-        { codigo: 'ZP20W', inspiradoEn: 'CAROLINA HERRERA' },
-        { codigo: 'ZP30W', inspiradoEn: 'DKNY' },
-        { codigo: 'ZP32W', inspiradoEn: 'DUENDE' },
-        { codigo: 'ZP38W', inspiradoEn: 'FANTASY MIDNIGHT' },
-        { codigo: 'ZP39W', inspiradoEn: 'FANTASY' },
-        { codigo: 'ZP40W', inspiradoEn: 'FLOWER' },
-        { codigo: 'ZP43W', inspiradoEn: 'HALLOWEEN' },
-        { codigo: 'ZP46W', inspiradoEn: 'HUGO WOMAN' },
-        { codigo: 'ZP51W', inspiradoEn: 'LIGHT BLUE' },
-        { codigo: 'ZP52W', inspiradoEn: 'LIGHT BLUE (mejorado)' },
-        { codigo: 'ZP55W', inspiradoEn: 'LA VIDA ES BELLA' },
-        { codigo: 'ZP59W', inspiradoEn: 'NINA MANZANA' },
-        { codigo: 'ZP63W', inspiradoEn: 'ONE' },
-        { codigo: 'ZP73W', inspiradoEn: 'RALPH' },
-        { codigo: 'ZP82W', inspiradoEn: 'TOMMY GIRL' },
-        { codigo: 'ZP87W', inspiradoEn: 'XS BLACK' },
-        { codigo: 'ZP89W', inspiradoEn: 'SÍ ARMANI' },
-        { codigo: 'ZP90W', inspiradoEn: 'GOOD GIRL' },
-        { codigo: 'ZP91W', inspiradoEn: 'OLYMPEA' },
-        { codigo: 'ZP111W', inspiradoEn: 'MISS DIOR' },
-        { codigo: 'ZP112W', inspiradoEn: 'IDÓLE' },
-        { codigo: 'ZP114W', inspiradoEn: 'CLOUD ARIANA G.' },
-        { codigo: 'ZP115W', inspiradoEn: 'YARA' }
+        { codigo: 'SP1W', inspiradoEn: '212' },
+        { codigo: 'SP2W', inspiradoEn: '212 SEXY' },
+        { codigo: 'SP3W', inspiradoEn: '212 VIP' },
+        { codigo: 'SP4W', inspiradoEn: '212 VIP ROSE' },
+        { codigo: 'SP5W', inspiradoEn: 'ACQUA DI GIO' },
+        { codigo: 'SP7W', inspiradoEn: 'AMOR AMOR' },
+        { codigo: 'SP13W', inspiradoEn: 'BE DELICIOUS' },
+        { codigo: 'SP18W', inspiradoEn: 'CAN-CAN' },
+        { codigo: 'SP20W', inspiradoEn: 'CAROLINA HERRERA' },
+        { codigo: 'SP30W', inspiradoEn: 'DKNY' },
+        { codigo: 'SP32W', inspiradoEn: 'DUENDE' },
+        { codigo: 'SP38W', inspiradoEn: 'FANTASY MIDNIGHT' },
+        { codigo: 'SP39W', inspiradoEn: 'FANTASY' },
+        { codigo: 'SP40W', inspiradoEn: 'FLOWER' },
+        { codigo: 'SP43W', inspiradoEn: 'HALLOWEEN' },
+        { codigo: 'SP46W', inspiradoEn: 'HUGO WOMAN' },
+        { codigo: 'SP51W', inspiradoEn: 'LIGHT BLUE' },
+        { codigo: 'SP52W', inspiradoEn: 'LIGHT BLUE (mejorado)' },
+        { codigo: 'SP55W', inspiradoEn: 'LA VIDA ES BELLA' },
+        { codigo: 'SP59W', inspiradoEn: 'NINA MANZANA' },
+        { codigo: 'SP63W', inspiradoEn: 'ONE' },
+        { codigo: 'SP73W', inspiradoEn: 'RALPH' },
+        { codigo: 'SP82W', inspiradoEn: 'TOMMY GIRL' },
+        { codigo: 'SP87W', inspiradoEn: 'XS BLACK' },
+        { codigo: 'SP89W', inspiradoEn: 'SÍ ARMANI' },
+        { codigo: 'SP90W', inspiradoEn: 'GOOD GIRL' },
+        { codigo: 'SP91W', inspiradoEn: 'OLYMPEA' },
+        { codigo: 'SP111W', inspiradoEn: 'MISS DIOR' },
+        { codigo: 'SP112W', inspiradoEn: 'IDÓLE' },
+        { codigo: 'SP114W', inspiradoEn: 'CLOUD ARIANA G.' },
+        { codigo: 'SP116W', inspiradoEn: 'SCANDAL JPG' },
     ];
 
     // Datos para las inspiraciones de hombre
     const inspiracionesHombre = [
-        { codigo: 'ZP1H', inspiradoEn: '212' },
-        { codigo: 'ZP2H', inspiradoEn: '212 SEXY' },
-        { codigo: 'ZP4H', inspiradoEn: '212 VIP MEN' },
-        { codigo: 'ZP5H', inspiradoEn: 'ACQUA DI GIO' },
-        { codigo: 'ZP7H', inspiradoEn: 'ANGEL' },
-        { codigo: 'ZP9H', inspiradoEn: 'ARMANI CODE SPORT' },
-        { codigo: 'ZP13H', inspiradoEn: 'BOSS 6' },
-        { codigo: 'ZP17H', inspiradoEn: 'BLEU CHANEL' },
-        { codigo: 'ZP32H', inspiradoEn: 'ETERNITY' },
-        { codigo: 'ZP38H', inspiradoEn: 'HUGO BOSS' },
-        { codigo: 'ZP42H', inspiradoEn: 'INVICTUS' },
-        { codigo: 'ZP45H', inspiradoEn: 'J.P.G' },
-        { codigo: 'ZP50H', inspiradoEn: 'LIGHT BLUE' },
-        { codigo: 'ZP52H', inspiradoEn: 'ONE' },
-        { codigo: 'ZP53H', inspiradoEn: 'ONE MILLION' },
-        { codigo: 'ZP60H', inspiradoEn: 'POLO BLUE' },
-        { codigo: 'ZP62H', inspiradoEn: 'POLO SPORT' },
-        { codigo: 'ZP63H', inspiradoEn: 'POLO RED' },
-        { codigo: 'ZP68H', inspiradoEn: 'TOMMY' },
-        { codigo: 'ZP69H', inspiradoEn: 'ULTRAVIOLET' },
-        { codigo: 'ZP73H', inspiradoEn: 'XS BLACK' },
-        { codigo: 'ZP75H', inspiradoEn: 'XS BLACK L´EXCES' },
-        { codigo: 'ZP77H', inspiradoEn: 'SAUVAGE' },
-        { codigo: 'ZP84H', inspiradoEn: 'INVICTUS INTENSE' },
-        { codigo: 'ZP93H', inspiradoEn: 'PHANTOM' },
-        { codigo: 'ZP94H', inspiradoEn: 'SAUVAGE ELIXIR' },
-        { codigo: 'ZP96H', inspiradoEn: 'BAD BOY' },
-        { codigo: 'ZP97H', inspiradoEn: 'EROS DE VERSACE' },
-        { codigo: 'ZP98H', inspiradoEn: 'LE BEAU' },
-        { codigo: 'ZP99H', inspiradoEn: 'SCANDAL J.P.G.' },
-        { codigo: 'ZP100H', inspiradoEn: 'STRONGER WITH YOU' }
+        { codigo: 'SP1H', inspiradoEn: '212' },
+        { codigo: 'SP2H', inspiradoEn: '212 SEXY' },
+        { codigo: 'SP4H', inspiradoEn: '212 VIP MEN' },
+        { codigo: 'SP5H', inspiradoEn: 'ACQUA DI GIO' },
+        { codigo: 'SP7H', inspiradoEn: 'ANGEL' },
+        { codigo: 'SP9H', inspiradoEn: 'ARMANI CODE SPORT' },
+        { codigo: 'SP13H', inspiradoEn: 'BOSS 6' },
+        { codigo: 'SP17H', inspiradoEn: 'BLEU CHANEL' },
+        { codigo: 'SP32H', inspiradoEn: 'ETERNITY' },
+        { codigo: 'SP34H', inspiradoEn: 'FAHRENHEIT' },
+        { codigo: 'SP38H', inspiradoEn: 'HUGO BOSS' },
+        { codigo: 'SP42H', inspiradoEn: 'INVICTUS' },
+        { codigo: 'SP45H', inspiradoEn: 'J.P.G' },
+        { codigo: 'SP50H', inspiradoEn: 'LIGHT BLUE' },
+        { codigo: 'SP53H', inspiradoEn: 'ONE MILLION' },
+        { codigo: 'SP60H', inspiradoEn: 'POLO BLUE' },
+        { codigo: 'SP62H', inspiradoEn: 'POLO SPORT' },
+        { codigo: 'SP63H', inspiradoEn: 'POLO RED' },
+        { codigo: 'SP68H', inspiradoEn: 'TOMMY' },
+        { codigo: 'SP73H', inspiradoEn: 'XS BLACK' },
+        { codigo: 'SP75H', inspiradoEn: 'XS BLACK L´EXCES' },
+        { codigo: 'SP77H', inspiradoEn: 'SAUVAGE' },
+        { codigo: 'SP84H', inspiradoEn: 'INVICTUS INTENSE' },
+        { codigo: 'SP93H', inspiradoEn: 'PHANTOM' },
+        { codigo: 'SP94H', inspiradoEn: 'SAUVAGE ELIXIR' },
+        { codigo: 'SP96H', inspiradoEn: 'BAD BOY' },
+        { codigo: 'SP97H', inspiradoEn: 'EROS DE VERSACE' },
+        { codigo: 'SP98H', inspiradoEn: 'LE BEAU' },
+        { codigo: 'SP99H', inspiradoEn: 'SCANDAL J.P.G.' },
     ];
 
-    // Función para manejar el clic en un código
+    // Datos para las lociones
+    const lociones = {
+        "locionMujer": [
+            { "codigo": "SP52W", inspiradoEn: 'Locion.' },
+            { "codigo": "SP55W", inspiradoEn: 'Locion.' },
+            { "codigo": "SP89W", inspiradoEn: 'Locion.' },
+            { "codigo": "SP90W", inspiradoEn: 'Locion.' },
+        ],
+        "locionHombre": [
+            { "codigo": "SP4H", inspiradoEn: 'Locion.' },
+            { "codigo": "SP5H", inspiradoEn: 'Locion.' },
+            { "codigo": "SP42h", inspiradoEn: 'Locion.' },
+            { "codigo": "SP53H", inspiradoEn: 'Locion.' },
+        ]
+    };
+
+    // Función para manejar el clic en un código de inspiración
     const handleCodigoClick = (codigo) => {
         navigate(`/productos/${codigo}-50ML`);
+    };
+
+    // Función para manejar el clic en un código de loción
+    const handleLocionClick = (codigo) => {
+        navigate(`/productos/${codigo}`);
     };
 
     return (
@@ -156,6 +175,67 @@ const Inspiraciones = () => {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-sillage-dark">
                                             {item.inspiradoEn}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            {/* Tabla para Lociones */}
+            <div className="mt-12 flex justify-center">
+                <div className="w-full lg:w-1/2 bg-sillage-cream rounded-lg shadow-lg overflow-hidden border border-sillage-gold-200">
+                    <div className="bg-sillage-gold-500 px-6 py-3">
+                        <h2 className="text-xl font-bold text-sillage-dark">Lociones</h2>
+                    </div>
+                    <div className="overflow-x-auto">
+                        <table className="min-w-full divide-y divide-sillage-gold-200">
+                            <thead className="bg-sillage-gold-50">
+                                <tr>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-sillage-dark uppercase tracking-wider">
+                                        Código
+                                    </th>
+                                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-sillage-dark uppercase tracking-wider">
+                                        Inspirado en
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody className="bg-sillage-cream divide-y divide-sillage-gold-200">
+                                <tr className="bg-sillage-gold-50">
+                                    <td colSpan="2" className="px-6 py-2 text-sm font-semibold text-sillage-dark">Mujer</td>
+                                </tr>
+                                {lociones.locionMujer.map((item, index) => (
+                                    <tr key={`locion-mujer-${index}`} className="hover:bg-sillage-gold-50 transition-colors">
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <button
+                                                onClick={() => handleLocionClick(item.codigo)}
+                                                className="text-sillage-gold-600 hover:text-sillage-gold-800 font-medium underline hover:no-underline transition-colors"
+                                            >
+                                                {item.codigo}
+                                            </button>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-sillage-dark">
+                                            {item.inspiradoEn || 'N/A'}
+                                        </td>
+                                    </tr>
+                                ))}
+                                <tr className="bg-sillage-gold-50">
+                                    <td colSpan="2" className="px-6 py-2 text-sm font-semibold text-sillage-dark">Hombre</td>
+                                </tr>
+                                {lociones.locionHombre.map((item, index) => (
+                                    <tr key={`locion-hombre-${index}`} className="hover:bg-sillage-gold-50 transition-colors">
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <button
+                                                onClick={() => handleLocionClick(item.codigo)}
+                                                className="text-sillage-gold-600 hover:text-sillage-gold-800 font-medium underline hover:no-underline transition-colors"
+                                            >
+                                                {item.codigo}
+                                            </button>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-sillage-dark">
+                                            {item.inspiradoEn || 'N/A'}
                                         </td>
                                     </tr>
                                 ))}
