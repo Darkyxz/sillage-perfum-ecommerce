@@ -184,7 +184,8 @@ router.get('/:sku', async (req, res) => {
     const sql = `
       SELECT id, name, description, price, sku, brand, category, 
              image_url, stock_quantity, is_featured, rating, created_at,
-             in_stock, notes, duration, original_inspiration, size, concentration
+             in_stock, notes, duration, original_inspiration, size, concentration,
+             fragrance_profile, fragrance_notes_middle, fragrance_notes_base
       FROM products 
       WHERE sku = ? AND is_active = 1
     `;

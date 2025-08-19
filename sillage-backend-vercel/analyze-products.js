@@ -35,6 +35,7 @@ async function analyzeProducts() {
       '50ml': { min: 12000, max: 15000 },
       '100ml': { min: 17000, max: 20000 },
       '200ml': { min: 7000, max: 8000 },
+      '120ml': { min: 6000, max: 6000 }
     };
     for (const row of priceAnalysis) {
       const size = row.size;
@@ -79,7 +80,7 @@ async function analyzeProducts() {
     console.log('\n📊 DISTRIBUCIÓN POR TAMAÑOS:');
     console.table(sizeCount);
     // Validar que solo existan tamaños esperados
-    const validSizes = ['30ml', '50ml', '100ml', '200ml'];
+    const validSizes = ['30ml', '50ml', '100ml', '120ml', '200ml'];
     for (const row of sizeCount) {
       if (!validSizes.includes(row.size)) {
         hasError = true;
