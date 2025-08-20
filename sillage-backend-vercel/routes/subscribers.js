@@ -35,7 +35,7 @@ router.post('/subscribe', async (req, res) => {
     await Subscriber.create(email, token);
     // Enviar email de confirmación solo si está configurado
     if (process.env.EMAIL_USER && process.env.EMAIL_PASS && process.env.EMAIL_USER !== 'tu-email@gmail.com') {
-      const backendUrl = process.env.BACKEND_URL || 'https://sillage-backend-vercel.vercel.app';
+      const backendUrl = process.env.BACKEND_URL || 'https://sillage-backend-iae11t8w2-sillageperfums-projects.vercel.app';
       const unsubscribeLink = `${backendUrl}/api/subscribers/unsubscribe/${token}`;
       try {
         await transporter.sendMail({

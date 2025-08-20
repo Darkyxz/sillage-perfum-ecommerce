@@ -47,7 +47,7 @@ if (empty($apiPath)) {
 }
 
 // Build the full Vercel backend URL
-$vercelBaseUrl = 'https://sillage-backend-i0jyiudue-sillageperfums-projects.vercel.app';
+$vercelBaseUrl = 'https://sillage-backend-iae11t8w2-sillageperfums-projects.vercel.app';
 $fullUrl = $vercelBaseUrl . '/' . ltrim($apiPath, '/');
 
 // Add query parameters if they exist (excluding 'path')

@@ -86,7 +86,27 @@ router.post('/create', authenticateToken, async (req, res) => {
 // POST /api/webpay/confirm - Confirmar transacción Webpay
 router.post('/confirm', async (req, res) => {
   try {
-    const { token } = req.body;
+    const { token, TBK_TOKEN, TBK_ID_SESION, TBK_ORDEN_COMPRA } = req.body;
+    
+    // Detectar cancelación por parte del usuario
+    if (TBK_TOKEN) {
+      console.log('❌ Pago cancelado por el usuario');
+      console.log('TBK_TOKEN:', TBK_TOKEN);
+      console.log('TBK_ID_SESION:', TBK_ID_SESION);
+      console.log('TBK_ORDEN_COMPRA:', TBK_ORDEN_COMPRA);
+      
+      // No hacer commit de la transacción, solo devolver información de cancelación
+      return res.json({
+        success: true,
+        data: {
+          status: 'CANCELLED',
+          message: 'Transacción cancelada por el usuario',
+          tbk_token: TBK_TOKEN,
+          tbk_id_sesion: TBK_ID_SESION,
+          tbk_orden_compra: TBK_ORDEN_COMPRA
+        }
+      });
+    }
     
     if (!token) {
       return res.status(400).json({

@@ -12,6 +12,7 @@ import Home from '@/pages/Home';
 import Products from '@/pages/Products';
 import ProductDetail from '@/pages/ProductDetail';
 import Cart from '@/pages/Cart';
+import CartPage from '@/pages/CartPage';
 import Checkout from '@/pages/Checkout';
 import GuestCheckout from '@/pages/GuestCheckout';
 import GuestTrackingPage from '@/pages/GuestTrackingPage';
@@ -43,7 +44,9 @@ import CookieConsent from './components/CookieConsent';
 import SEOStatus from './components/SEOStatus';
 import safeStorage from './utils/storage';
 import { ErrorBoundary } from 'react-error-boundary';
-import PagoRealizado from './pages/pagoRealizado';
+import PoliticaReembolsos from './components/PoliticaReembolsos';
+import ScrollToTop from './components/ScrollToTop';
+import UnsubscribePage from '@/pages/UnsubscribePage';
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   const isStorageError = error.message.includes('localStorage') ||
@@ -157,6 +160,7 @@ function App() {
                       <SafeContextWrapper contextName="FavoritesContext">
                         <FavoritesProvider>
                           <Router>
+                            <ScrollToTop />
                             <div className="min-h-screen transition-colors duration-300 bg-background text-foreground">
                               <Helmet>
                                 <html lang={LANGUAGE_CONFIG.htmlLang} dir="ltr" />
@@ -192,12 +196,14 @@ function App() {
                                     <Route path="/pago-exitoso" element={<PaymentSuccessPage />} />
                                     <Route path="/pago-fallido" element={<PaymentFailurePage />} />
                                     <Route path="/pago-pendiente" element={<PaymentPendingPage />} />
-                                    <Route path="/Pago-realizado" element={<PagoRealizado />} />
                                     <Route path="/como-comprar" element={<ComoComprar />} />
                                     <Route path="/inspiraciones" element={<Inspiraciones />} />
                                     <Route path="/cookies" element={<CookiesPolicy />} />
                                     <Route path="/terminos" element={<TerminosCondiciones />} />
                                     <Route path="/privacidad" element={<PoliticaPrivacidad />} />
+                                    <Route path="/politica-reembolsos" element={<PoliticaReembolsos />} />
+                                    <Route path="/unsubscribe" element={<UnsubscribePage />} />
+                                    <Route path="/unsubscribe/:token" element={<UnsubscribePage />} />
                                     <Route
                                       path="/seguimiento"
                                       element={

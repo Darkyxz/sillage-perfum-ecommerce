@@ -270,9 +270,10 @@ const Home = () => {
               ))
             ) : featuredProducts.length > 0 ? (
               (() => {
-                const sortedProducts = [...featuredProducts];
+                const sortedProducts = [...(featuredProducts || [])];
                 const longestNameProduct = sortedProducts.reduce((longest, current) =>
-                  current.name.length > longest.name.length ? current : longest
+                  current?.name?.length > longest?.name?.length ? current : longest,
+                  { name: '' }
                 );
                 const otherProducts = sortedProducts.filter(p => p.id !== longestNameProduct.id);
                 const middleIndex = Math.floor(otherProducts.length / 2);

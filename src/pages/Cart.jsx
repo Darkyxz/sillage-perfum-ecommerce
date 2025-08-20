@@ -18,8 +18,9 @@ import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { useCart } from '../contexts/CartContext';
 import { useAuth } from '../contexts/AuthContext';
-import { orderService } from '../lib/orderService';
+import { checkoutService } from '../lib/checkoutService';
 import { formatPrice } from '@/utils/formatPrice';
+import { getPaymentReturnUrl, getPaymentFailureUrl } from '@/utils/config';
 
 import { useToast } from '../components/ui/use-toast';
 
@@ -29,144 +30,71 @@ const Cart = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isLoadingCheckout, setIsLoadingCheckout] = useState(false);
-  const [preferenceId, setPreferenceId] = useState(null);
-  const [currentOrder, setCurrentOrder] = useState(null);
 
   const handleCheckout = async () => {
-    if (!items.length) {
-      toast({ title: "Carrito vacío", description: "Añade productos para continuar.", variant: "destructive" });
+    if (!user) {
+      // Redirigir a checkout de invitados en lugar de forzar login
+      navigate('/checkout-invitado');
       return;
     }
-    if (!user) {
+
+    if (items.length === 0) {
       toast({
-        title: "Inicia sesión para continuar",
-        description: "Debes iniciar sesión para poder realizar un pedido.",
+        title: "Carrito vacío",
+        description: "Agrega productos al carrito antes de proceder",
         variant: "destructive",
       });
       return;
     }
 
     setIsLoadingCheckout(true);
-    setPreferenceId(null);
-    let order;
-
-    console.log("🛒 Iniciando proceso de checkout...");
     const total = getTotalPrice();
-    console.log("💰 Total del carrito calculado:", total);
 
     try {
-      // Debug del usuario
-      console.log("👤 Debug usuario completo:", user);
-      console.log("🆔 Debug user.id:", user?.id);
+      const result = await checkoutService.processWebpayCheckout(
+        user.id,
+        items,
+        total,
+        getPaymentReturnUrl(),
+        getPaymentFailureUrl()
+      );
 
-      if (!user?.id) {
-        throw new Error('Usuario no válido o sin ID');
-      }
+      console.log('📊 Debug resultado completo:', result);
 
-      // Paso 1: Crear el pedido en la base de datos de forma aislada.
-      console.log("📦 Intentando crear el pedido en la base de datos...");
-
-      // Datos de envío por defecto (el usuario los actualizará más tarde)
-      const shippingData = {
-        address: user.address || 'Por confirmar',
-        city: user.city || 'Santiago',
-        region: user.region || 'Región Metropolitana',
-        postal_code: user.postal_code || '',
-        notes: 'Pedido creado desde el carrito. Envío a coordinar.'
-      };
-
-      order = await orderService.createOrder(user.id, items, total, null, shippingData);
-
-      console.log("📄 Pedido creado:", order);
-
-      // El backend puede devolver order.id o order.order_id
-      const orderId = order?.id || order?.order_id;
-
-      if (!order || !orderId) {
-        console.error("❌ ERROR: El pedido se creó pero no tiene ID.");
-        throw new Error("El pedido fue creado, pero no se recibió un ID válido. No se puede continuar con el pago.");
-      }
-
-      // Normalizar la estructura del pedido
-      const normalizedOrder = {
-        ...order,
-        id: orderId
-      };
-      setCurrentOrder(normalizedOrder);
-      console.log("✅ Pedido creado exitosamente con ID:", orderId);
-
-      // Paso 2: Proceso de pago temporal (hasta tener credenciales)
-      console.log("� Rediriagiendo a checkout...");
-
-      // Redirigir a la página de Webpay
-      const form = document.createElement('form');
-      form.method = 'post';
-      form.action = 'https://www.webpay.cl/backpub/external/form-pay';
-      form.target = '_blank';
-
-      const idFormularioField = document.createElement('input');
-      idFormularioField.type = 'hidden';
-      idFormularioField.name = 'idFormulario';
-      idFormularioField.value = '299617';
-      form.appendChild(idFormularioField);
-
-      const montoField = document.createElement('input');
-      montoField.type = 'hidden';
-      montoField.name = 'monto';
-      montoField.value = Math.round(total + 5000);
-      form.appendChild(montoField);
-
-      const correoField = document.createElement('input');
-      correoField.type = 'hidden';
-      correoField.name = 'Correo';
-      correoField.value = user.email;
-      form.appendChild(correoField);
-
-      document.body.appendChild(form);
-      form.submit();
-      document.body.removeChild(form);
-
-      // Limpiar carrito inmediatamente
-      clearCart();
-
-      // Mostrar toast de éxito
-      toast({
-        title: "¡Pedido creado con éxito!",
-        description: `Tu pedido #${orderId} ha sido creado. Redirigiendo a Webpay...`,
-      });
-
-      // Esperar un momento antes de redirigir al perfil
-      setTimeout(() => {
-        navigate('/perfil');
-      }, 2000);
-
-      console.log("🎉 Proceso de checkout completado exitosamente");
-
-    } catch (error) {
-      console.error("💥 Error detallado en el proceso de pago:", error);
-
-      // Si el error ocurrió después de crear el pedido, intentamos marcarlo como fallido.
-      const orderId = order?.id || order?.order_id;
-      if (order && orderId) {
-        console.log(`🔥 Marcando pedido ${orderId} como fallido.`);
-        try {
-          await orderService.updateOrderStatus(orderId, 'failed');
-        } catch (updateError) {
-          console.error("Error actualizando estado del pedido:", updateError);
-        }
-        toast({
-          title: "Error al contactar al procesador de pago",
-          description: "Se creó tu pedido, pero no pudimos generar el enlace de pago. El pedido ha sido marcado como 'fallido'. Intenta de nuevo.",
-          variant: "destructive",
-        });
+      if (result.url && result.token) {
+        console.log('🚀 Redirigiendo a Webpay:');
+        console.log('URL:', result.url);
+        console.log('Token:', result.token);
+        
+        // Crear un formulario POST para enviar el token a Webpay
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = result.url;
+        form.style.display = 'none';
+        
+        const tokenInput = document.createElement('input');
+        tokenInput.type = 'hidden';
+        tokenInput.name = 'token_ws';
+        tokenInput.value = result.token;
+        form.appendChild(tokenInput);
+        
+        document.body.appendChild(form);
+        form.submit();
+        
+        // Limpiar el formulario después de enviarlo
+        setTimeout(() => {
+          document.body.removeChild(form);
+        }, 100);
       } else {
-        // Si el error fue al crear el pedido mismo.
-        toast({
-          title: "Error al crear el pedido",
-          description: error.message || "No se pudo registrar tu pedido en la base de datos. Por favor, intenta de nuevo.",
-          variant: "destructive",
-        });
+        throw new Error('Error al iniciar el pago con Webpay - No se recibió URL o token');
       }
+    } catch (error) {
+      console.error('Error en checkout:', error);
+      toast({
+        title: "Error en el checkout",
+        description: error.message || "Hubo un problema procesando tu pedido",
+        variant: "destructive",
+      });
     } finally {
       setIsLoadingCheckout(false);
     }
@@ -254,7 +182,6 @@ const Cart = () => {
               variant="outline"
               onClick={() => {
                 clearCart();
-                setPreferenceId(null);
               }}
               className="glass-effect border-border/30 text-foreground hover:bg-accent/15 w-full sm:w-auto"
             >
@@ -478,7 +405,7 @@ const Cart = () => {
                         ) : (
                           <>
                             <CreditCard className="mr-2 h-4 w-4" />
-                            Procesar Pago - {formatPrice(getTotalPrice() + 5000)}
+                            🚀 Pagar con Webpay
                           </>
                         )}
                       </Button>
@@ -523,6 +450,14 @@ const Cart = () => {
                         Se usará el correo: <span className="font-medium">{user.email}</span>
                       </p>
                     )}
+                    <div className="mt-4">
+                      <img
+                        src="https://www.webpay.cl/assets/img/boton_webpaycl.svg"
+                        alt="Webpay"
+                        className="h-12 mx-auto cursor-pointer"
+                        onClick={handleCheckout}
+                      />
+                    </div>
                   </div>
 
                   {!user && (
@@ -539,14 +474,6 @@ const Cart = () => {
                     </p>
                   )}
 
-                  {preferenceId && (
-                    <div className="mt-4 p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
-                      <div className="flex items-center text-primary">
-                        <CheckCircle className="mr-2 h-4 w-4" />
-                        <span className="text-sm">Preferencia creada: {preferenceId}</span>
-                      </div>
-                    </div>
-                  )}
                 </CardContent>
               </Card>
             </motion.div>

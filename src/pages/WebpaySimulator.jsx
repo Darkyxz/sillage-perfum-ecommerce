@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { CreditCard, CheckCircle, XCircle } from 'lucide-react';
+import { CreditCard, CheckCircle, XCircle, Ban } from 'lucide-react';
 
 const WebpaySimulator = () => {
   const [searchParams] = useSearchParams();
@@ -22,6 +22,15 @@ const WebpaySimulator = () => {
 
   const handleReject = () => {
     navigate(`/pago-fallido?token_ws=${token}&buy_order=${order}`);
+  };
+
+  const handleCancel = () => {
+    // Simular cancelación enviando parámetros TBK según documentación de Transbank
+    const tbkToken = `TBK_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const tbkIdSesion = `SID_${Date.now()}`;
+    const tbkOrdenCompra = order || `OC_${Date.now()}`;
+    
+    navigate(`/pago-exitoso?TBK_TOKEN=${tbkToken}&TBK_ID_SESION=${tbkIdSesion}&TBK_ORDEN_COMPRA=${tbkOrdenCompra}`);
   };
 
   return (
@@ -56,6 +65,15 @@ const WebpaySimulator = () => {
           </div>
         </div>
 
+        <div className="bg-blue-50 rounded-lg p-4 mb-6">
+          <p className="text-sm text-blue-800 font-medium mb-2">Opciones de Simulación:</p>
+          <ul className="text-xs text-blue-700 space-y-1">
+            <li>• <strong>Aprobar:</strong> Simula pago exitoso (AUTHORIZED)</li>
+            <li>• <strong>Rechazar:</strong> Simula pago rechazado por banco (FAILED)</li>
+            <li>• <strong>Cancelar:</strong> Simula cancelación por usuario (TBK_TOKEN)</li>
+          </ul>
+        </div>
+
         <div className="space-y-4">
           <Button
             onClick={handleApprove}
@@ -83,6 +101,16 @@ const WebpaySimulator = () => {
           >
             <XCircle className="w-4 h-4 mr-2" />
             Rechazar Pago
+          </Button>
+
+          <Button
+            onClick={handleCancel}
+            disabled={loading}
+            variant="outline"
+            className="w-full border-yellow-300 text-yellow-600 hover:bg-yellow-50 py-3"
+          >
+            <Ban className="w-4 h-4 mr-2" />
+            Cancelar Pago
           </Button>
         </div>
 

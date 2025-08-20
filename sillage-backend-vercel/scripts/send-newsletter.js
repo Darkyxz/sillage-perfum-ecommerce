@@ -92,7 +92,7 @@ async function sendNewsletter() {
             © 2025 Sillage Perfum. Todos los derechos reservados.
           </p>
           <p style="color: #999; font-size: 12px;">
-            <a href="https://sillage-backend-vercel.vercel.app/api/subscribers/unsubscribe/{{TOKEN}}" 
+            <a href="https://sillage-backend-iae11t8w2-sillageperfums-projects.vercel.app/api/subscribers/unsubscribe/{{TOKEN}}" 
                style="color: #999; text-decoration: underline;">
               Cancelar suscripción
             </a>

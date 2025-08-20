@@ -8,12 +8,11 @@ import ProductSizeSelector from '@/components/ProductSizeSelector';
 import { formatPrice } from '@/utils/formatPrice';
 import { useNavigate } from 'react-router-dom';
 
-// Precios fijos para todos los productos Zachary
-const FIXED_PRICES = {
+// Precios fijos solo para productos Zachary (perfumes diseñador)
+const ZACHARY_FIXED_PRICES = {
   '30ml': 9000,   // $9,000 CLP
   '50ml': 14000,  // $14,000 CLP  
   '100ml': 18000,  // $18,000 CLP
-  '200ml': 7500   // $7,500 CLP
 };
 
 // Componente DialogContent optimizado fuera del render
@@ -38,10 +37,27 @@ export const QuantityDialog = React.memo(({ open, onOpenChange, product, onAddTo
   const [selectedProduct, setSelectedProduct] = useState(null);
   const navigate = useNavigate();
 
-  // Detectar si es un producto Home Spray
+  // Detectar si es un producto Home Spray o Loción
   const isHomeSpray = product?.category === 'Hogar' ||
     product?.sku?.startsWith('ZHS-') ||
-    product?.name?.toLowerCase().includes('home spray');
+    product?.name?.toLowerCase().includes('home spray') ||
+    product?.name?.toLowerCase().includes('capuccino') ||
+    product?.concentration === 'Home Spray';
+    
+  const isLocion = product?.category === 'Lociones' ||
+    product?.concentration === 'Loción' ||
+    product?.name?.toLowerCase().includes('loción') ||  
+    product?.name?.toLowerCase().includes('locion');
+
+  // Debug para verificar detección
+  console.log('QuantityDialog - Product debug:', {
+    name: product?.name,
+    category: product?.category,
+    concentration: product?.concentration,
+    sku: product?.sku,
+    isHomeSpray,
+    isLocion
+  });
 
   // Inicializar producto seleccionado cuando se abre el dialog
   useEffect(() => {
@@ -51,17 +67,25 @@ export const QuantityDialog = React.memo(({ open, onOpenChange, product, onAddTo
         setSelectedProduct({
           ...product,
           size: '200ml',
-          price: 7500
+          price: product.price || 7500 // Usar precio de BD o default 7500
+        });
+      } else if (isLocion) {
+        // Para Lociones: forzar 120ml y precio $6.000
+        setSelectedProduct({
+          ...product,
+          size: '120ml',
+          price: product.price || 6000 // Usar precio de BD o default 6000
         });
       } else {
+        // Para perfumes Zachary (productos diseñador)
         setSelectedProduct({
           ...product,
           size: product.size || '50ml',
-          price: FIXED_PRICES[product.size || '50ml']
+          price: product.price || ZACHARY_FIXED_PRICES[product.size || '50ml'] // Usar precio de BD o default
         });
       }
     }
-  }, [product, open, isHomeSpray]);
+  }, [product, open, isHomeSpray, isLocion]);
 
   const handleAddToCart = useCallback(() => {
     if (selectedProduct) {
@@ -140,6 +164,12 @@ export const QuantityDialog = React.memo(({ open, onOpenChange, product, onAddTo
                 <div className="bg-sillage-gold/10 rounded-lg p-4 border border-sillage-gold/30">
                   <p className="text-sm font-medium text-foreground mb-1">Tamaño único</p>
                   <p className="text-lg font-bold text-sillage-gold-dark">200ml</p>
+                </div>
+              ) : isLocion ? (
+                // Para Lociones mostrar solo 120ml sin opción de cambiar
+                <div className="bg-sillage-gold/10 rounded-lg p-4 border border-sillage-gold/30">
+                  <p className="text-sm font-medium text-foreground mb-1">Tamaño único</p>
+                  <p className="text-lg font-bold text-sillage-gold-dark">120ml</p>
                 </div>
               ) : (
                 <ProductSizeSelector

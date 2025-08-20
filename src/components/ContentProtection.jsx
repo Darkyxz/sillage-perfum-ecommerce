@@ -55,9 +55,9 @@ const ContentProtection = ({ children }) => {
         user-select: none;
       }
     `;
-    
+
     document.head.appendChild(style);
-    
+
     // Cleanup
     return () => {
       if (document.head.contains(style)) {
@@ -73,19 +73,19 @@ const ContentProtection = ({ children }) => {
         open: false,
         orientation: null
       };
-      
+
       const threshold = 160;
-      
+
       setInterval(() => {
-        if (window.outerHeight - window.innerHeight > threshold || 
-            window.outerWidth - window.innerWidth > threshold) {
+        if (window.outerHeight - window.innerHeight > threshold ||
+          window.outerWidth - window.innerWidth > threshold) {
           if (!devtools.open) {
             devtools.open = true;
             console.clear();
             console.log('%c🚫 ACCESO NO AUTORIZADO', 'color: red; font-size: 30px; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);');
             console.log('%c⚠️ Esta aplicación web está protegida contra inspección', 'color: orange; font-size: 18px; font-weight: bold;');
-            console.log('%c🔒 Sillage-Perfum - Contenido Protegido', 'color: #FFC107; font-size: 16px; font-weight: bold;');
-            
+            console.log('%c🔒 Sillage-Perfum - Contenido Protegido', 'color: #c29605ff; font-size: 16px; font-weight: bold;');
+
             // Opcional: Redirigir o mostrar advertencia
             // window.location.href = '/';
           }
@@ -94,7 +94,7 @@ const ContentProtection = ({ children }) => {
         }
       }, 500);
     };
-    
+
     detectDevTools();
   }, []);
 

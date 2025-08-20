@@ -1,9 +1,44 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Phone, Mail, Clock, Instagram, Facebook, Twitter } from 'lucide-react';
 import { FaWhatsapp, FaTiktok } from 'react-icons/fa';
+import axios from 'axios';
 
 const Footer = () => {
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Manejar el envío del formulario de suscripción
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setMessage('');
+
+    try {
+      // Construir URL correctamente para el proxy PHP
+      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
+      const subscribersUrl = apiBaseUrl.includes('api-proxy.php')
+        ? `${apiBaseUrl}?path=api/subscribers/subscribe`
+        : `${apiBaseUrl}/subscribers/subscribe`;
+
+      const response = await axios.post(
+        subscribersUrl,
+        { email },
+        { withCredentials: true }
+      );
+      setMessage('¡Gracias por suscribirte! Revisa tu email para confirmar.');
+      setEmail('');
+    } catch (error) {
+      if (error.response?.data?.alreadySubscribed) {
+        setMessage('Ya estás suscrito con este email. ¡Gracias!');
+      } else {
+        setMessage(error.response?.data?.error || 'Error al suscribirse. Por favor intenta nuevamente.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <footer className="bg-background border-t border-border pt-12 md:pt-16 pb-6 md:pb-8 mt-16 md:mt-20 w-full" style={{ margin: 0, width: '100%', maxWidth: '100%' }}>
       <div className="w-full px-4" style={{ margin: 0, boxSizing: 'border-box' }}>
@@ -27,23 +62,17 @@ const Footer = () => {
                 href="https://www.instagram.com/sillage668" target='_blank' rel='noreferrer'
                 className="w-8 h-8 md:w-12 md:h-12 bg-white border border-gray-200 rounded-full flex items-center justify-center relative overflow-hidden group transition-all duration-300 shadow-sm hover:shadow-lg"
               >
-                {/* Fondo de gradiente (solo visible en hover) */}
                 <div className="absolute inset-0 bg-gradient-to-tr from-[#833AB4] via-[#C13584] to-[#E1306C] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-                {/* Icono */}
                 <Instagram className="w-4 h-4 md:w-5 md:h-5 text-gray-700 group-hover:text-white relative z-10 transition-colors duration-300" />
               </a>
               <a href="https://web.facebook.com/profile.php?id=61578843794049" target='_blank' rel='noreferrer' className="w-8 h-8 md:w-12 md:h-12 bg-white border border-gray-200 rounded-full flex items-center justify-center hover:bg-[#1877F2] hover:border-[#1877F2] transition-all duration-300 shadow-sm hover:shadow-md group">
                 <Facebook className="w-4 h-4 md:w-5 md:h-5 text-[#1877F2] group-hover:text-white" />
               </a>
-              <a href="https://www.tiktok.com/@sillage.perfum.sp" target='_blank' rel='noreferrer' className="w-8 h-8 md:w-12 md:h-12 bg-white border border-gray-200 rounded-full flex items-center justify-center relative overflow-hidden group transition-all duration-300 shadow-sm hover:shadow-lg"				>
-                {/* Fondo gradiente (hover) */}
+              <a href="https://www.tiktok.com/@sillage.perfum.sp" target='_blank' rel='noreferrer' className="w-8 h-8 md:w-12 md:h-12 bg-white border border-gray-200 rounded-full flex items-center justify-center relative overflow-hidden group transition-all duration-300 shadow-sm hover:shadow-lg">
                 <div className="absolute inset-0 bg-gradient-to-tr from-[#25F4EE] via-[#000000] to-[#FE2C55] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-                {/* Icono de TikTok */}
                 <FaTiktok className="w-4 h-4 md:w-5 md:h-5 text-gray-700 group-hover:text-white relative z-10 transition-colors duration-300" />
               </a>
-              <a href="https://wa.me/56973749375" target='_blank' rel='noreferrer' className="w-8 h-8 md:w-12 md:h-12 bg-white border border-gray-200 rounded-full flex items-center justify-center relative overflow-hidden group transition-all duration-300 shadow-sm hover:shadow-lg"				>
+              <a href="https://wa.me/56973749375" target='_blank' rel='noreferrer' className="w-8 h-8 md:w-12 md:h-12 bg-white border border-gray-200 rounded-full flex items-center justify-center relative overflow-hidden group transition-all duration-300 shadow-sm hover:shadow-lg">
                 <div className="absolute inset-0 bg-[#25D366] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 <FaWhatsapp className="w-4 h-4 md:w-5 md:h-5 text-gray-700 group-hover:text-white relative z-10 transition-colors duration-300" />
               </a>
@@ -80,11 +109,11 @@ const Footer = () => {
           <div className="text-center">
             <h4 className="text-base md:text-lg font-semibold text-foreground mb-3 md:mb-4">Información</h4>
             <ul className="space-y-2 md:space-y-3">
-              <li><Link to="/rastrear-pedido" className="text-sillage-gold-dark hover:text-sillage-gold-bright transition-colors text-sm">Rastrear mi Pedido</Link></li>
-              <li><a href="#" className="text-sillage-gold-dark hover:text-sillage-gold-bright transition-colors text-sm">Política de Reembolsos</a></li>
-              <li><a href="#" className="text-sillage-gold-dark hover:text-sillage-gold-bright transition-colors text-sm">Políticas de Privacidad</a></li>
-              <li><a href="#" className="text-sillage-gold-dark hover:text-sillage-gold-bright transition-colors text-sm">Términos y Condiciones</a></li>
-              <li><a href="#" className="text-sillage-gold-dark hover:text-sillage-gold-bright transition-colors text-sm">Políticas de Envío</a></li>
+              <li><Link to="/seguimiento" className="text-sillage-gold-dark hover:text-sillage-gold-bright transition-colors text-sm">Rastrear mi Pedido</Link></li>
+              <li><Link to="/politica-reembolsos" className="text-sillage-gold-dark hover:text-sillage-gold-bright transition-colors text-sm">Política de Reembolsos</Link></li>
+              <li><a href="/privacidad" className="text-sillage-gold-dark hover:text-sillage-gold-bright transition-colors text-sm">Políticas de Privacidad</a></li>
+              <li><a href="/terminos" className="text-sillage-gold-dark hover:text-sillage-gold-bright transition-colors text-sm">Términos y Condiciones</a></li>
+
             </ul>
           </div>
 
@@ -124,22 +153,35 @@ const Footer = () => {
         {/* Newsletter */}
         <div className="bg-secondary rounded-lg p-4 md:p-6 mb-6 md:mb-8">
           <div className="text-center max-w-md mx-auto">
-            <h4 className="text-base md:text-lg font-semibold text-foreground mb-2">Suscribete</h4>
-            <p className="text-sillage-gold-dark text-sm mb-3 md:mb-4">Suscribete a nuestro bolietin para saber de nuestras promociones.</p>
-            <p className="text-sillage-gold-dark text-sm mb-3 md:mb-4">Introduce tu correo electronico.</p>
-            <div className="flex flex-col sm:flex-row gap-2">
+            <h4 className="text-base md:text-lg font-semibold text-foreground mb-2">Suscríbete</h4>
+            <p className="text-sillage-gold-dark text-sm mb-3 md:mb-4">Suscríbete a nuestro boletín para saber de nuestras promociones.</p>
+            <p className="text-sillage-gold-dark text-sm mb-3 md:mb-4">Introduce tu correo electrónico.</p>
+            <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2">
               <input
                 type="email"
                 placeholder="Tu correo electrónico"
                 className="flex-1 px-3 md:px-4 py-2 border border-border bg-background text-foreground rounded-lg focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent text-sm placeholder:text-muted-foreground"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
               />
-              <button className="bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white px-4 md:px-6 py-2 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
-                Unirse
+              <button
+                type="submit"
+                className="bg-gradient-to-r from-sillage-gold to-sillage-gold-dark hover:from-sillage-gold-bright hover:to-sillage-gold text-white px-4 md:px-6 py-2 rounded-lg text-sm font-medium transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-70"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Procesando...' : 'Unirse'}
               </button>
-            </div>
-          </div><br></br>
+            </form>
+            {message && (
+              <p className={`mt-3 text-sm ${message.includes('Gracias') ? 'text-green-600' : 'text-red-600'}`}>
+                {message}
+              </p>
+            )}
+          </div>
+          <br />
           <div className="text-center max-w mx-auto">
-            <p className="text-sillage-gold-dark text-sm mb-3 md:mb-4">*Al completar el formulario te registras para recibir nuestros correos electornicos y puedes darte de baja en cualquier momento.</p>
+            <p className="text-sillage-gold-dark text-sm mb-3 md:mb-4">*Al completar el formulario te registras para recibir nuestros correos electrónicos y puedes darte de baja en cualquier momento.</p>
           </div>
         </div>
 
@@ -162,4 +204,3 @@ const Footer = () => {
 };
 
 export default Footer;
-

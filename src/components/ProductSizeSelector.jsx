@@ -5,8 +5,8 @@ import { ChevronDown, Package, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatPrice } from '@/utils/formatPrice';
 
-// Precios fijos para todos los productos Zachary
-const FIXED_PRICES = {
+// Precios fijos solo para productos Zachary (perfumes diseñador)
+const ZACHARY_FIXED_PRICES = {
   '30ml': 9000,   // $9,000 CLP
   '50ml': 14000,  // $14,000 CLP  
   '100ml': 18000  // $18,000 CLP
@@ -16,21 +16,21 @@ const FIXED_PRICES = {
 const SIZE_CONFIG = {
   '30ml': {
     label: '30ml',
-    price: FIXED_PRICES['30ml'],
+    price: ZACHARY_FIXED_PRICES['30ml'],
     description: 'Perfecto para probar',
     popular: false,
     icon: '💧'
   },
   '50ml': {
     label: '50ml',
-    price: FIXED_PRICES['50ml'],
+    price: ZACHARY_FIXED_PRICES['50ml'],
     description: 'Tamaño estándar',
     popular: true,
     icon: '🌟'
   },
   '100ml': {
     label: '100ml',
-    price: FIXED_PRICES['100ml'],
+    price: ZACHARY_FIXED_PRICES['100ml'],
     description: 'Mayor duración',
     popular: false,
     icon: '💎'
@@ -46,7 +46,11 @@ const ProductSizeSelector = ({
   variant = 'default' // 'default', 'compact', 'dropdown'
 }) => {
   // Para Home Spray, siempre usar 200ml
-  const isHomeSpray = baseProduct?.category === 'Home Spray' || baseProduct?.category_name === 'Home Spray';
+  const isHomeSpray = baseProduct?.category === 'Hogar' ||
+    baseProduct?.category_name === 'Home Spray' ||
+    baseProduct?.name?.toLowerCase().includes('home spray') ||
+    baseProduct?.name?.toLowerCase().includes('capuccino') ||
+    baseProduct?.concentration === 'Home Spray';
   const availableSizes = isHomeSpray ? ['200ml'] : allSizes;
   const defaultSize = isHomeSpray ? '200ml' : (selectedSize || '50ml');
 
@@ -69,7 +73,7 @@ const ProductSizeSelector = ({
     return {
       ...baseProduct,
       size: currentSize,
-      price: isHomeSpray ? 7500 : FIXED_PRICES[currentSize],
+      price: isHomeSpray ? (baseProduct.price || 7500) : (baseProduct.price || ZACHARY_FIXED_PRICES[currentSize]),
       // Generar SKU con tamaño si no existe
       sku: baseProduct.sku.includes('-')
         ? baseProduct.sku.replace(/-\d+ML$/i, `-${currentSize.toUpperCase()}`)
@@ -86,7 +90,7 @@ const ProductSizeSelector = ({
       const updatedProduct = {
         ...baseProduct,
         size: newSize,
-        price: isHomeSpray ? 7500 : FIXED_PRICES[newSize],
+        price: isHomeSpray ? (baseProduct.price || 7500) : (baseProduct.price || ZACHARY_FIXED_PRICES[newSize]),
         sku: baseProduct.sku.includes('-')
           ? baseProduct.sku.replace(/-\d+ML$/i, `-${newSize.toUpperCase()}`)
           : `${baseProduct.sku}-${newSize.toUpperCase()}`
@@ -96,7 +100,7 @@ const ProductSizeSelector = ({
   };
 
   const currentProduct = getCurrentProduct();
-  const currentPrice = isHomeSpray ? 7500 : FIXED_PRICES[currentSize];
+  const currentPrice = isHomeSpray ? (baseProduct?.price || 7500) : (baseProduct?.price || ZACHARY_FIXED_PRICES[currentSize]);
 
   if (!baseProduct) return null;
 
@@ -178,7 +182,7 @@ const ProductSizeSelector = ({
                     </div>
                     <div className="text-right">
                       <div className="text-sm font-semibold">
-                        {formatPrice(config.price)}
+                        {formatPrice(baseProduct?.price || config.price)}
                       </div>
                       {currentSize === size && (
                         <Check className="h-3 w-3 text-sillage-gold ml-auto" />
@@ -237,7 +241,7 @@ const ProductSizeSelector = ({
                       </div>
 
                       <div className="text-lg font-bold text-sillage-gold-dark">
-                        {formatPrice(config.price)}
+                        {formatPrice(baseProduct?.price || config.price)}
                       </div>
                     </div>
 

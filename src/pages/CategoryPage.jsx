@@ -108,29 +108,15 @@ const CategoryPage = () => {
 
       // Manejar filtros especiales
       if (categorySlug === 'lociones') {
-        // Para by-sillage, obtener todos los productos y filtrar por brand
+        // Para lociones, obtener todos los productos y filtrar por categoría
         const allProductsResult = await productService.getAllProducts(1, 500);
-        const sillageProducts = allProductsResult.products.filter(product =>
-          product.category === 'Lociones'
+        const locionesProducts = allProductsResult.products.filter(product =>
+          product.category === 'Lociones' || product.concentration === 'Loción'
         );
 
         result = {
-          products: sillageProducts,
-          totalCount: sillageProducts.length,
-          currentPage: 1,
-          totalPages: 1,
-          hasMore: false
-        };
-      } else if (categorySlug === 'lociones') {
-        // Para body-mist, filtrar por concentración
-        const allProductsResult = await productService.getAllProducts(1, 500);
-        const bodyMistProducts = allProductsResult.products.filter(product =>
-          product.concentration === 'Lociones' || product.category === 'Lociones'
-        );
-
-        result = {
-          products: bodyMistProducts,
-          totalCount: bodyMistProducts.length,
+          products: locionesProducts,
+          totalCount: locionesProducts.length,
           currentPage: 1,
           totalPages: 1,
           hasMore: false
@@ -488,9 +474,7 @@ const CategoryPage = () => {
 
                           {/* Price */}
                           <p className="text-2xl font-bold text-sillage-gold-dark mb-3">
-                            {formatPrice(
-                              categorySlug === 'home-spray' ? 7500 : product.price
-                            )}
+                            {formatPrice(product.price)}
                           </p>
                           <div className="flex items-center space-x-2 mt-3">
                             <Link to={`/productos/${product.sku}`} className="flex-1">

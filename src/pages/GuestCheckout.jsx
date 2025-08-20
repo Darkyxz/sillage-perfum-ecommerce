@@ -23,6 +23,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useCart } from '@/contexts/CartContext';
 import { toast } from '@/components/ui/use-toast';
 import { guestCheckoutService } from '@/lib/guestCheckoutService';
+import { getGuestPaymentReturnUrl, getGuestPaymentFailureUrl } from '@/utils/config';
 
 const GuestCheckout = () => {
   const navigate = useNavigate();
@@ -169,8 +170,8 @@ const GuestCheckout = () => {
           orderId,
           guestEmail,
           total,
-          `${window.location.origin}/pago-exitoso?guest=true&order=${orderId}&email=${encodeURIComponent(guestEmail)}`,
-          `${window.location.origin}/pago-fallido?guest=true&order=${orderId}`
+          getGuestPaymentReturnUrl(orderId, guestEmail),
+          getGuestPaymentFailureUrl(orderId)
         );
 
         if (paymentResult.success && paymentResult.data.url) {

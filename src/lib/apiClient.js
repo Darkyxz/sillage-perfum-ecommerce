@@ -1,7 +1,7 @@
 // Cliente API para reemplazar Supabase
 class ApiClient {
   constructor() {
-    this.baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
+    this.baseURL = import.meta.env.VITE_API_BASE_URL
     this.token = this.getToken();
   }
 
@@ -22,14 +22,14 @@ class ApiClient {
   // Método principal para hacer requests
   async request(endpoint, options = {}) {
     let url;
-    
+
     // Si estamos usando el proxy, necesitamos formatear la URL de manera diferente
     if (this.baseURL.includes('api-proxy.php')) {
       // Remover la barra inicial del endpoint si existe
       const cleanEndpoint = endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
       // Construir la ruta completa para el proxy
       const path = `api/${cleanEndpoint}`;
-      
+
       // Si no hay parámetros en el endpoint, usar la sintaxis con ?path=
       if (!endpoint.includes('?')) {
         url = `${this.baseURL}?path=${encodeURIComponent(path)}`;
@@ -43,7 +43,7 @@ class ApiClient {
       // URL normal para conexión directa
       url = `${this.baseURL}${endpoint}`;
     }
-    
+
     const config = {
       headers: {
         'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ class ApiClient {
 
     try {
       const response = await fetch(url, config);
-      
+
       // Si el token expiró, limpiar y solo lanzar error si es una ruta que requiere auth
       if (response.status === 401) {
         this.setToken(null);
@@ -64,12 +64,12 @@ class ApiClient {
           throw new Error('Sesión expirada');
         }
       }
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
       }
-      
+
       return response.json();
     } catch (error) {
       console.error('API Request Error:', error);
@@ -80,14 +80,14 @@ class ApiClient {
   // Método para hacer requests públicos (sin token)
   async publicRequest(endpoint, options = {}) {
     let url;
-    
+
     // Si estamos usando el proxy, necesitamos formatear la URL de manera diferente
     if (this.baseURL.includes('api-proxy.php')) {
       // Remover la barra inicial del endpoint si existe
       const cleanEndpoint = endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
       // Construir la ruta completa para el proxy
       const path = `api/${cleanEndpoint}`;
-      
+
       // Si no hay parámetros en el endpoint, usar la sintaxis con ?path=
       if (!endpoint.includes('?')) {
         url = `${this.baseURL}?path=${encodeURIComponent(path)}`;
@@ -101,7 +101,7 @@ class ApiClient {
       // URL normal para conexión directa
       url = `${this.baseURL}${endpoint}`;
     }
-    
+
     const config = {
       headers: {
         'Content-Type': 'application/json',
@@ -112,12 +112,12 @@ class ApiClient {
 
     try {
       const response = await fetch(url, config);
-      
+
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
       }
-      
+
       return response.json();
     } catch (error) {
       console.error('API Request Error:', error);
@@ -171,7 +171,7 @@ class ApiClient {
       // Método directo al backend
       response = await this.post('/auth/login', { email, password });
     }
-    
+
     if (response.success && response.data.token) {
       this.setToken(response.data.token);
     }
@@ -196,7 +196,7 @@ class ApiClient {
       // Método directo al backend
       response = await this.post('/auth/register', { email, password, full_name });
     }
-    
+
     if (response.success && response.data.token) {
       this.setToken(response.data.token);
     }
