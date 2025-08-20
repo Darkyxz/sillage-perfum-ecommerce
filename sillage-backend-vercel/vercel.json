@@ -12,17 +12,5 @@
       "dest": "/server.js"
     }
   ],
-  "env": {
-    "NODE_ENV": "production",
-    "DB_HOST": "srv1918.hstgr.io",
-    "DB_USER": "u172702780_AdminSillage",
-    "DB_PASS": "M0nkey12345!",
-    "DB_NAME": "u172702780_Sillagep",
-    "DB_PORT": "3306",
-    "JWT_SECRET": "sillage-perfum-jwt-secret-super-seguro-2025-chile",
-    "SMTP_HOST": "smtp.hostinger.com",
-    "SMTP_PORT": "465",
-    "SMTP_USER": "ventas@sillageperfum.cl",
-    "SMTP_PASS": "Sillage12345!"
-  }
+  
 }
